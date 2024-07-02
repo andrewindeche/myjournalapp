@@ -1,9 +1,30 @@
 from rest_framework import generics, permissions
-from .models import JournalEntry
-from .serializers import  JournalEntrySerializer
+from .models import JournalEntry, Category
+from .serializers import  JournalEntrySerializer, CategorySerializer
 
 # Create your views here.
-class JournalEntryView(generics.ListCreateAPIView):
+class CategoryListCreateView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+
+# Journal Entry Views
+class JournalEntryListCreateView(generics.ListCreateAPIView):
+    queryset = JournalEntry.objects.all()
     serializer_class = JournalEntrySerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -11,4 +32,17 @@ class JournalEntryView(generics.ListCreateAPIView):
         return JournalEntry.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        category_name = self.request.data.get('category')
+        if category_name:
+            category, created = Category.objects.get_or_create(name=category_name, user=self.request.user)
+            serializer.save(user=self.request.user, category=category)
+        else:
+            serializer.save(user=self.request.user)
+
+class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = JournalEntry.objects.all()
+    serializer_class = JournalEntrySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return JournalEntry.objects.filter(user=self.request.user)
