@@ -1,5 +1,7 @@
 from django.contrib import admin
-from accounts.models import User
+from .models import User
+from journals.models import JournalEntry
 
 # Register your models here.
+admin.site.register(JournalEntry)
 admin.site.register(User)
