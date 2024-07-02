@@ -9,6 +9,7 @@ python-dotenv = "*"
 psycopg = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+pillow = "*"
 
 [dev-packages]
 

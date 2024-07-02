@@ -5,7 +5,6 @@ from django.conf import settings
 
 
 def user_profile_image_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return f'user_{instance.id}/{filename}'
 
 # Create your models here.
