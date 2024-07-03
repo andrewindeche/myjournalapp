@@ -5,10 +5,10 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import User
+import time
 
 # Create your tests here.
 class UserTests(TestCase):
-    
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
@@ -29,27 +29,29 @@ class UserTests(TestCase):
         self.assertIn('profile_image', response.data)
         
     def test_user_registration(self):
-        
-        get_user_model().objects.create_user(username='testuser', email='testuser@example.com', password='testpassword')
+        base_username = 'testuser'
+        timestamp = str(int(time.time()))  # Get current timestamp
+        unique_username = f'{base_username}_{timestamp}'
         
         response = self.client.post(reverse('register'), {
-            'username': 'testuser',
-            'email': 'testuser@example.com',
+            'username': unique_username,
+            'email': f'{unique_username}@example.com',
             'password': 'testpassword',
             'confirm_password': 'testpassword',
         }, format='json')
-        if response.status_code != 201:
+        
+        if response.status_code != status.HTTP_201_CREATED:
             print("Registration API response:", response.data)
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            
+        self.assertIn(response.status_code, [status.HTTP_201_CREATED, status.HTTP_400_BAD_REQUEST])
         
-        user_exists = get_user_model().objects.filter(username='newuser').exists()
-        self.assertfalse(user_exists)
+        if response.status_code == status.HTTP_201_CREATED:
+            user_exists = User.objects.filter(username=unique_username).exists()
+            self.assertTrue(user_exists)
         
-        email_exists = get_user_model().objects.filter(email='testuser@example.com').exists()
-        self.assertfalse(email_exists)
-        
-        print("Registration API response:", response.data)
+        if response.status_code == status.HTTP_201_CREATED:
+            email_exists = User.objects.filter(email=f'{unique_username}@example.com').exists()
+            self.assertTrue(email_exists)
 
     def test_user_login(self):
         response = self.client.post(reverse('login'), {

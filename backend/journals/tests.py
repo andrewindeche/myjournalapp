@@ -12,11 +12,11 @@ class JournalEntryTests(TestCase):
         self.category = Category.objects.create(name='Test Category', user=self.user)
 
     def test_create_journal_entry(self):
-        url = reverse('journalentry-list')
+        url = reverse('journalentry-list-create')
         data = {
             'title': 'Test Entry',
             'content': 'This is a test entry.',
-            'category': self.category.name,  # Optional, depends on your serializer
+            'category': self.category.name, 
             'user': self.user.id,
         }
         response = self.client.post(url, data, format='json')
@@ -57,7 +57,7 @@ class CategoryTests(TestCase):
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
 
     def test_create_category(self):
-        url = reverse('category-list')
+        url = reverse('category-list-create')
         data = {
             'name': 'Test Category',
             'user': self.user.id,
