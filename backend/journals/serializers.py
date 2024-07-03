@@ -34,5 +34,11 @@ class JournalEntrySerializer(serializers.ModelSerializer):
         if category_name:
             category, created = Category.objects.get_or_create(name=category_name, user=validated_data['user'])
             validated_data['category'] = category
-
         return JournalEntry.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        category_name = validated_data.pop('category', None)
+        if category_name:
+            category, created = Category.objects.get_or_create(name=category_name, user=self.context['request'].user)
+            validated_data['category'] = category
+        return super().update(instance, validated_data)

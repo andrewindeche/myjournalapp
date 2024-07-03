@@ -46,3 +46,11 @@ class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
 
     def get_queryset(self):
         return JournalEntry.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        category_name = self.request.data.get('category')
+        if category_name:
+            category, created = Category.objects.get_or_create(name=category_name, user=self.request.user)
+            serializer.save(category=category)
+        else:
+            serializer.save()

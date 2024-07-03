@@ -62,10 +62,13 @@ class PasswordChangeSerializer(serializers.Serializer):
 
         if data.get('new_password') != data.get('confirm_new_password'):
             raise serializers.ValidationError("New passwords do not match")
+        
+        if len(data.get('new_password')) < 8:
+            raise serializers.ValidationError("New password must be at least 8 characters long")
 
         return data
 
-    def update(self, instance, validated_data):
+    def update(self, validated_data):
         user = self.context['request'].user
         user.set_password(validated_data['new_password'])
         user.save()

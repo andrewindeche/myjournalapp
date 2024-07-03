@@ -43,13 +43,13 @@ obtain_token_pair = ObtainTokenPairView.as_view()
 
 class PasswordChangeAPIView(generics.UpdateAPIView):
     serializer_class = PasswordChangeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
     def put(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)

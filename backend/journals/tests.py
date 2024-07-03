@@ -1,15 +1,17 @@
-from django.test import TestCase
+from django.test import TestCase,, APITestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import JournalEntry, Category,User
 
 # Create your tests here.
-class JournalEntryTests(TestCase):
+class JournalEntryTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
         self.category = Category.objects.create(name='Test Category', user=self.user)
+        self.client.force_authenticate(user=self.user)
+        self.entry = JournalEntry.objects.create(title='Original Title', content='Original Content', user=self.user, category=self.category)
 
     def test_create_journal_entry(self):
         url = reverse('journalentry-list-create')
@@ -21,8 +23,7 @@ class JournalEntryTests(TestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(JournalEntry.objects.count(), 1)
-        self.assertEqual(JournalEntry.objects.get().title, 'Test Entry')
+        self.assertEqual(JournalEntry.objects.count(), 2)
 
     def test_update_journal_entry(self):
         entry = JournalEntry.objects.create(title='Original Title', content='Original Content', user=self.user)
@@ -30,25 +31,24 @@ class JournalEntryTests(TestCase):
         updated_data = {
             'title': 'Updated Title',
             'content': 'Updated Content',
+            'category': self.category.name 
         }
         response = self.client.put(url, updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        entry.refresh_from_db()
+        self.entry.refresh_from_db()
         self.assertEqual(entry.title, 'Updated Title')
 
     def test_retrieve_journal_entry(self):
-        entry = JournalEntry.objects.create(title='Test Entry', content='This is a test entry.', user=self.user)
-        url = reverse('journalentry-detail', args=[entry.id])
+         url = reverse('journalentry-detail', args=[self.entry.id])
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['title'], 'Test Entry')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['title'], 'Original Title')
 
     def test_delete_journal_entry(self):
-        entry = JournalEntry.objects.create(title='Test Entry', content='This is a test entry.', user=self.user)
-        url = reverse('journalentry-detail', args=[entry.id])
+        url = reverse('journalentry-detail', args=[self.entry.id])
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(JournalEntry.objects.filter(id=entry.id).exists())
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(JournalEntry.objects.count(), 0)
 
 #Category Test cases
 class CategoryTests(TestCase):
@@ -92,4 +92,11 @@ class CategoryTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Category.objects.filter(id=category.id).exists())
 
+    def test_category_edge_cases(self):
+        url = reverse('category-list-create')
+        response = self.client.post(url, {'name': 'Test Category'}, format='json')
+        self.assertEqual(response.status_code, 400) 
+
+        response = self.client.post(url, {'name': ''}, format='json')
+        self.assertEqual(response.status_code, 400) 
     

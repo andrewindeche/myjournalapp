@@ -10,7 +10,7 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-     path('entries/', JournalEntryListCreateView.as_view(), name='journalentry-list-create'),
+    path('entries/', JournalEntryListCreateView.as_view(), name='journalentry-list-create'),
     path('entries/<int:pk>/', JournalEntryRetrieveUpdateDestroyView.as_view(), name='journalentry-detail'),
     path('categories/', CategoryListCreateView.as_view(), name='category-list-create'),
     path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyView.as_view(), name='category-detail'),

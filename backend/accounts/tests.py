@@ -12,7 +12,6 @@ class UserTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
-        
         self.test_user = get_user_model().objects.create_user(
             username='existinguser',
             password='password123',
@@ -20,7 +19,6 @@ class UserTests(TestCase):
         )
     
     def test_upload_profile_image(self):
-        self.client.force_authenticate(user=self.user)
         image_data = {
             'profile_image': SimpleUploadedFile('test_image.jpg', b'file_content', content_type='image/jpeg')
         }
@@ -65,7 +63,6 @@ class UserTests(TestCase):
         self.assertIn('refresh', response.data)
         
     def test_password_change(self):
-        self.client.force_authenticate(user=self.user)
         url = reverse('password-change')
         
         data = {
@@ -80,7 +77,6 @@ class UserTests(TestCase):
         self.assertTrue(user.check_password('newtestpassword'))
         
     def test_password_change_incorrect_old_password(self):
-        self.client.force_authenticate(user=self.user)
         url = reverse('password-change')
         
         data = {
@@ -93,7 +89,6 @@ class UserTests(TestCase):
         self.assertIn('Incorrect old password', response.data['non_field_errors'])
 
     def test_password_change_mismatched_new_passwords(self):
-        self.client.force_authenticate(user=self.user)
         url = reverse('password-change')
         
         data = {
@@ -104,3 +99,4 @@ class UserTests(TestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('New passwords do not match', response.data['non_field_errors'])
+        
