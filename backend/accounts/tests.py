@@ -30,7 +30,7 @@ class UserTests(TestCase):
         
     def test_user_registration(self):
         base_username = 'testuser'
-        timestamp = str(int(time.time()))  # Get current timestamp
+        timestamp = str(int(time.time()))
         unique_username = f'{base_username}_{timestamp}'
         
         response = self.client.post(reverse('register'), {
@@ -65,7 +65,9 @@ class UserTests(TestCase):
         self.assertIn('refresh', response.data)
         
     def test_password_change(self):
+        self.client.force_authenticate(user=self.user)
         url = reverse('password-change')
+        
         data = {
             'old_password': 'testpassword',
             'new_password': 'newtestpassword',
@@ -78,7 +80,9 @@ class UserTests(TestCase):
         self.assertTrue(user.check_password('newtestpassword'))
         
     def test_password_change_incorrect_old_password(self):
+        self.client.force_authenticate(user=self.user)
         url = reverse('password-change')
+        
         data = {
             'old_password': 'incorrectpassword',
             'new_password': 'newtestpassword',
@@ -89,7 +93,9 @@ class UserTests(TestCase):
         self.assertIn('Incorrect old password', response.data['non_field_errors'])
 
     def test_password_change_mismatched_new_passwords(self):
+        self.client.force_authenticate(user=self.user)
         url = reverse('password-change')
+        
         data = {
             'old_password': 'testpassword',
             'new_password': 'newtestpassword',
