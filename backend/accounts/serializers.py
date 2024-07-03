@@ -1,5 +1,7 @@
 from .models import User
 from rest_framework import serializers
+from django.contrib.auth import password_validation
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -29,6 +31,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("This email address is already registered.")
+        
+        try:
+            password_validation.validate_password('password', self.instance)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
 
         return data
 
