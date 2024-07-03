@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth.hashers import make_password
 
 User = get_user_model()
 
@@ -27,16 +28,33 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         print("Created user:", user)
         return user
-    
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'password']
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio', 'birth_date', 'profile_image']
+        fields = ['id', 'username', 'email', 'bio', 'profile_image']
+        
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        user = self.context['request'].user
+
+        if not user.check_password(data.get('old_password')):
+            raise serializers.ValidationError("Incorrect old password")
+
+        if data.get('new_password') != data.get('confirm_new_password'):
+            raise serializers.ValidationError("New passwords do not match")
+
+        return data
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+        user.set_password(validated_data['new_password'])
+        user.save()
+        return user
 
 class TokenObtainSerializer(serializers.Serializer):
     username = serializers.CharField()

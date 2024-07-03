@@ -1,19 +1,32 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
+from rest_framework import status
+from .models import User
 
 # Create your tests here.
 class UserTests(TestCase):
     
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
         
         self.test_user = get_user_model().objects.create_user(
             username='existinguser',
             password='password123',
             email='existinguser@example.com'
         )
+    
+    def test_upload_profile_image(self):
+        self.client.force_authenticate(user=self.user)
+        image_data = {
+            'profile_image': SimpleUploadedFile('test_image.jpg', b'file_content', content_type='image/jpeg')
+        }
+        response = self.client.patch(reverse('profile_update'), image_data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('profile_image', response.data)
         
     def test_user_registration(self):
         response = self.client.post(reverse('register'), {
