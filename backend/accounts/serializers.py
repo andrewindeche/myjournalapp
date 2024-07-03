@@ -99,3 +99,8 @@ class TokenPairSerializer(serializers.Serializer):
     
 class LoginSerializer(TokenObtainPairSerializer):
     pass
+
+class UserProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['profile_image']

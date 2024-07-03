@@ -11,6 +11,7 @@ import time
 class UserTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
         self.test_user = get_user_model().objects.create_user(
             username='existinguser',
@@ -19,12 +20,19 @@ class UserTests(TestCase):
         )
     
     def test_upload_profile_image(self):
-        image_data = {
-            'profile_image': SimpleUploadedFile('test_image.jpg', b'file_content', content_type='image/jpeg')
-        }
-        response = self.client.patch(reverse('profile_update'), image_data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('profile_image', response.data)
+        url = reverse('user-profile-image')
+        
+        image = BytesIO()
+        image.write(b"test image content")
+        image.seek(0)
+        uploaded_image = SimpleUploadedFile("testimage.jpg", image.read(), content_type="image/jpeg")
+        
+        data = {'profile_image': uploaded_image}
+        response = self.client.patch(url, data, format='multipart')
+
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.profile_image.url) 
         
     def test_user_registration(self):
         base_username = 'testuser'

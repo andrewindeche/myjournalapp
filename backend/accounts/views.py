@@ -5,7 +5,7 @@ from .models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserProfileSerializer,TokenObtainSerializer
+from .serializers import UserProfileSerializer,TokenObtainSerializer,UserProfileImageSerializer
 from .serializers import TokenPairSerializer,RegisterSerializer,LoginSerializer,PasswordChangeSerializer
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
@@ -29,6 +29,13 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     
     def get_object(self):
         return self.request.user
+
+class UserProfileImageView(generics.UpdateAPIView):
+    serializer_class = UserProfileImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.User
     
 class ObtainTokenPairView(TokenObtainPairView):
     serializer_class = TokenObtainSerializer
