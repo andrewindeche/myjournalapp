@@ -25,7 +25,7 @@ from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY','a8*9eb-8_1zic&uefps(rhl_9osxe-%&gl_t5)^*7&=4cruww3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
