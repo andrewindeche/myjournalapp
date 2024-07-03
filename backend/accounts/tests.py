@@ -29,6 +29,9 @@ class UserTests(TestCase):
         self.assertIn('profile_image', response.data)
         
     def test_user_registration(self):
+        
+        get_user_model().objects.create_user(username='testuser', email='testuser@example.com', password='testpassword')
+        
         response = self.client.post(reverse('register'), {
             'username': 'testuser',
             'email': 'testuser@example.com',
@@ -38,8 +41,15 @@ class UserTests(TestCase):
         if response.status_code != 201:
             print("Registration API response:", response.data)
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
         user_exists = get_user_model().objects.filter(username='newuser').exists()
-        self.assertTrue(user_exists)
+        self.assertfalse(user_exists)
+        
+        email_exists = get_user_model().objects.filter(email='testuser@example.com').exists()
+        self.assertfalse(email_exists)
+        
+        print("Registration API response:", response.data)
 
     def test_user_login(self):
         response = self.client.post(reverse('login'), {
