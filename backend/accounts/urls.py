@@ -1,8 +1,6 @@
-from .views import RegisterView,LoginView,UserProfileView
+from .views import RegisterView,LoginView,UserProfileView,PasswordChangeAPIView,TokenObtainPairView
 from rest_framework.routers import DefaultRouter
-from . import views
 from django.urls import path, include
-from .views import obtain_token_pair
 
 router = DefaultRouter()
 
@@ -11,5 +9,6 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('profile/update/', UserProfileView.as_view(), name='profile_update'),
-    path('api/token/', obtain_token_pair, name='token_obtain_pair'),
+    path('profile/update/password-change/', PasswordChangeAPIView.as_view(), name='password-change'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 ]
