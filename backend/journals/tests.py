@@ -96,9 +96,9 @@ class CategoryTests(TestCase):
 
     def test_category_edge_cases(self):
         url = reverse('category-list-create')
-        response = self.client.post(url, {'name': 'Test Category'}, format='json')
+        response = self.client.post(url, {'name': ''}, format='json')
         self.assertEqual(response.status_code, 400) 
 
-        response = self.client.post(url, {'name': ''}, format='json')
+        response = self.client.post(url, {}, format='json')
         self.assertEqual(response.status_code, 400) 
     

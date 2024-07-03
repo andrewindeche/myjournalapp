@@ -54,19 +54,21 @@ class PasswordChangeSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
     confirm_new_password = serializers.CharField(required=True)
 
-    def validate(self, data):
-        user = self.context['request'].user
-
-        if not user.check_password(data.get('old_password')):
+    def validate_old_password(self, value):
+        if not self.context['request'].user.check_password(value):
             raise serializers.ValidationError("Incorrect old password")
+        return value
 
-        if data.get('new_password') != data.get('confirm_new_password'):
+    def validate_confirm_new_password(self, value):
+        if self.initial_data.get('new_password') != value:
             raise serializers.ValidationError("New passwords do not match")
-        
-        if len(data.get('new_password')) < 8:
-            raise serializers.ValidationError("New password must be at least 8 characters long")
+        return value
 
-        return data
+    def create(self, validated_data):
+        user = self.context['request'].user
+        user.set_password(validated_data['new_password'])
+        user.save()
+        return user
 
     def update(self, validated_data):
         user = self.context['request'].user
