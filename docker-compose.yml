@@ -1,12 +1,13 @@
-db:
+services:
+  db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: journal
+      POSTGRES_DB: dockerjournal
       POSTGRES_USER: andrew
       DB_HOST: db
       POSTGRES_PASSWORD: password
     ports:
-      - "5430:5430"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - ./dumps:/dumps
@@ -16,12 +17,12 @@ db:
       timeout: 5s
       retries: 5
 
-create_table:
-  build: ./backend
-  command: python manage.py createcachetable
-  depends_on:
-    db:
-      condition: service_healthy
+  create_table:
+    build: ./backend
+    command: python manage.py createcachetable
+    depends_on:
+      db:
+        condition: service_healthy
 
   migrate:
     build: ./backend
@@ -39,3 +40,6 @@ create_table:
     depends_on:
       - db
       - migrate
+
+volumes:
+  postgres_data:
