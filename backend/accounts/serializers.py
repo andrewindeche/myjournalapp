@@ -1,7 +1,10 @@
 from .models import User
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -12,13 +15,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('username', 'email',  'password', 'confirm_password')
 
     def validate(self, data):
+        if 'password' not in data or 'confirm_password' not in data:
+            raise serializers.ValidationError("Password and Confirm Password are required")
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError("Passwords do not match")
         return data
 
     def create(self, validated_data):
         validated_data.pop('confirm_password')
-        return User.objects.create_user(**validated_data)
+        print("Creating user with data:", validated_data) 
+        user = User.objects.create_user(**validated_data)
+        print("Created user:", user)
+        return user
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio', 'birth_date']
+        fields = ['id', 'username', 'email', 'bio', 'birth_date', 'profile_image']
 
 class TokenObtainSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -52,3 +60,6 @@ class TokenPairSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
+    
+class LoginSerializer(TokenObtainPairSerializer):
+    pass

@@ -2,27 +2,41 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer, UserProfileSerializer,TokenObtainSerializer, TokenPairSerializer,RegisterSerializer
+from .serializers import UserProfileSerializer,TokenObtainSerializer, TokenPairSerializer,RegisterSerializer,LoginSerializer
 
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
+    
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+        print("Errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(TokenObtainPairView):
-    pass
+    serializer_class = LoginSerializer
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
+    
+class UserProfileUpdateAPIView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user 
     
 class ObtainTokenPairView(TokenObtainPairView):
     serializer_class = TokenObtainSerializer
