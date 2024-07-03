@@ -85,3 +85,14 @@ class UserTests(TestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Incorrect old password', response.data['non_field_errors'])
+
+    def test_password_change_mismatched_new_passwords(self):
+        url = reverse('password-change')
+        data = {
+            'old_password': 'testpassword',
+            'new_password': 'newtestpassword',
+            'confirm_new_password': 'mismatchedpassword'
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('New passwords do not match', response.data['non_field_errors'])
