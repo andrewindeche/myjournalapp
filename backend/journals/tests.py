@@ -1,4 +1,5 @@
-from django.test import TestCase,APITestCase
+from django.test import TestCase
+from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -26,7 +27,7 @@ class JournalEntryTests(APITestCase):
         self.assertEqual(JournalEntry.objects.count(), 2)
 
     def test_update_journal_entry(self):
-        entry = JournalEntry.objects.create(title='Original Title', content='Original Content', user=self.user)
+        entry = JournalEntry.objects.get(id=self.entry.id)
         url = reverse('journalentry-detail', args=[entry.id])
         updated_data = {
             'title': 'Updated Title',
@@ -35,11 +36,11 @@ class JournalEntryTests(APITestCase):
         }
         response = self.client.put(url, updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.entry.refresh_from_db()
+        entry.refresh_from_db()
         self.assertEqual(entry.title, 'Updated Title')
 
     def test_retrieve_journal_entry(self):
-         url = reverse('journalentry-detail', args=[self.entry.id])
+        url = reverse('journalentry-detail', args=[self.entry.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['title'], 'Original Title')
@@ -55,7 +56,8 @@ class CategoryTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
-
+        self.client.force_authenticate(user=self.user)
+    
     def test_create_category(self):
         url = reverse('category-list-create')
         data = {

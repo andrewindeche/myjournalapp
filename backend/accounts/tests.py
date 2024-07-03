@@ -11,8 +11,9 @@ import time
 class UserTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.user = get_user_model().objects.create_user(username='testuser', email='test@example.com', password='testpassword')
         self.client.force_authenticate(user=self.user)
-        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
+        
         self.test_user = get_user_model().objects.create_user(
             username='existinguser',
             password='password123',
@@ -72,6 +73,7 @@ class UserTests(TestCase):
         
     def test_password_change(self):
         url = reverse('password-change')
+        self.client.force_authenticate(user=self.user)
         
         data = {
             'old_password': 'testpassword',
