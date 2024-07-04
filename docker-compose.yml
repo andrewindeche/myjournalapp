@@ -3,7 +3,7 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_DB: dockerjournal
-      POSTGRES_USER: andrew
+      POSTGRES_USER: postgres
       DB_HOST: db
       POSTGRES_PASSWORD: password
     ports:
@@ -40,10 +40,10 @@ services:
     depends_on:
       - db
       - migrate
-
+      
   expo:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "19000:19000"
