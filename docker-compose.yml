@@ -3,7 +3,7 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_DB: dockerjournal
-      POSTGRES_USER: andrew
+      POSTGRES_USER: postgres
       DB_HOST: db
       POSTGRES_PASSWORD: password
     ports:
@@ -40,6 +40,22 @@ services:
     depends_on:
       - db
       - migrate
+      
+  expo:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    volumes:
+      - ./frontend:/app/frontend
+    environment:
+      - REACT_NATIVE_PACKAGER_HOSTNAME=host.docker.internal
+    stdin_open: true
+    tty: true
 
 volumes:
   postgres_data:
+

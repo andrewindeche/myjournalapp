@@ -6,6 +6,7 @@ RUN pip install pipenv
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PATH="/root/.local/bin:${PATH}"
 
 # Set working directory
 WORKDIR /app/backend
@@ -18,9 +19,6 @@ RUN pipenv install --deploy --system
 
 # Copy the rest of the application code
 COPY . /app/backend
-
-# Copy the Django project files
-COPY . .
 
 # Expose port
 EXPOSE 8000
