@@ -5,6 +5,9 @@ export default function HomeScreen() {
     return(
 
     <View style={styles.section}>
+    <View>
+
+    </View>
     <View style={styles.container}>
     <View style={styles.header}>
         <Text style={styles.title}>Everyday has a Story!</Text>
@@ -27,7 +30,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: '#fff',
+    backgroundColor: '#020035',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -37,6 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     alignItems: 'center',
     justifyContent: 'center',
+    width: 250
   },
   text: {
     fontSize: 18,
@@ -60,7 +64,6 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   footer: {
-    backgroundColor: '#003366',
     flexDirection: 'column',
     justifyContent: 'space-around',
     padding: 20,
