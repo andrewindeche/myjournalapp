@@ -39,8 +39,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#DDDDDD',
     alignItems: 'center',
+    fontSize: 8,
     justifyContent: 'center',
-    width: 250
+    width: 250,
+    borderRadius: 4,
   },
   text: {
     fontSize: 18,
@@ -54,6 +56,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 20,
+    color: 'white',
   },
   title: {
     fontSize: 24,
@@ -67,5 +70,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-around',
     padding: 20,
+    gap: 15
   },
 });
