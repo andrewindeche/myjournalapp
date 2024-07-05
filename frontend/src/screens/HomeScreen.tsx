@@ -20,7 +20,7 @@ export default function HomeScreen() {
       <Text style={styles.text}>Sign In</Text>
     </Pressable>
     <Pressable style={[styles.pressable, styles.register]} onPress={() => console.log('Pressed')}>
-      <Text style={styles.text}>Register</Text>
+      <Text style={[styles.text, styles.registerText]}>Register</Text>
     </Pressable>
         </View>
         </View>
@@ -63,6 +63,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#020035',
     borderColor: 'white',
     borderWidth: 2,
+    
+  },
+  registerText: {
     color: 'white',
   },
   title: {
