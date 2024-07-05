@@ -7,15 +7,13 @@
         "react-native/react-native": true
     },
     "extends": [
+        "eslint:recommended",
         "plugin:react/recommended",
-        "airbnb",
-        "airbnb/hooks",
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
         "plugin:react-native/all",
-        "prettier",
-        "prettier/@typescript-eslint",
-        "prettier/react"
+        "plugin:prettier/recommended",
+        "prettier"
     ],
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -29,14 +27,18 @@
         "@typescript-eslint",
         "react-native",
         "import",
-        "jsx-a11y"
+        "jsx-a11y",
+        "prettier"
     ],
     "rules": {
         "no-console": "warn",
+        "prettier/prettier": ["error"],
         "indent": ["error", 2],
         "linebreak-style": ["error", "unix"],
         "quotes": ["error", "single"],
         "semi": ["error", "always"],
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
         "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
         "@typescript-eslint/explicit-module-boundary-types": "off"
     },
