@@ -1,8 +1,6 @@
-import React from 'react';
-import { Slot } from 'expo-router';
+import React from "react";
+import { Slot } from "expo-router";
 
 export default function App() {
-  return (
-    <Slot />
-  );
+  return <Slot />;
 }
