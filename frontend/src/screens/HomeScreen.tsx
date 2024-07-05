@@ -1,12 +1,16 @@
 import React from 'react';
-import { Text, View, StyleSheet, Pressable } from 'react-native';
+import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
 
-export default function HomeScreen() {
+const HomeScreen: React.FC = () => {
     return(
 
     <View style={styles.section}>
-    <View>
-
+    <View style={styles.outerContainer}>
+    <Image
+      style={styles.image}
+      resizeMode="cover"
+      source={require('./img/journaler.jpg')}
+    />
     </View>
     <View style={styles.container}>
     <View style={styles.header}>
@@ -29,6 +33,11 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   section: {
     backgroundColor: '#020035',
     flex: 1,
@@ -44,6 +53,11 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 8,
     fontWeight: 'bold',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    marginBottom: 20,
   },
   text: {
     fontSize: 18,
@@ -84,3 +98,5 @@ const styles = StyleSheet.create({
     gap: 15
   },
 });
+
+export default HomeScreen;
