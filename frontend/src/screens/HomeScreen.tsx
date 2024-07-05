@@ -19,7 +19,7 @@ export default function HomeScreen() {
       <Pressable style={styles.pressable} onPress={() => console.log('Pressed')}>
       <Text style={styles.text}>Sign In</Text>
     </Pressable>
-    <Pressable style={styles.pressable} onPress={() => console.log('Pressed')}>
+    <Pressable style={[styles.pressable, styles.register]} onPress={() => console.log('Pressed')}>
       <Text style={styles.text}>Register</Text>
     </Pressable>
         </View>
@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
     fontSize: 8,
     justifyContent: 'center',
     width: 250,
-    borderRadius: 4,
+    borderRadius: 8,
+    fontWeight: 'bold',
   },
   text: {
     fontSize: 18,
@@ -56,6 +57,12 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 20,
+    color: 'white',
+  },
+  register: {
+    backgroundColor: '#020035',
+    borderColor: 'white',
+    borderWidth: 2,
     color: 'white',
   },
   title: {
