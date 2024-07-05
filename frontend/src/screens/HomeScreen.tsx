@@ -9,8 +9,8 @@ export default function HomeScreen() {
         <Text>Write Yours</Text>
       </View>
       <View>
-          <Button type="button">Sign In</Button>
-          <Button type="button">Register</Button>
+          <Button title="Login" onPress={() => console.log('Button pressed')} />
+          <Button title="Login" onPress={() => console.log('Button pressed')} />
         </View>
         </>
     )
