@@ -1,10 +1,8 @@
 import React from 'react'
 import { Slot } from 'expo-router';
 
-const RootLayout = () => {
+export default function RootLayout() {
   return (
     <Slot />
   )
 }
-
-export default RootLayout;
