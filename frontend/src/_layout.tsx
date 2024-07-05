@@ -1,9 +1,10 @@
-import { Stack } from "expo-router";
+import React from 'react'
+import { Slot } from 'expo-router';
 
-export default function RootLayout() {
+const RootLayout = () => {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-    </Stack>
-  );
+    <Slot />
+  )
 }
+
+export default RootLayout;
