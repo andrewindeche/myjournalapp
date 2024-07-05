@@ -20,18 +20,17 @@
 <p><b>Github</b></p>
 <ul>
 <li> Download the Zip file from the code tab on github to get the project Zip files (Recommended)</li>
-<li> You can also clone the project 'git clone https://github.com/yourusername/yourproject.git
-cd yourproject'.</li>
+<li> Clone the project using 'git clone https://github.com/yourusername/yourproject.git'.</li>
 <li> Unzip the file and add the Project folder to your IDE/Compiler</li>
 </ul>
 
 <p><b>Docker</b></p>
 <ul>
-<li> Create a .env on the Django root folder and add the recessary environment variables. 
-Use [Your Link Text](backend\env.example) as a guide for environment variables </li>
+<li> Create an .env environment on the Django root folder and add the recessary environment variables. 
+Use <b>backend\env.example</b> as a guide for environment variables </li>
 <li>Use Postgresql user if you want to create new postgres credentials in docker, use the command <b>docker-compose up -d </b> and <b>docker exec -it <container_name> psq</b> to verify postgres and db existance </li>
 <li>Start the docker db service using the command <b>docker-compose up -d db</b> and copy the dump files into the container, Load the data </li>
-<li>If oyu have data fixtures use <b>docker-compose exec backend python manage.py loaddata initial_data.json
+<li> For data fixtures use <b>docker-compose exec backend python manage.py loaddata initial_data.json
 </b></li>
 <li>Use the command <b>docker compose build</b> to build a new container, <b>docker compose up</b> to start the container or <b>docker compose up --build</b> to execute both build and start actions </li>
 <li> Access the Django development server on <b>http://localhost:8000/</b> and expo server <b>http://localhost:8081</b</li>
@@ -42,7 +41,8 @@ Use [Your Link Text](backend\env.example) as a guide for environment variables <
 <ul>
 <li> Install pipenv using the command <b>pip install pipenv</b></li>
 <li> Use <b>pipenv shell</b> to activate your virtual enviromnment</li>
-<li> Naviagte to your Django project and use <b>pipenv install -r requirements.txt</b> in [Your Link Text](backend\requirements.txt) to install the required django dependencies </li>
+<li> Naviagte to your Django project and use <b>pipenv install -r requirements.txt</b> in 
+<b>backend\requirements.txt</b> to install the required django dependencies </li>
 <li> Create a .env on the Django root folder and add the recessary environment variables. 
 Use [Your Link Text](backend\env.example) as a guide for environment variables </li>
 <li> Create a Super User using <b>python manage.py createsuperuser</b> and migrate your DB using <b>python manage.py migrate</b></li>
@@ -58,3 +58,6 @@ Use [Your Link Text](backend\env.example) as a guide for environment variables <
 </ul>
 
 ## <h1> Endpoints</h1>
+
+## <h1> Endpoints</h1>
+Built by <b>Andrew Indeche  </b>
