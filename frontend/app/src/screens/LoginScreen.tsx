@@ -4,26 +4,28 @@ import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen: React.FC = () => {
   return (
-    <View style={styles.container}>
+    <>
     <View style={styles.outerContainer}>
       <View style={styles.header}>
       <Text style={styles.title}>Welcome to your journal</Text>
       <Text style={styles.subtitle}>Sign Into Your Account</Text>
       </View>
     </View>
-    <View style={styles.outerContainer}>
+    <View style={styles.innerContainer}>
+    <Text style={[styles.title, styles.inputText]}>Sign In</Text>
+    <Text style={styles.label}>Your Email</Text>
     <TextInput
         style={styles.input}
         placeholder="Your Email"
       />
+    <Text style={styles.label}>Password</Text>
     <TextInput
         style={styles.input}
         placeholder="Password"
         secureTextEntry
-        // Other input props...
       />
     </View>
-    </View>
+    </>
   );
 };
 
@@ -38,8 +40,19 @@ const styles = StyleSheet.create({
     height: 10,
     width: '100%',
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  innerContainer: {
+    backgroundColor: 'white',
+    height: '80%'
+  },
+  inputText: {
+    color: '#020035',
+    padding: 20
   },
   header: {
     display: 'flex',
@@ -51,7 +64,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   input: {
-    width: '100%',
+    width: '90%',
     height: 40,
     borderWidth: 1,
     borderColor: '#ccc',
