@@ -21,7 +21,7 @@ interface RegistrationState {
     'registration/registerUser',
     async (userData: { fullName: string; email: string; password: string }, { rejectWithValue }) => {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/register/', {
+        const response = await axios.post('http://127.0.0.1:8000/api/register/', {
           username: userData.fullName,
           email: userData.email,
           password: userData.password,

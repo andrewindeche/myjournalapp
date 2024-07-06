@@ -11,6 +11,7 @@ from .serializers import TokenPairSerializer,RegisterSerializer,LoginSerializer,
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
     
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
