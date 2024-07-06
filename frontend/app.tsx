@@ -1,15 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import AppLoading from 'expo-app-loading';
+import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './src/screens/HomeScreen';
-import LoginScreen from './src/screens/LoginScreen';
+import HomeScreen from './app/src/screens/HomeScreen';
+import LoginScreen from './app/src/screens/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 
+SplashScreen.preventAutoHideAsync();
+
 const App: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const loadResources = async () => {
+      try {
+        await Font.loadAsync({
+          'mulish-regular': require('@/assets/fonts/Mulish-Regular.ttf'),
+          'mulish-bold': require('@/assets/fonts/Mulish-Bold.ttf'),
+        });
+      } catch (e) {
+        console.error("Font loading error:", e);
+      } finally {
+        setIsReady(true);
+        SplashScreen.hideAsync(); // Hide splash screen once fonts are loaded
+      }
+    };
+
+    loadResources();
+  }, []);
+
 
   const loadFonts = async () => {
     await Font.loadAsync({
@@ -29,12 +51,12 @@ const App: React.FC = () => {
 
   return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-    </Stack.Navigator>
-  </NavigationContainer>
- );
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
 
 export default App;

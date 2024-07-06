@@ -1,6 +1,4 @@
-import React from 'react';
-import App from '../app';
+import { registerRootComponent } from "expo";
+import App from "../app";
 
-export default function Index() {
-    return <App />;
-  }
+registerRootComponent(App);
