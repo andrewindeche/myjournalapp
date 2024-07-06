@@ -134,10 +134,6 @@ python manage.py runserver
 1. Install the required dependencies using the commands 
 
 ```bash
-yarn install 
-```
-or
-```bash
 npm install
 ```
 

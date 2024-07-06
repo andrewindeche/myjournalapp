@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
 
-const HomeScreen: React.FC = () => {
+const HomeScreen {
     return(
     <View>
     <View style={styles.section}>
