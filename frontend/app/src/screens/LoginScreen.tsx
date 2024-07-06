@@ -55,10 +55,10 @@ const styles = StyleSheet.create({
   },
   inputText: {
     color: '#020035',
-    padding: 20
+    padding: 5
   },
   inputContainer: {
-    padding: 10,
+    padding: 20,
   },
   header: {
     display: 'flex',
