@@ -1,7 +1,9 @@
 import React from 'react';
 import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 const HomeScreen: React.FC = () => {
+  const navigation = useNavigation();
+
     return(
     <View style={ styles.container}>
     <View style={styles.section}>
@@ -20,10 +22,10 @@ const HomeScreen: React.FC = () => {
         <Text style={styles.subtitle}> Document Your Imagination</Text>
       </View>
       <View style={styles.footer}>
-      <Pressable style={styles.pressable} onPress={() => console.log('Pressed')}>
+      <Pressable style={styles.pressable} onPress={() => navigation.navigate('Login')}>
       <Text style={styles.text}>Sign In</Text>
     </Pressable>
-    <Pressable style={[styles.pressable, styles.register]} onPress={() => console.log('Pressed')}>
+    <Pressable style={[styles.pressable, styles.register]}>
       <Text style={[styles.text, styles.registerText]}>Register</Text>
     </Pressable>
         </View>
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#020035',
     borderColor: 'white',
     borderWidth: 2,
-    
+    justifyContent: "space-around"
   },
   registerText: {
     color: 'white',
