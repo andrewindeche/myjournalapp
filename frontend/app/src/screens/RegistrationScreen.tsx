@@ -11,7 +11,7 @@ const RegistrationScreen: React.FC = () => {
   const navigation = useNavigation();
 
   const { fullName, email, password, status } = useSelector((state: RootState) => state.registration);
-
+  const [isFullNameValid, setIsFullNameValid] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
@@ -24,6 +24,7 @@ const RegistrationScreen: React.FC = () => {
 
   const handleFullNameChange = (text: string) => {
     dispatch(setFullName(text));
+    setIsFullNameValid(text.trim().includes(' '));
   };
 
   const handleEmailChange = (text: string) => {
