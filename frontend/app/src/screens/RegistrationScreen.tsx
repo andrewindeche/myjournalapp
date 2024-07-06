@@ -15,8 +15,29 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
+    dispatch(registerUser({ fullName, email, password }))
+      .then(() => {
+        navigation.navigate('Login');
+        dispatch(reset());
+      });
+  };
+
+  const handleFullNameChange = (text: string) => {
+    dispatch(setFullName(text));
+  };
+
+  const handleEmailChange = (text: string) => {
+    dispatch(setEmail(text));
+  };
+
+  const handlePasswordChange = (text: string) => {
+    dispatch(setPassword(text));
+  };
+
+  const handleSignInPress = () => {
     navigation.navigate('Login');
   };
+  
   return (
     <>
     <View style={styles.outerContainer}>
@@ -32,23 +53,31 @@ const RegistrationScreen: React.FC = () => {
     <TextInput
         style={styles.input}
         placeholder="Full Name"
+        onChangeText={handleFullNameChange}
+        value={fullName}
       />
+      {fullName.includes(' ') && <FontAwesome name="check" size={20} color="green" />}
     <Text style={styles.label}>Email Address</Text>
     <TextInput
         style={styles.input}
         placeholder="Email Address"
+        onChangeText={handleEmailChange}
+        value={email}
+        {.../\S+@\S+\.\S+/.test(email) && <FontAwesome name="check" size={20} color="green" />}
       />
     <Text style={styles.label}>Password</Text>
     <TextInput
         style={styles.input}
         placeholder="Password"
-        secureTextEntry
+        secureTextEntry={!passwordVisible}
+        onChangeText={handlePasswordChange}
+        value={password}
       />
       <View style={styles.footer}>
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registeredUser} onPress={handleSignUpPress}>
+      <TouchableOpacity style={styles.registeredUser} onPress={handleSignInPress}>
         <Text>Already have an Account?</Text>
         <Text style={styles.signInText}>Log In</Text>
       </TouchableOpacity>
