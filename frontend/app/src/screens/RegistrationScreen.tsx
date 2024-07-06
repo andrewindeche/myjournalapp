@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser, setEmail, setFullName, setPassword, reset } from '../redux/RegistrationSlice';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { RootState } from '../redux/store';
 import { useNavigation } from '@react-navigation/native';
@@ -73,11 +73,14 @@ const RegistrationScreen: React.FC = () => {
         onChangeText={handlePasswordChange}
         value={password}
       />
+       <Pressable onPress={() => setPasswordVisible(!passwordVisible)}>
+        <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
+      </Pressable>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.signInButton}>
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registeredUser} onPress={handleSignInPress}>
+      <TouchableOpacity style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
         <Text>Already have an Account?</Text>
         <Text style={styles.signInText}>Log In</Text>
       </TouchableOpacity>

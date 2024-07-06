@@ -3,10 +3,12 @@ import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './app/src/screens/HomeScreen';
 import LoginScreen from './app/src/screens/LoginScreen';
-import RegisterScreen from './app/src/screens/RegistrationScreen'
+import RegisterScreen from './app/src/screens/RegistrationScreen';
+import store from './app/src/redux/store'; 
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +53,7 @@ const App: React.FC = () => {
   }
 
   return (
+    <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
@@ -58,6 +61,7 @@ const App: React.FC = () => {
         <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 };
 
