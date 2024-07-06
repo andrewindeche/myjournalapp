@@ -16,3 +16,19 @@ interface RegistrationState {
     status: 'idle',
     error: null,
   };
+
+  export const registerUser = createAsyncThunk(
+    'registration/registerUser',
+    async (userData: { fullName: string; email: string; password: string }, { rejectWithValue }) => {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/register/', {
+          username: userData.fullName,
+          email: userData.email,
+          password: userData.password,
+        });
+        return response.data;
+      } catch (error: any) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
