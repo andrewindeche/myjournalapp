@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser, setEmail, setFullName, setPassword, reset } from '../redux/RegistrationSlice';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { RootState } from '../redux/store';
+import { useNavigation } from '@react-navigation/native';
 
-const RegistrationScreen: React.FC = ({navigation}) => {
+const RegistrationScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
+  const { fullName, email, password, status } = useSelector((state: RootState) => state.registration);
+
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   const handleSignUpPress = () => {
     navigation.navigate('Login');
   };
