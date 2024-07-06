@@ -32,25 +32,23 @@ const LoginScreen: React.FC = () => {
         secureTextEntry
       />
       </View>
+      <View style={styles.footer}>
       <TouchableOpacity style={styles.checkboxContainer} onPress={toggleCheckbox}>
       {isChecked ? (
         <Ionicons name="checkmark-circle" size={24} color="green" />
       ) : (
         <Ionicons name="ellipse-outline" size={24} color="gray" />
       )}
-      <Text style={styles.label}>Remember me</Text>
+      <Text style={[styles.label, styles.remember]}>Remember me</Text>
     </TouchableOpacity>
-      <TouchableOpacity style={styles.forgotPassword}>
-        <Text>Forgot your password?</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.newUser}>
-        <Text>I'm a new user. Sign up</Text>
+        <Text>I'm a new user,Sign up</Text>
       </TouchableOpacity>
+      </View>
     </View>
     </>
   );
@@ -76,6 +74,11 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
   },
   innerContainer: {
     backgroundColor: 'white',
@@ -107,13 +110,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  forgotPassword: {
-    marginBottom: 10,
-  },
   signInButton: {
     backgroundColor: '#020035',
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 8,
+    width: '90%',
     borderRadius: 8,
     marginBottom: 10,
   },
