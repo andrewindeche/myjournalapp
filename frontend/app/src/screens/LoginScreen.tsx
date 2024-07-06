@@ -12,6 +12,7 @@ const LoginScreen: React.FC = () => {
       </View>
     </View>
     <View style={styles.innerContainer}>
+      <View style={styles.inputContainer}>
     <Text style={[styles.title, styles.inputText]}>Sign In</Text>
     <Text style={styles.label}>Your Email</Text>
     <TextInput
@@ -24,6 +25,7 @@ const LoginScreen: React.FC = () => {
         placeholder="Password"
         secureTextEntry
       />
+      </View>
     </View>
     </>
   );
@@ -48,11 +50,15 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     backgroundColor: 'white',
-    height: '80%'
+    height: '80%',
+    marginBottom: 10,
   },
   inputText: {
     color: '#020035',
     padding: 20
+  },
+  inputContainer: {
+    padding: 10,
   },
   header: {
     display: 'flex',
@@ -64,7 +70,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   input: {
-    width: '90%',
+    width: '95%',
     height: 40,
     borderWidth: 1,
     borderColor: '#ccc',
