@@ -8,7 +8,7 @@
 | 4.ESLint| Linting Framework| [Lint]; [syntax];|
 | 5.PostgresQl | Relational Database| [Relational Integrity]; [Database];|
 | 6.Docker | Ocntainerization/Virtulization| [Virtualization]; [Containers];|
-| 7.Expo | Native Bundler| [Bundle];|
+| 7.Metro | Native Bundler| [Bundle];|
 | 8.Pipenv | Package/Dependency manager| [Virtual Environment];[Dependency];|
 | 9.Circleci | Pipeline| [continuous integration];[continuous delivery];|
 
@@ -37,7 +37,7 @@ docker-compose up -d
 3. To verify postgres and db existance :
 
 ```bash
-<b>docker exec -it <container_name> psq
+docker exec -it <container_name> psq
 ```
 
 4. Start the docker db service and copy the dump files into the container using the command:
@@ -100,7 +100,7 @@ pipenv shell
 pipenv install -r requirements.txt
 ```
 
-4. Create a .env on the Django root folder and add the recessary environment variables. 
+4. Create an .env on the Django root folder and add the recessary environment variables. 
 
 Use (backend\env.example) as a guide for environment variables </li>
 

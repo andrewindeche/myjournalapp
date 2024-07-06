@@ -3,16 +3,16 @@ import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
 
 const HomeScreen: React.FC = () => {
     return(
-
+    <View>
     <View style={styles.section}>
     <View style={styles.outerContainer}>
     <Image
       style={styles.image}
       resizeMode="cover"
-      source={require('./img/journaler.jpg')}
+      source={require('@/assets/images/journaler.jpg')}
     />
     </View>
-    <View style={styles.container}>
+    <View style={styles.innerContainer}>
     <View style={styles.header}>
         <Text style={styles.title}>Everyday has a Story!</Text>
         <Text style={styles.title}>Write Yours</Text>
@@ -29,6 +29,7 @@ const HomeScreen: React.FC = () => {
         </View>
         </View>
         </View>
+        </View>
     )
 }
 
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'white',
   },
   section: {
     backgroundColor: '#020035',
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   image: {
-    width: '100%',
+    width: 400,
     height: 200,
     marginBottom: 20,
   },
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'black',
   },
-  container: {
+  innerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
