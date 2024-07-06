@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Image } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen: React.FC = () => {
@@ -10,6 +10,18 @@ const LoginScreen: React.FC = () => {
       <Text style={styles.title}>Welcome to your journal</Text>
       <Text style={styles.subtitle}>Sign Into Your Account</Text>
       </View>
+    </View>
+    <View style={styles.outerContainer}>
+    <TextInput
+        style={styles.input}
+        placeholder="Your Email"
+      />
+    <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        // Other input props...
+      />
     </View>
     </View>
   );
@@ -23,7 +35,8 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     backgroundColor: '#020035',
-    height: '20%',
+    height: 10,
+    width: '100%',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -36,6 +49,18 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
     color: 'white',
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  forgotPassword: {
+    marginBottom: 10,
   },
   title: {
     fontSize: 25,
