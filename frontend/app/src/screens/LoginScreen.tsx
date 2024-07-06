@@ -1,9 +1,12 @@
 import React, { useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen: React.FC = ({ navigation }) => {
+const LoginScreen: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
+  const navigation = useNavigation();
+
   const handleSignUpPress = () => {
     navigation.navigate('Register');
   };
@@ -46,7 +49,6 @@ const LoginScreen: React.FC = ({ navigation }) => {
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
-
       <TouchableOpacity style={styles.newUser} onPress={handleSignUpPress}>
         <Text>I'm a new user</Text>
         <Text style={styles.signUpText}>Sign up</Text>

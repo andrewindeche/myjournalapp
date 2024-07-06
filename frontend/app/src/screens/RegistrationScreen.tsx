@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Pressable, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
-const RegistrationScreen: React.FC = () => {
+const RegistrationScreen: React.FC = ({navigation}) => {
+  const handleSignUpPress = () => {
+    navigation.navigate('Login');
+  };
   return (
     <>
     <View style={styles.outerContainer}>
@@ -29,6 +32,13 @@ const RegistrationScreen: React.FC = () => {
         placeholder="Password"
         secureTextEntry
       />
+      <TouchableOpacity style={styles.signInButton}>
+        <Text style={styles.signInButtonText}>Sign In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.registeredUser} onPress={handleSignUpPress}>
+        <Text>Already have an Account?</Text>
+        <Text style={styles.signInText}>Sign In</Text>
+      </TouchableOpacity>
       </View>
     </View>
     </>
@@ -56,6 +66,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: '80%',
     marginBottom: 10,
+  },
+  registeredUser: {
+    marginTop: 10,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  signInButton: {
+    backgroundColor: '#020035',
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    width: '90%',
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  signInButtonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  signInText: {
+    fontSize: 20,
+    color: '#CB7723'
   },
   inputText: {
     color: '#020035',
