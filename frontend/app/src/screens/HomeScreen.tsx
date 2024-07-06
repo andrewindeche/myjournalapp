@@ -5,7 +5,7 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
 
     return (
-    <View style={styles.section}>
+    <View style={styles.container}>
     <View style={styles.outerContainer}>
     <Image
       style={styles.image}
@@ -34,9 +34,6 @@ const HomeScreen: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    fontFamily: 'mulish-regular',
-  },
   outerContainer: {
     flex: 1,
     alignItems: 'center',
@@ -45,11 +42,12 @@ const styles = StyleSheet.create({
     width: '100%',
     borderBottomLeftRadius: 50,
   },
-  section: {
+  container: {
     backgroundColor: '#020035',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    fontFamily: 'mulish-regular',
   },
   pressable: {
     padding: 10,
