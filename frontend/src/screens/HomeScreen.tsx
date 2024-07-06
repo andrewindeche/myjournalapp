@@ -1,10 +1,10 @@
-import React from 'react';
-import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { Text, View, StyleSheet, Pressable, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
 
-    return(
+    return (
     <View style={styles.section}>
     <View style={styles.outerContainer}>
     <Image
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'column',
     padding: 20,
-    gap: 8,
+    gap: 20,
     backgroundColor: '#020035',
     height: '100%',
     width: '100%'

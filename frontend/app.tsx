@@ -13,14 +13,18 @@ const App: React.FC = () => {
 
   const loadFonts = async () => {
     await Font.loadAsync({
-      'mulish-regular': require('@/assets/fonts/mulish-regular.ttf'),
-      'mulish-bold': require('@/assets/fonts/mulish-bold.ttf'),
+      'mulish-regular': require('@/assets/fonts/Mulish-Regular.ttf'),
+      'mulish-bold': require('@/assets/fonts/Mulish-Bold.ttf'),
     });
     setIsReady(true);
   };
 
+  const onError = (error: Error) => {
+    console.error("AppLoading Error:", error);
+  };
+
   if (!isReady) {
-    return <AppLoading startAsync={loadFonts} onFinish={() => setIsReady(true)} />;
+    return <AppLoading startAsync={loadFonts} onFinish={() => setIsReady(true)} onError={onError}/>;
   }
 
   return (
