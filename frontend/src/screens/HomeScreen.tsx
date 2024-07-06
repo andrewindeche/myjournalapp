@@ -5,7 +5,6 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
 
     return(
-    <View style={ styles.container}>
     <View style={styles.section}>
     <View style={styles.outerContainer}>
     <Image
@@ -31,7 +30,6 @@ const HomeScreen: React.FC = () => {
         </View>
         </View>
         </View>
-        </View>
     )
 }
 
@@ -45,6 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     backgroundColor: 'white',
     width: '100%',
+    borderBottomLeftRadius: 50,
   },
   section: {
     backgroundColor: '#020035',
@@ -78,6 +77,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
   },
   header: {
     display: 'flex',
