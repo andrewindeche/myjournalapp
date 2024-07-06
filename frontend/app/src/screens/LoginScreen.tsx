@@ -1,12 +1,11 @@
 import React, { useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen: React.FC = ({ navigation }) => {
   const [isChecked, setIsChecked] = useState(false);
   const handleSignUpPress = () => {
-    navigation.navigate('SignUp');
+    navigation.navigate('Register');
   };
 
   const toggleCheckbox = () => {
@@ -42,7 +41,7 @@ const LoginScreen: React.FC = ({ navigation }) => {
       ) : (
         <Ionicons name="ellipse-outline" size={24} color="gray" />
       )}
-      <Text style={[styles.label, styles.remember]}>Remember me</Text>
+      <Text style={ styles.label }>Remember me</Text>
     </TouchableOpacity>
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText}>Sign In</Text>
@@ -91,7 +90,8 @@ const styles = StyleSheet.create({
   },
   inputText: {
     color: '#020035',
-    padding: 5
+    padding: 5,
+    fontWeight: 'bold',
   },
   inputContainer: {
     padding: 17,
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     paddingHorizontal: 10,
+    backgroundColor: 'rgba(0, 0, 255, 0.1)',
   },
   signInButton: {
     backgroundColor: '#020035',
