@@ -24,7 +24,7 @@ const HomeScreen: React.FC = () => {
       <Pressable style={styles.pressable} onPress={() => navigation.navigate('Login')}>
       <Text style={styles.text}>Sign In</Text>
     </Pressable>
-    <Pressable style={[styles.pressable, styles.register]}>
+    <Pressable style={[styles.pressable, styles.register]} onPress={() => navigation.navigate('Register')}>
       <Text style={[styles.text, styles.registerText]}>Register</Text>
     </Pressable>
         </View>
@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
     gap:10,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     color: 'white',
   },
   register: {

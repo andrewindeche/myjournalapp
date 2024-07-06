@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './app/src/screens/HomeScreen';
 import LoginScreen from './app/src/screens/LoginScreen';
 import ErrorBoundary from './app/src/screens/ErrorBoundary';
+import RegisterScreen from './app/src/screens/RegistrationScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +57,7 @@ const App: React.FC = () => {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Login" component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </ErrorBoundary>
