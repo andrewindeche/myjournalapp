@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
 
-const HomeScreen {
+const HomeScreen: React.FC = () => {
     return(
-    <View>
+    <View style={ styles.container}>
     <View style={styles.section}>
     <View style={styles.outerContainer}>
     <Image
@@ -34,11 +34,15 @@ const HomeScreen {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    fontFamily: 'mulish-regular',
+  },
   outerContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     backgroundColor: 'white',
+    width: '100%',
   },
   section: {
     backgroundColor: '#020035',
@@ -48,29 +52,35 @@ const styles = StyleSheet.create({
   },
   pressable: {
     padding: 10,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: 'white',
     alignItems: 'center',
     fontSize: 8,
     justifyContent: 'center',
-    width: 250,
+    width: '95%',
     borderRadius: 8,
     fontWeight: 'bold',
   },
   image: {
-    width: 400,
-    height: 200,
-    marginBottom: 20,
+    width: '90%',
+    height: 300,
+    borderRadius: 100,
   },
   text: {
-    fontSize: 18,
+    fontSize: 10,
     color: 'black',
   },
   innerContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: '#020035',
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
   header: {
+    display: 'flex',
+    gap:10,
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
     color: 'white',
@@ -85,19 +95,21 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   title: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 10,
     color: 'white',
   },
   footer: {
     flexDirection: 'column',
-    justifyContent: 'space-around',
     padding: 20,
-    gap: 15
+    gap: 8,
+    backgroundColor: '#020035',
+    height: '100%',
+    width: '100%'
   },
 });
 

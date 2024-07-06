@@ -25,6 +25,7 @@
 </ul>
 
 <p><b>Docker</b></p>
+Python 3.10.12 Django==5.0.6
 
 1. Create an .env environment on the Django root folder and add the recessary environment variables. 
 Use <b>backend\env.example</b> as a guide for environment variables.
@@ -80,6 +81,8 @@ and expo server
 
 
 <p><b>Django</b></p>
+
+
 <p>The project uses pipenv, django and postgresql backend</p>
 
 1. Install pipenv using the command 
@@ -131,6 +134,8 @@ python manage.py runserver
 <p><b>React Native</b></p>
 <p>The project using React Native for frontend development</p>
 
+node v21.4.0 (npm v10.2.4)
+
 1. Install the required dependencies using the commands 
 
 ```bash
@@ -138,6 +143,7 @@ npm install
 ```
 
 2. Start the Development server using the command 
+
 
 ```bash
 npx react-native start
