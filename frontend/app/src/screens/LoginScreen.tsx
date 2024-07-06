@@ -3,8 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Image }
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen: React.FC = () => {
+const LoginScreen: React.FC = ({ navigation }) => {
   const [isChecked, setIsChecked] = useState(false);
+  const handleSignUpPress = () => {
+    navigation.navigate('SignUp');
+  };
 
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
@@ -45,8 +48,9 @@ const LoginScreen: React.FC = () => {
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.newUser}>
-        <Text>I'm a new user,Sign up</Text>
+      <TouchableOpacity style={styles.newUser} onPress={handleSignUpPress}>
+        <Text>I'm a new user</Text>
+        <Text style={styles.signUpText}>Sign up</Text>
       </TouchableOpacity>
       </View>
     </View>
@@ -117,6 +121,10 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 8,
     marginBottom: 10,
+  },
+  signUpText: {
+    fontSize: 20,
+    color: '#CB7723'
   },
   signInButtonText: {
     color: 'white',
