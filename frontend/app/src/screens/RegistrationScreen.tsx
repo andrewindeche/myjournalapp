@@ -32,13 +32,15 @@ const RegistrationScreen: React.FC = ({navigation}) => {
         placeholder="Password"
         secureTextEntry
       />
+      <View style={styles.footer}>
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.registeredUser} onPress={handleSignUpPress}>
         <Text>Already have an Account?</Text>
-        <Text style={styles.signInText}>Sign In</Text>
+        <Text style={styles.signInText}>Log In</Text>
       </TouchableOpacity>
+      </View>
       </View>
     </View>
     </>
@@ -67,10 +69,14 @@ const styles = StyleSheet.create({
     height: '80%',
     marginBottom: 10,
   },
+  footer: {
+    margin: 12,
+  },
   registeredUser: {
     marginTop: 10,
     display: 'flex',
     alignItems: 'center',
+    gap: 10,
   },
   signInButton: {
     backgroundColor: '#020035',
@@ -112,6 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     paddingHorizontal: 10,
+    backgroundColor: 'rgba(0, 0, 255, 0.1)',
   },
   forgotPassword: {
     marginBottom: 10,
