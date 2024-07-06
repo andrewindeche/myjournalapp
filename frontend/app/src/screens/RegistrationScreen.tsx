@@ -79,7 +79,7 @@ const RegistrationScreen: React.FC = () => {
       </Pressable>
       <View style={styles.footer}>
       <TouchableOpacity style={styles.signInButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
-        <Text style={styles.signInButtonText}>Sign In</Text>
+        <Text style={styles.signInButtonText}>Create Account</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
         <Text>Already have an Account?</Text>
