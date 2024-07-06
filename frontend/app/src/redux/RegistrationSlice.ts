@@ -68,3 +68,7 @@ interface RegistrationState {
           });
       },
     });
+
+    export const { setFullName, setEmail, setPassword, reset } = registrationSlice.actions;
+
+    export default registrationSlice.reducer;
