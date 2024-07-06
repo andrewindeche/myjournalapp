@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './app/src/screens/HomeScreen';
 import LoginScreen from './app/src/screens/LoginScreen';
-import ErrorScreen from './app/src/screens/ErrorScreen';
+import ErrorBoundary from './app/src/screens/ErrorBoundary';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,13 +51,14 @@ const App: React.FC = () => {
   }
 
   return (
+    <ErrorBoundary>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        fallback={<ErrorScreen />}
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </ErrorBoundary>
   );
 };
 
