@@ -32,3 +32,25 @@ interface RegistrationState {
       }
     }
   );
+
+  const registrationSlice = createSlice({
+    name: 'registration',
+    initialState,
+    reducers: {
+      setFullName: (state, action: PayloadAction<string>) => {
+        state.fullName = action.payload;
+      },
+      setEmail: (state, action: PayloadAction<string>) => {
+        state.email = action.payload;
+      },
+      setPassword: (state, action: PayloadAction<string>) => {
+        state.password = action.payload;
+      },
+      reset: (state) => {
+        state.fullName = '';
+        state.email = '';
+        state.password = '';
+        state.status = 'idle';
+        state.error = null;
+      },
+    },
