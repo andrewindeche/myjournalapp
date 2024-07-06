@@ -8,3 +8,11 @@ interface RegistrationState {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
   }
+
+  const initialState: RegistrationState = {
+    fullName: '',
+    email: '',
+    password: '',
+    status: 'idle',
+    error: null,
+  };
