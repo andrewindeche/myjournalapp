@@ -54,3 +54,17 @@ interface RegistrationState {
         state.error = null;
       },
     },
+    extraReducers: (builder) => {
+        builder
+          .addCase(registerUser.pending, (state) => {
+            state.status = 'loading';
+          })
+          .addCase(registerUser.fulfilled, (state) => {
+            state.status = 'succeeded';
+          })
+          .addCase(registerUser.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload as string;
+          });
+      },
+    });
