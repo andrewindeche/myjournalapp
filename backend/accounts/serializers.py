@@ -21,6 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if 'password' not in data or 'confirm_password' not in data:
             raise serializers.ValidationError("Password and Confirm Password are required")
+        
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError("Passwords do not match")
         
@@ -34,8 +35,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This email address is already registered.")
         
         try:
-            validate_password(data['password'], self.instance)
-        except serializers.ValidationError as e:
+            validate_password(data['password'])
+        except Exception as e:
             raise serializers.ValidationError(str(e))
 
         return data

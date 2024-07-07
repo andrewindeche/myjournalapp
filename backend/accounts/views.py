@@ -16,12 +16,11 @@ class RegisterView(generics.CreateAPIView):
     
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
-        except serializer.ValidationError as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
