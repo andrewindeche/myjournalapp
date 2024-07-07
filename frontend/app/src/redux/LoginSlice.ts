@@ -25,7 +25,11 @@ export const loginUser = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue('Please enter the correct credentials.');
+      } else {
+        return rejectWithValue('Login failed. Please try again.');
+      }
     }
   }
 );

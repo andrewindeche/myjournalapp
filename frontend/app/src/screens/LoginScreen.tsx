@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,7 +6,6 @@ import { RootState } from '../redux/store';
 import { setUsername, setPassword, loginUser } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
-  const [isChecked, setIsChecked] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -53,8 +52,6 @@ const LoginScreen: React.FC = () => {
       />
       </View>
       <View style={styles.footer}>
-    {error && <Text style={styles.errorText}>{error}</Text>}
-    
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
       </TouchableOpacity>
@@ -64,6 +61,7 @@ const LoginScreen: React.FC = () => {
       </TouchableOpacity>
       </View>
     </View>
+    {error && <Text style={styles.errorText}>{error}</Text>}
     </>
   );
 };
@@ -90,7 +88,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: 'green',
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 10,
   },
   footer: {
     display: 'flex',

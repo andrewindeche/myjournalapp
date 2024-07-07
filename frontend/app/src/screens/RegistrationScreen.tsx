@@ -84,11 +84,11 @@ const RegistrationScreen: React.FC = () => {
         <Text style={styles.signInText}>Log In</Text>
       </TouchableOpacity>
       </View>
-            {error && (
-              <Text style={styles.errorText}>{error}</Text>
-            )}
       </View>
     </View>
+    {error && (
+      <Text style={styles.errorText}>{error}</Text>
+    )}
     </>
   );
 };
@@ -112,7 +112,8 @@ const styles = StyleSheet.create({
   },
   errorText: { 
     color: 'red',
-    marginBottom: 10,
+    textAlign: 'center',
+    marginVertical: 10,
   },
   innerContainer: {
     backgroundColor: 'white',
