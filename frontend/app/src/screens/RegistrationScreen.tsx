@@ -90,7 +90,9 @@ const RegistrationScreen: React.FC = () => {
         <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
       </Pressable>
       <View style={styles.footer}>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+    <Text style={styles.errorText}>{error.message}</Text>
+  )}
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
