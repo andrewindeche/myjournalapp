@@ -10,16 +10,12 @@ const RegistrationScreen: React.FC = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const { username, email, password, confirm_password ,status, error } = useSelector((state: RootState) => state.registration);
+  const { username, email, password, confirm_password ,status, error, successMessage } = useSelector((state: RootState) => state.registration);
   const [isFullNameValid, setIsFullNameValid] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
     dispatch(registerUser({ username, email, password, confirm_password }))
-      .then(() => {
-        navigation.navigate('Login');
-        dispatch(reset());
-      });
   };
 
   const handleFullNameChange = (text: string) => {
@@ -54,7 +50,7 @@ const RegistrationScreen: React.FC = () => {
     <TextInput
         style={styles.input}
         placeholder="Full Name"
-        onChangeText={(text) => dispatch(setFullName(text))}
+        onChangeText={handleFullNameChange}
         value={username}
       />
       {username.includes(' ') && <FontAwesome name="check" size={20} color="green" />}
@@ -62,7 +58,7 @@ const RegistrationScreen: React.FC = () => {
     <TextInput
         style={styles.input}
         placeholder="Email Address"
-        onChangeText={(text) => dispatch(setEmail(text))}
+        onChangeText={handleEmailChange}
         value={email}
         {.../\S+@\S+\.\S+/.test(email) && <FontAwesome name="check" size={20} color="green" />}
       />
@@ -71,7 +67,7 @@ const RegistrationScreen: React.FC = () => {
         style={styles.input}
         placeholder="Password"
         secureTextEntry={!passwordVisible}
-        onChangeText={(text) => dispatch(setPassword(text))}
+        onChangeText={handlePasswordChange}
         value={password}
       />
       {password && (
@@ -91,12 +87,22 @@ const RegistrationScreen: React.FC = () => {
       </Pressable>
       <View style={styles.footer}>
       {error && (
-    <Text style={styles.errorText}>{error.message}</Text>
-  )}
+              <View style={styles.errorContainer}>
+                {Object.entries(error).map(([field, messages]) => (
+                  <Text key={field} style={styles.errorText}>{`${field}: ${messages.join(', ')}`}</Text>
+                ))}
+              </View>
+            )}
+            {successMessage && (
+              <View style={styles.successContainer}>
+                <FontAwesome name="check" size={20} color="green" />
+                <Text style={styles.successText}>{successMessage}</Text>
+              </View>
+            )}
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity style={styles.registeredUser} onPress={handleSignInPress}>
         <Text>Already have an Account?</Text>
         <Text style={styles.signInText}>Log In</Text>
       </TouchableOpacity>
@@ -123,6 +129,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+  },
+  errorContainer: {
+    marginBottom: 10,
+  },
+  successContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   errorText: { 
     color: 'red',
