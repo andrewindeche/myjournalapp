@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { fetchProfileInfo, updateUsername, resetProfileState } from '../redux/ProfileSlice';
 
 const ProfileScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  const { username, email, profileImage, status, error } = useSelector((state: RootState) => state.profile);
+
+  useEffect(() => {
+    dispatch(fetchProfileInfo());
+  }, [dispatch]);
+
+  const handleUsernameChange = (newUsername: string) => {
+    dispatch(updateUsername(newUsername));
+  };
+
+  const handleSaveChanges = () => {
+    // Implement save changes for other fields like password and profile image
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.outerContainer}>
@@ -32,7 +50,7 @@ const ProfileScreen: React.FC = () => {
         placeholder="Password"
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button}  onPress={handleSaveChanges} disabled={status === 'loading'}>
         <Text style={styles.buttonText}>Save Changes</Text>
       </TouchableOpacity>
       </View>
