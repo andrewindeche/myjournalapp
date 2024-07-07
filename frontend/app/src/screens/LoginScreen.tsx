@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { setUsername, setPassword, reset, loginUser } from '../redux/LoginSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
