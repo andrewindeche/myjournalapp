@@ -28,3 +28,25 @@ interface ProfileState {
       }
     }
   );
+
+  export const updateUsername = createAsyncThunk(
+    'profile/updateUsername',
+    async (newUsername: string, { rejectWithValue }) => {
+      try {
+        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername });
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
+
+  const profileSlice = createSlice({
+    name: 'profile',
+    initialState,
+    reducers: {
+      resetProfileState(state) {
+        state.status = 'idle';
+        state.error = null;
+      },
+    },
