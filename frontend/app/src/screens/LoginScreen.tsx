@@ -2,14 +2,29 @@ import React, { useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { setEmail, setPassword, reset, loginUser } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const { email, password, status, error } = useSelector((state: RootState) => state.login);
 
   const handleSignUpPress = () => {
     navigation.navigate('Register');
   };
+
+  const handleSignInPress = () => {
+    dispatch(loginUser({ email, password })).then(() => {
+      if (status === 'succeeded') {
+        navigation.navigate('Home');
+        dispatch(reset());
+      }
+    });
+   }
 
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
@@ -29,12 +44,16 @@ const LoginScreen: React.FC = () => {
     <TextInput
         style={styles.input}
         placeholder="Your Email"
+        onChangeText={(text) => dispatch(setEmail(text))}
+        value={email}
       />
     <Text style={styles.label}>Password</Text>
     <TextInput
         style={styles.input}
         placeholder="Password"
         secureTextEntry
+        onChangeText={(text) => dispatch(setPassword(text))}
+        value={password}
       />
       </View>
       <View style={styles.footer}>
@@ -46,8 +65,9 @@ const LoginScreen: React.FC = () => {
       )}
       <Text style={ styles.label }>Remember me</Text>
     </TouchableOpacity>
+    {error && <Text style={[styles.errorText, styles.messageText]}>{error}</Text>}
       <TouchableOpacity style={styles.signInButton}>
-        <Text style={styles.signInButtonText}>Sign In</Text>
+        <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.newUser} onPress={handleSignUpPress}>
         <Text>I'm a new user</Text>
