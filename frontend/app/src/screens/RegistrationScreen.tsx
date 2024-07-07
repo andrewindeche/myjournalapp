@@ -30,10 +30,6 @@ const RegistrationScreen: React.FC = () => {
   const handlePasswordChange = (text: string) => {
     dispatch(setPassword(text));
   };
-
-  const handleSignInPress = () => {
-    navigation.navigate('Login');
-  };
   
   return (
     <>
@@ -102,7 +98,7 @@ const RegistrationScreen: React.FC = () => {
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registeredUser} onPress={handleSignInPress}>
+      <TouchableOpacity style={styles.registeredUser}>
         <Text>Already have an Account?</Text>
         <Text style={styles.signInText}>Log In</Text>
       </TouchableOpacity>
@@ -146,6 +142,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: '80%',
     marginBottom: 10,
+  },
+  successText: {
+    color: 'green',
+    marginLeft: 5,
   },
   footer: {
     margin: 12,
