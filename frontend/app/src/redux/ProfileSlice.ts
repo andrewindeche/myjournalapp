@@ -50,3 +50,36 @@ interface ProfileState {
         state.error = null;
       },
     },
+
+    extraReducers: (builder) => {
+        builder
+          .addCase(fetchProfileInfo.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+          })
+          .addCase(fetchProfileInfo.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.username = action.payload.username;
+            state.email = action.payload.email;
+            state.profileImage = action.payload.profileImage;
+            state.error = null;
+          })
+          .addCase(fetchProfileInfo.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload as string;
+          })
+          .addCase(updateUsername.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+          })
+          .addCase(updateUsername.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.username = action.payload.username;
+            state.error = null;
+          })
+          .addCase(updateUsername.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload as string;
+          });
+      },
+    });
