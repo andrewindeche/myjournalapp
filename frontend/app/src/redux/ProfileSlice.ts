@@ -17,54 +17,49 @@ interface ProfileState {
     error: null,
   };
 
-  export const fetchProfileInfo = createAsyncThunk(
+  export const fetchProfileInfo = createAsyncThunk<ProfileState>(
     'profile/fetchProfileInfo',
     async (_, { rejectWithValue }) => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/api/profile/'); 
         return response.data;
-      } catch (error) {
-        return rejectWithValue(error.message);
+      } catch (error:any) {
+        return rejectWithValue(error.response?.data || error.message);
       }
     }
   );
-
-  export const updateProfileImage = createAsyncThunk(
+  export const updateProfileImage = createAsyncThunk<ProfileState, FormData>(
     'profile/updateProfileImage',
-    async (imageData: FormData, { rejectWithValue }) => {
+    async (formData, { rejectWithValue }) => {
       try {
-        const response = await axios.put('http://127.0.0.1:8000/api/profile/update/profile-image/', imageData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/profile-image/', formData);
         return response.data;
-      } catch (error) {
-        return rejectWithValue(error.message);
+      } catch (error: any) {
+        return rejectWithValue(error.response?.data || error.message);
       }
     }
   );
 
-  export const updateUsername = createAsyncThunk(
+  export const updateUsername = createAsyncThunk<ProfileState, string>(
     'profile/updateUsername',
     async (newUsername: string, { rejectWithValue }) => {
       try {
         const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername });
         return response.data;
-      } catch (error) {
-        return rejectWithValue(error.message);
+      } catch (error:any) {
+        return rejectWithValue(error.response?.data || error.message);
       }
     }
   );
 
-  export const updatePassword = createAsyncThunk(
+  export const updatePassword = createAsyncThunk<ProfileState, { old_password: string, new_password: string }>(
     'profile/updatePassword',
-    async (passwordData: { old_password: string; new_password: string }, { rejectWithValue }) => {
+    async ({ old_password, new_password }, { rejectWithValue }) => {
       try {
-        const response = await axios.put('http://127.0.0.1:8000/api/profile/update/password-change/', passwordData);
+        const response = await axios.put('http://127.0.0.1:8000/api/profile/update/password-change/', { old_password, new_password });
         return response.data;
-      } catch (error) {
-        return rejectWithValue(error.message);
+      } catch (error: any) {
+        return rejectWithValue(error.response?.data || error.message);
       }
     }
   );
@@ -104,10 +99,6 @@ interface ProfileState {
             state.status = 'succeeded';
             state.username = action.payload.username;
             state.error = null;
-          })
-          .addCase(updateUsername.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.payload as string;
           })
           .addCase(updateUsername.rejected, (state, action) => {
             state.status = 'failed';
