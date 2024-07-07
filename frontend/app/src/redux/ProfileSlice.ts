@@ -83,3 +83,7 @@ interface ProfileState {
           });
       },
     });
+
+    export const { resetProfileState } = profileSlice.actions;
+
+export default profileSlice.reducer;
