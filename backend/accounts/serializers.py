@@ -1,6 +1,7 @@
 from .models import User
 from rest_framework import serializers
 from django.contrib.auth import password_validation
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -20,6 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if 'password' not in data or 'confirm_password' not in data:
             raise serializers.ValidationError("Password and Confirm Password are required")
+        
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError("Passwords do not match")
         
@@ -33,8 +35,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This email address is already registered.")
         
         try:
-            password_validation.validate_password('password', self.instance)
-        except DjangoValidationError as e:
+            validate_password(data['password'])
+        except Exception as e:
             raise serializers.ValidationError(str(e))
 
         return data

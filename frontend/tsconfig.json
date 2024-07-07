@@ -2,6 +2,7 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "jsx": "react-native",
     "paths": {
       "@/*": [
         "./*"
@@ -12,6 +13,12 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+    "expo-env.d.ts",
+    "@react-native-async-storage.d.ts",
+  ],
+  "exclude": [
+    "node_modules",
+     "babel.config.js", 
+     "metro.config.js", 
+     "jest.config.js"]
 }

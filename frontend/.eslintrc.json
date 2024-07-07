@@ -1,48 +1,54 @@
-{   
+{
     "parser": "@typescript-eslint/parser",
     "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true,
-        "react-native/react-native": true
+      "browser": true,
+      "es2021": true,
+      "node": true,
+      "react-native/react-native": true
     },
     "extends": [
-        "plugin:react/recommended",
-        "airbnb",
-        "airbnb/hooks",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:react/recommended",
-        "plugin:react-native/all",
-        "prettier",
-        "prettier/@typescript-eslint",
-        "prettier/react"
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react-native/all",
+      "plugin:prettier/recommended",
+      "prettier"
     ],
     "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-          }
+      "ecmaVersion": "latest",
+      "sourceType": "module",
+      "project": "./tsconfig.json",
+      "ecmaFeatures": {
+        "jsx": true
+      }
     },
     "plugins": [
-        "react",
-        "@typescript-eslint",
-        "react-native",
-        "import",
-        "jsx-a11y"
+      "react",
+      "@typescript-eslint",
+      "react-native",
+      "prettier"
     ],
     "rules": {
-        "no-console": "warn",
-        "indent": ["error", 2],
-        "linebreak-style": ["error", "unix"],
-        "quotes": ["error", "single"],
-        "semi": ["error", "always"],
-        "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-        "@typescript-eslint/explicit-module-boundary-types": "off"
+      "no-console": "warn",
+      "prettier/prettier": ["error"],
+      "indent": ["error", 2],
+      "linebreak-style": ["error", "unix"],
+      "semi": ["error", "always"],
+      "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/explicit-module-boundary-types": "off"
     },
+    "ignorePatterns": [
+      "**/node_modules/@types/react/index"
+    ],
     "settings": {
-        "import/resolver": {
-          "typescript": {}
-        }
+      "import/resolver": {
+        "typescript": {}
+      },
+      "react": {
+        "version": "detect"
+      }
     }
-}
+  }
+  
