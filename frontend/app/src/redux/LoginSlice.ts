@@ -2,14 +2,14 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 interface LoginState {
-  email: string;
+  username: string;
   password: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
 const initialState: LoginState = {
-  email: '',
+  username: '',
   password: '',
   status: 'idle',
   error: null,
@@ -17,10 +17,10 @@ const initialState: LoginState = {
 
 export const loginUser = createAsyncThunk(
   'login/loginUser',
-  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+  async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login/', {
-        email,
+        username,
         password,
       });
       return response.data;
@@ -34,14 +34,14 @@ const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
-    setEmail: (state, action: PayloadAction<string>) => {
-      state.email = action.payload;
+    setUsername: (state, action: PayloadAction<string>) => {
+      state.username = action.payload;
     },
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;
     },
     reset: (state) => {
-      state.email = '';
+      state.username = '';
       state.password = '';
       state.status = 'idle';
       state.error = null;
@@ -64,6 +64,6 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setEmail, setPassword, reset } = loginSlice.actions;
+export const { setUsername, setPassword, reset } = loginSlice.actions;
 
 export default loginSlice.reducer;

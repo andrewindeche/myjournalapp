@@ -34,7 +34,7 @@ interface RegistrationState {
         if (error.response.status === 400) {
           return rejectWithValue("Please enter valid credentials");
         }
-        return rejectWithValue(error.response.data.errors);
+        return rejectWithValue(error.response.data.errors || "An unknown error occurred.");
       }
     }
   );

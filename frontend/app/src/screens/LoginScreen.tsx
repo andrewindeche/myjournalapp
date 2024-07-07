@@ -4,21 +4,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { setEmail, setPassword, reset, loginUser } from '../redux/LoginSlice';
+import { setUsername, setPassword, reset, loginUser } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const { email, password, status, error } = useSelector((state: RootState) => state.login);
+  const { username, password, status, error } = useSelector((state: RootState) => state.login);
 
   const handleSignUpPress = () => {
     navigation.navigate('Register');
   };
 
   const handleSignInPress = () => {
-    dispatch(loginUser({ email, password })).then(() => {
+    dispatch(loginUser({ username, password })).then(() => {
       if (status === 'succeeded') {
         navigation.navigate('Profile');
         dispatch(reset());
@@ -40,12 +40,12 @@ const LoginScreen: React.FC = () => {
     <View style={styles.innerContainer}>
       <View style={styles.inputContainer}>
     <Text style={[styles.title, styles.inputText]}>Sign In</Text>
-    <Text style={styles.label}>Your Email</Text>
+    <Text style={styles.label}>Your UserName</Text>
     <TextInput
         style={styles.input}
-        placeholder="Your Email"
-        onChangeText={(text) => dispatch(setEmail(text))}
-        value={email}
+        placeholder="Your Username"
+        onChangeText={(text) => dispatch(setUsername(text))}
+        value={username}
       />
     <Text style={styles.label}>Password</Text>
     <TextInput
@@ -65,7 +65,7 @@ const LoginScreen: React.FC = () => {
       )}
       <Text style={ styles.label }>Remember me</Text>
     </TouchableOpacity>
-    {error && <Text style={[styles.errorText, styles.messageText]}>{error}</Text>}
+    {error && <Text style={styles.errorText}>{error}</Text>}
     
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
@@ -100,6 +100,9 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  errorText: {
+    color: 'green',
   },
   footer: {
     display: 'flex',

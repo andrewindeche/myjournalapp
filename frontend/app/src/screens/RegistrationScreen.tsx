@@ -20,28 +20,9 @@ const RegistrationScreen: React.FC = () => {
       .then(() => {
         if (status === 'succeeded') {
           navigation.navigate('Login');
-          dispatch(reset());
         }
       })
       .catch(() => {});
-
-  };
-
-  const handleFullNameChange = (text: string) => {
-    dispatch(setFullName(text));
-    setIsFullNameValid(text.trim().includes(' '));
-  };
-
-  const handleEmailChange = (text: string) => {
-    dispatch(setEmail(text));
-  };
-
-  const handlePasswordChange = (text: string) => {
-    dispatch(setPassword(text));
-  };
-
-  const handleSignInPress = () => {
-    navigation.navigate('Login');
   };
   
   return (
