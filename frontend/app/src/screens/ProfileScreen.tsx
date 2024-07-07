@@ -54,32 +54,30 @@ const ProfileScreen: React.FC = () => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.outerContainer}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
+      <Text style={styles.title}>Profile Information</Text>
+      <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
         <TouchableOpacity onPress={handleProfileImageChange}>
         <Image source={{ uri: profileImage }} style={styles.avatar} />
         </TouchableOpacity>
-        <Text>Personal Information</Text>
-        <TouchableOpacity onPress={handleSaveChanges} disabled={status === 'loading'}>
-          <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
       </View>
       <View style={{ alignItems: 'center', padding: 16 }}>
-        <Text>Name : {username}</Text>
-        <Text>Email: {email}</Text>
+        <Text style={styles.label}>Name : {username}</Text>
+        <Text style={styles.label}>Email: {email}</Text>
       </View>
       </View>
-
       <View style={styles.innerContainer}>
         <Text style={styles.label}>Change Profile Image</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Choose File</Text>
             <input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files[0])} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleProfileImageChange}>
+          <TouchableOpacity style={[styles.button,styles.uploadButton]} onPress={handleProfileImageChange}>
             <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>
         </View>
+          <TouchableOpacity onPress={handleSaveChanges} disabled={status === 'loading'}>
+          <Text style={styles.buttonText}>Save Changes</Text>
+        </TouchableOpacity>
 
 <Text style={styles.label}>Password</Text>
       <TextInput
@@ -121,6 +119,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: 'white',
   },
   outerContainer: {
     backgroundColor: '#020035',
@@ -156,6 +155,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     margin: 5,
   },
+  title: {
+    color: 'white',
+  }
 });
 
 

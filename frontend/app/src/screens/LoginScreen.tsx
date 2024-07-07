@@ -1,10 +1,9 @@
 import React, { useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { setUsername, setPassword, reset, loginUser } from '../redux/LoginSlice';
+import { setUsername, setPassword, loginUser } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -21,10 +20,10 @@ const LoginScreen: React.FC = () => {
     dispatch(loginUser({ username, password })).then(() => {
       if (status === 'succeeded') {
         navigation.navigate('Profile');
-        dispatch(reset());
       }
     });
   };
+
 
   return (
     <>
