@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser, setEmail, setFullName, setPassword, reset } from '../redux/RegistrationSlice';
+import { registerUser, setEmail, setFullName, setConfirmPassword, setPassword, reset } from '../redux/RegistrationSlice';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { RootState } from '../redux/store';
@@ -10,12 +10,12 @@ const RegistrationScreen: React.FC = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const { fullName, email, password, status } = useSelector((state: RootState) => state.registration);
+  const { username, email, password, confirm_password ,status } = useSelector((state: RootState) => state.registration);
   const [isFullNameValid, setIsFullNameValid] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
-    dispatch(registerUser({ username, email, password }))
+    dispatch(registerUser({ username, email, password, confirm_password }))
       .then(() => {
         navigation.navigate('Login');
         dispatch(reset());
@@ -54,15 +54,15 @@ const RegistrationScreen: React.FC = () => {
     <TextInput
         style={styles.input}
         placeholder="Full Name"
-        onChangeText={handleFullNameChange}
+        onChangeText={(text) => dispatch(setFullName(text))}
         value={username}
       />
-      {fullName.includes(' ') && <FontAwesome name="check" size={20} color="green" />}
+      {username.includes(' ') && <FontAwesome name="check" size={20} color="green" />}
     <Text style={styles.label}>Email Address</Text>
     <TextInput
         style={styles.input}
         placeholder="Email Address"
-        onChangeText={handleEmailChange}
+        onChangeText={(text) => dispatch(setEmail(text))}
         value={email}
         {.../\S+@\S+\.\S+/.test(email) && <FontAwesome name="check" size={20} color="green" />}
       />
@@ -71,9 +71,21 @@ const RegistrationScreen: React.FC = () => {
         style={styles.input}
         placeholder="Password"
         secureTextEntry={!passwordVisible}
-        onChangeText={handlePasswordChange}
+        onChangeText={(text) => dispatch(setPassword(text))}
         value={password}
       />
+      {password && (
+            <>
+              <Text style={styles.label}>Confirm Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                onChangeText={(text) => dispatch(setConfirmPassword(text))}
+                secureTextEntry
+                value={confirm_password}
+              />
+            </>
+          )}
        <Pressable onPress={() => setPasswordVisible(!passwordVisible)}>
         <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
       </Pressable>
