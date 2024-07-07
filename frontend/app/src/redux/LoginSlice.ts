@@ -40,7 +40,8 @@ const loginSlice = createSlice({
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;
     },
-    reset: (state) => {
+    
+    logout: (state) => {
       state.username = '';
       state.password = '';
       state.status = 'idle';
@@ -64,6 +65,6 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setUsername, setPassword, reset } = loginSlice.actions;
+export const { setUsername, setPassword, logout } = loginSlice.actions;
 
 export default loginSlice.reducer;

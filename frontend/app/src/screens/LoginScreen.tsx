@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { setUsername, setPassword, reset, loginUser } from '../redux/LoginSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -27,9 +26,6 @@ const LoginScreen: React.FC = () => {
     });
   };
 
-  const toggleCheckbox = () => {
-    setIsChecked(!isChecked);
-  };
   return (
     <>
     <View style={styles.outerContainer}>
@@ -58,14 +54,6 @@ const LoginScreen: React.FC = () => {
       />
       </View>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.checkboxContainer} onPress={toggleCheckbox}>
-      {isChecked ? (
-        <Ionicons name="checkmark-circle" size={24} color="green" />
-      ) : (
-        <Ionicons name="ellipse-outline" size={24} color="gray" />
-      )}
-      <Text style={ styles.label }>Remember me</Text>
-    </TouchableOpacity>
     {error && <Text style={styles.errorText}>{error}</Text>}
     
       <TouchableOpacity style={styles.signInButton}>
