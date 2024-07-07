@@ -7,7 +7,8 @@ interface RegistrationState {
     password: string;
     confirm_password: string;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
+    error: Record<string, string[]> | null;
+    successMessage: string | null;
   }
 
   const initialState: RegistrationState = {
@@ -17,6 +18,7 @@ interface RegistrationState {
     confirm_password: '',
     status: 'idle',
     error: null,
+    successMessage: null,
   };
 
   export const registerUser = createAsyncThunk(
