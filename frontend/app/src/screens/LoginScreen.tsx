@@ -20,11 +20,11 @@ const LoginScreen: React.FC = () => {
   const handleSignInPress = () => {
     dispatch(loginUser({ email, password })).then(() => {
       if (status === 'succeeded') {
-        navigation.navigate('Home');
+        navigation.navigate('Profile');
         dispatch(reset());
       }
     });
-   }
+  };
 
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
@@ -66,6 +66,7 @@ const LoginScreen: React.FC = () => {
       <Text style={ styles.label }>Remember me</Text>
     </TouchableOpacity>
     {error && <Text style={[styles.errorText, styles.messageText]}>{error}</Text>}
+    
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
       </TouchableOpacity>

@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './app/src/screens/HomeScreen';
 import LoginScreen from './app/src/screens/LoginScreen';
 import RegisterScreen from './app/src/screens/RegistrationScreen';
+import ProfileScreen from "./app/src/screens/ProfileScreen";
 import store from './app/src/redux/store'; 
 
 const Stack = createNativeStackNavigator();
@@ -57,8 +58,9 @@ const App: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
