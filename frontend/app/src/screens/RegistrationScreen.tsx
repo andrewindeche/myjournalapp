@@ -15,7 +15,7 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
-    dispatch(registerUser({ fullName, email, password }))
+    dispatch(registerUser({ username, email, password }))
       .then(() => {
         navigation.navigate('Login');
         dispatch(reset());
@@ -55,7 +55,7 @@ const RegistrationScreen: React.FC = () => {
         style={styles.input}
         placeholder="Full Name"
         onChangeText={handleFullNameChange}
-        value={fullName}
+        value={username}
       />
       {fullName.includes(' ') && <FontAwesome name="check" size={20} color="green" />}
     <Text style={styles.label}>Email Address</Text>

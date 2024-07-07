@@ -2,29 +2,32 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 interface RegistrationState {
-    fullName: string;
+    username: string;
     email: string;
     password: string;
+    confirm_password: string;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
   }
 
   const initialState: RegistrationState = {
-    fullName: '',
+    username: '',
     email: '',
     password: '',
+    confirm_password: '',
     status: 'idle',
     error: null,
   };
 
   export const registerUser = createAsyncThunk(
     'registration/registerUser',
-    async (userData: { fullName: string; email: string; password: string }, { rejectWithValue }) => {
+    async (userData: { username: string; email: string; password: string; confirm_password: string; }, { rejectWithValue }) => {
       try {
         const response = await axios.post('http://127.0.0.1:8000/api/register/', {
-          username: userData.fullName,
+          username: userData.username,
           email: userData.email,
           password: userData.password,
+          confirm_password: userData.confirm_password,
         });
         return response.data;
       } catch (error: any) {
@@ -38,7 +41,7 @@ interface RegistrationState {
     initialState,
     reducers: {
       setFullName: (state, action: PayloadAction<string>) => {
-        state.fullName = action.payload;
+        state.username = action.payload;
       },
       setEmail: (state, action: PayloadAction<string>) => {
         state.email = action.payload;
@@ -46,10 +49,14 @@ interface RegistrationState {
       setPassword: (state, action: PayloadAction<string>) => {
         state.password = action.payload;
       },
+      setConfirmPassword: (state, action: PayloadAction<string>) => {
+        state.confirm_password = action.payload;
+      },
       reset: (state) => {
-        state.fullName = '';
+        state.username = '';
         state.email = '';
         state.password = '';
+        state.confirm_password = '';
         state.status = 'idle';
         state.error = null;
       },
@@ -69,6 +76,6 @@ interface RegistrationState {
       },
     });
 
-    export const { setFullName, setEmail, setPassword, reset } = registrationSlice.actions;
+    export const { setFullName, setEmail, setPassword,setConfirmPassword, reset } = registrationSlice.actions;
 
     export default registrationSlice.reducer;

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserProfileSerializer,TokenObtainSerializer,UserProfileImageSerializer
 from .serializers import TokenPairSerializer,RegisterSerializer,LoginSerializer,PasswordChangeSerializer
+from rest_framework.permissions import AllowAny 
 
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
