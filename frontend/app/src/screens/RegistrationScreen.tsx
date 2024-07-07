@@ -15,7 +15,13 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
-    dispatch(registerUser({ username, email, password, confirm_password }))
+    dispatch(registerUser({ username, email, password, confirm_password, status, error  }))
+    .then(() => {
+      dispatch({type: 'registration/setSuccessMessage', payload: 'Account successfully created!' });
+      dispatch(reset());
+    })
+    .catch((error: string) => { console.error('Registration failed:', error);
+    });
   };
 
   const handleFullNameChange = (text: string) => {
