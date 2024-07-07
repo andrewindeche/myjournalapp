@@ -65,9 +65,11 @@ interface RegistrationState {
         builder
           .addCase(registerUser.pending, (state) => {
             state.status = 'loading';
+            state.error = null;
           })
           .addCase(registerUser.fulfilled, (state) => {
             state.status = 'succeeded';
+            state.error = null;
           })
           .addCase(registerUser.rejected, (state, action) => {
             state.status = 'failed';

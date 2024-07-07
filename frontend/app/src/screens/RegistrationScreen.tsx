@@ -10,7 +10,7 @@ const RegistrationScreen: React.FC = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const { username, email, password, confirm_password ,status } = useSelector((state: RootState) => state.registration);
+  const { username, email, password, confirm_password ,status, error } = useSelector((state: RootState) => state.registration);
   const [isFullNameValid, setIsFullNameValid] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -90,8 +90,9 @@ const RegistrationScreen: React.FC = () => {
         <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
       </Pressable>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.signInButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
-        <Text style={styles.signInButtonText}>Create Account</Text>
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
+        <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
         <Text>Already have an Account?</Text>
@@ -121,6 +122,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
+  errorText: { 
+    color: 'red',
+    marginBottom: 10,
+  },
   innerContainer: {
     backgroundColor: 'white',
     height: '80%',
@@ -135,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-  signInButton: {
+  signUpButton: {
     backgroundColor: '#020035',
     paddingVertical: 10,
     paddingHorizontal: 8,
@@ -143,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
   },
-  signInButtonText: {
+  signUpButtonText: {
     color: 'white',
     textAlign: 'center',
   },
