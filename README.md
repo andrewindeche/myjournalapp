@@ -7,10 +7,10 @@
 | 3.Django |  Python Based Backend Framework| [python]; [Django];|
 | 4.ESLint| Linting Framework| [Lint]; [syntax];|
 | 5.PostgresQl | Relational Database| [Relational Integrity]; [Database];|
-| 6.Docker | Ocntainerization/Virtulization| [Virtualization]; [Containers];|
+| 6.Docker | containerization/Virtulization| [Virtualization]; [Containers];|
 | 7.Metro | Native Bundler| [Bundle];|
 | 8.Pipenv | Package/Dependency manager| [Virtual Environment];[Dependency];|
-| 9.Circleci | Pipeline| [continuous integration];[continuous delivery];|
+| 9.Circleci | CI/Cd Pipeline| [continuous integration];[continuous delivery];|
 
 ## <h1> Description</h1>
 <p>The aim of the project is to build a journaling app using React Native for frontend and Python Django web for backend </p>
@@ -190,5 +190,5 @@ npx react-native start
 
 <p><b>http://localhost:8081/api/categories/<int:pk>/edit/</b></p>
 
-## <h1> Endpoints</h1>
+## <h1> Author </h1>
 Built by <b>Andrew Indeche</b>

@@ -3,12 +3,14 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import registrationReducer from '../redux/RegistrationSlice';
 import loginReducer from '../redux/LoginSlice';
 import profileReducer from '../redux/ProfileSlice';
+import authReducer from '../redux/AuthSlice';
 
 const store = configureStore({
     reducer: {
       registration: registrationReducer,
       login: loginReducer,
       profile: profileReducer,
+      auth: authReducer,
     },
   });
   

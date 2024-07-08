@@ -12,8 +12,6 @@ const ProfileScreen: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [localImage, setLocalImage] = useState('');
 
   useEffect(() => {
     dispatch(fetchProfileInfo());
@@ -42,7 +40,7 @@ const ProfileScreen: React.FC = () => {
       setNewPassword('');
       setConfirmNewPassword('');
     } else {
-      // Handle password mismatch error
+      alert('Passwords do not match');
     }
   };
 
@@ -140,6 +138,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
+    backgroundColor: 'rgba(0, 0, 255, 0.1)',
   },
   button: {
     backgroundColor: '#020035',
