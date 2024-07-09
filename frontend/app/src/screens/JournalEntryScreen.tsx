@@ -26,7 +26,7 @@ const JournalEntryScreen: React.FC = () => {
       </View>
       {showMenu && <Menu />}
       <View style={styles.content}>
-        <Text>{new Date().toDateString()}</Text>
+        <Text style={styles.date}>{new Date().toDateString()}</Text>
         {editMode ? (
           <>
           <ScrollView style={styles.content}>
@@ -40,14 +40,6 @@ const JournalEntryScreen: React.FC = () => {
               multiline
               value={description}
               onChangeText={(text) => setDescription(text)}
-            />
-            <TextInput
-              style={styles.expandedInput}
-              multiline
-              value={inputText}
-              onChangeText={(text) => setInputText(text)}
-              placeholder="Have fun"
-              placeholderTextColor="#ccc"
             />
             </ScrollView>
           </>
@@ -85,6 +77,11 @@ const JournalEntryScreen: React.FC = () => {
         padding: 20,
         backgroundColor: '#E3F0F5',
       },
+      date: {
+        color: '#CB7723',
+        fontWeight: 'bold',
+        fontSize: 14
+      },
       header: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -115,6 +112,7 @@ const JournalEntryScreen: React.FC = () => {
         borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
+        height: 300,
         backgroundColor: '#fff',
       },
       description: {
@@ -128,7 +126,7 @@ const JournalEntryScreen: React.FC = () => {
         borderColor: '#ccc',
         borderRadius: 5,
         backgroundColor: '#fff',
-        height: 100, 
+        height: 1000, 
       },
       subtitle: {
         fontSize: 16,
