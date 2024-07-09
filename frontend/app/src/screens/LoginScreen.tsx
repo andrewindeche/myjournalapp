@@ -23,7 +23,6 @@ const LoginScreen: React.FC = () => {
     });
   };
 
-
   return (
     <>
     <View style={styles.outerContainer}>

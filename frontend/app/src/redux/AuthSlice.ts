@@ -13,11 +13,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const login = createAsyncThunk<
-  { token: string },
-  { username: string, password: string },
-  { rejectValue: string }
->(
+export const login = createAsyncThunk<{ token: string }, { username: string; password: string }, { rejectValue: string }>(
   'auth/login',
   async ({ username, password }, { rejectWithValue }) => {
     try {
@@ -33,19 +29,16 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    resetAuthState(state) {
+    logout(state) {
+      state.token = null;
       state.status = 'idle';
       state.error = null;
     },
-    logout(state) {
-      state.token = null;
-    }
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.status = 'loading';
-        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'succeeded';
@@ -59,5 +52,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthState, logout } = authSlice.actions;
+export const { logout } = authSlice.actions;
+
 export default authSlice.reducer;

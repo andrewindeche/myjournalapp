@@ -21,8 +21,11 @@ interface ProfileState {
   export const fetchProfileInfo = createAsyncThunk<ProfileState,void,{ rejectValue: string, state: RootState }>(
     'profile/fetchProfileInfo',
     async (_, { rejectWithValue, getState }) => {
-      const state: RootState = getState();
-      const token = state.auth.token;
+      const state = getState();
+      const token = state.login.token;
+      if (!token) {
+        return rejectWithValue('Token not available');
+      }
         try {
           const response = await axios.get('http://127.0.0.1:8000/api/profile/', {
               headers: {
@@ -31,6 +34,7 @@ interface ProfileState {
           });
         return response.data;
       } catch (error:any) {
+        console.error('Fetch profile error:', error.response?.data || error.message);
         return rejectWithValue(error.response?.data || error.message);
       }
     }
@@ -40,7 +44,8 @@ interface ProfileState {
     'profile/updateProfileImage',
     async (formData, { rejectWithValue, getState }) => {
       const state: RootState = getState() as RootState;
-      const token = state.auth.token;
+      const token = state.login.token;
+      console.log('Updating profile image with token:', token);
       try {
         const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/profile-image/', formData, {
         headers: {
@@ -58,8 +63,9 @@ interface ProfileState {
   export const updateUsername = createAsyncThunk<ProfileState, string>(
     'profile/updateUsername',
     async (newUsername: string, { rejectWithValue, getState }) => {
-      const state: RootState = getState();
-      const token = state.auth.token;
+      const state: RootState = getState() as RootState;
+      const token = state.login.token;
+      console.log('Updating profile image with token:', token);
       try {
         const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername }, {
           headers: {
@@ -76,8 +82,9 @@ interface ProfileState {
   export const updatePassword = createAsyncThunk<{ message: string },{ old_password: string, new_password: string },
   { rejectValue: string }>('profile/updatePassword',
 async ({ old_password, new_password }, { rejectWithValue, getState }) => {
-  const state: RootState = getState();
-  const token = state.auth.token;
+  const state: RootState = getState() as RootState;
+  const token = state.login.token;
+  console.log('Updating profile image with token:', token);
   try {
     const response = await axios.put('http://127.0.0.1:8000/api/password-change/', { old_password, new_password }, {
         headers: {

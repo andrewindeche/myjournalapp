@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import registrationReducer from '../redux/RegistrationSlice';
 import loginReducer from '../redux/LoginSlice';
@@ -18,5 +18,11 @@ const store = configureStore({
   
   export type RootState = ReturnType<typeof store.getState>;
   export type AppDispatch = typeof store.dispatch;
+  export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
   
   export default store;

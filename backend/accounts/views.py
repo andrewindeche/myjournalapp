@@ -36,6 +36,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 class UserProfileImageView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
