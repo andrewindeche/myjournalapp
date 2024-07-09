@@ -1,60 +1,81 @@
 import React, { useState} from 'react';
-import {  View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import {  View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView  } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Menu from '../components/Menu'
 
 const JournalEntryScreen: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [title, setTitle] = useState('Enter Your Title');
+  const [description, setDescription] = useState(
+    "Click on the description are and begin typing, save using the pencil icon"
+  );
+  const [inputText, setInputText] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-    const journalEntries = [
-        'Audi RS7 sportback 5 seater',
-        'Harley davidson street guide',
-        'Lamborghini aventador',
-        'Shopping of the downtown mall',
-        'GST filing of the iPhone 14 pro max',
-      ];
+      const handleImageUpload = () => {
+       
+      };
 
     return (
-        <View style={styles.container}>
-        <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+      <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <Icon name="menu" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-        {showMenu && <Menu />}
-        <View style={styles.content}>
-          <Text style={styles.title}>Tax payment before the end of march</Text>
-          <Text style={styles.description}>
-            This is a reminder note, so as not to forget to pay taxes before the end of March. Don't miss it, you could be fined!
-          </Text>
-          <Text style={styles.subtitle}>
-            List of assets that must be reported to the government, whether in the form of cash savings: that is mandatory things we have filling the tax payment to the government.
-          </Text>
-          <FlatList
-            data={journalEntries}
-            renderItem={({ item }) => <Text style={styles.listItem}>{item}</Text>}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <TextInput style={styles.input} placeholder="Tap here to continue" />
-        </View>
-        <View style={styles.footer}>
-          <TouchableOpacity>
-            <Icon name="camera" size={28} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="pencil" size={28} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="ellipsis-horizontal" size={28} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="add-circle" size={28} color="black" />
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </View>
+      {showMenu && <Menu />}
+      <View style={styles.content}>
+        <Text>{new Date().toDateString()}</Text>
+        {editMode ? (
+          <>
+          <ScrollView style={styles.content}>
+            <TextInput
+              style={styles.titleInput}
+              value={title}
+              onChangeText={(text) => setTitle(text)}
+            />
+            <TextInput
+              style={styles.descriptionInput}
+              multiline
+              value={description}
+              onChangeText={(text) => setDescription(text)}
+            />
+            <TextInput
+              style={styles.expandedInput}
+              multiline
+              value={inputText}
+              onChangeText={(text) => setInputText(text)}
+              placeholder="Have fun"
+              placeholderTextColor="#ccc"
+            />
+            </ScrollView>
+          </>
+        ) : (
+          <>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.description}>{description}</Text>
+          </>
+        )}
+        {selectedImage && (
+          <Image source={{ uri: selectedImage }} style={styles.image} />
+        )}
+      </View>
+      <View style={styles.footer}>
+        <TouchableOpacity onPress={handleImageUpload}>
+          <Icon name="camera" size={28} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setEditMode(!editMode)}>
+          <Icon name="pencil" size={28} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Icon name="ellipsis-horizontal" size={28} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Icon name="add-circle" size={28} color="black" />
+        </TouchableOpacity>
+      </View>
+    </View>
     );
   };
   
@@ -66,7 +87,7 @@ const JournalEntryScreen: React.FC = () => {
       },
       header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         marginBottom: 20,
       },
       content: {
@@ -77,9 +98,37 @@ const JournalEntryScreen: React.FC = () => {
         fontWeight: 'bold',
         marginBottom: 10,
       },
+      titleInput: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        backgroundColor: '#fff',
+      },
+      descriptionInput: {
+        fontSize: 16,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        backgroundColor: '#fff',
+      },
       description: {
         fontSize: 16,
         marginBottom: 10,
+      },
+      expandedInput: {
+        marginTop: 20,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        height: 100, 
       },
       subtitle: {
         fontSize: 16,
