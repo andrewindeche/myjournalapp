@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState} from 'react';
 import {  View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Menu from '../components/Menu'
 
 const JournalEntryScreen: React.FC = () => {
+  const [showMenu, setShowMenu] = useState(false);
+
     const journalEntries = [
         'Audi RS7 sportback 5 seater',
         'Harley davidson street guide',
@@ -14,9 +17,14 @@ const JournalEntryScreen: React.FC = () => {
     return (
         <View style={styles.container}>
         <View style={styles.header}>
+        <TouchableOpacity>
           <Icon name="arrow-back" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <Icon name="menu" size={24} color="black" />
+          </TouchableOpacity>
         </View>
+        {showMenu && <Menu />}
         <View style={styles.content}>
           <Text style={styles.title}>Tax payment before the end of march</Text>
           <Text style={styles.description}>
