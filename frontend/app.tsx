@@ -10,6 +10,7 @@ import LoginScreen from './app/src/screens/LoginScreen';
 import RegisterScreen from './app/src/screens/RegistrationScreen';
 import ProfileScreen from "./app/src/screens/ProfileScreen";
 import store from './app/src/redux/store'; 
+import JournalEntryScreen from "./app/src/screens/JournalEntryScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +62,7 @@ const App: React.FC = () => {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="JournalEntry" component={JournalEntryScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
