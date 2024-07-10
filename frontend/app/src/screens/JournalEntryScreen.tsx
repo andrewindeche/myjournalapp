@@ -115,6 +115,7 @@ const JournalEntryScreen: React.FC = () => {
           </>
         ) : (
           <>
+            {title ? <Text style={styles.title}>{title}</Text> : null}
             <FlatList
               data={journalEntries}
               keyExtractor={(item) => item.id}
@@ -194,6 +195,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     backgroundColor: '#fff',
+  },
+  title : {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    backgroundColor: '#E3F0F5',
   },
   entryInput: {
     fontSize: 16,
