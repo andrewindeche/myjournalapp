@@ -1,20 +1,75 @@
 import React, { useState} from 'react';
-import {  View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView  } from 'react-native';
+import {  View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Menu from '../components/Menu'
+import Menu from '../components/Menu';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const JournalEntryScreen: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState('Enter Your Title');
   const [description, setDescription] = useState(
-    "Click on the description are and begin typing, save using the pencil icon"
+    "Click on the pencil icon, Edit the entry and click on it again to save,Click on camera for to capture images and plus sign to upload images",
   );
   const [inputText, setInputText] = useState('');
+  const [journalEntries, setJournalEntries] = useState([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
       const handleImageUpload = () => {
-       
+        launchImageLibrary(
+          { mediaType: 'photo' },
+          (response) => {
+            if (response.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+              console.log('ImagePicker Error: ', response.errorMessage);
+            } else {
+              const uri = response.assets && response.assets[0].uri;
+              if (uri) {
+                setInputText((prevText) => prevText + `\n[image:${uri}]`);
+              }
+            }
+          }
+        );
+      };
+      const handleTakePhoto = () => {
+        launchCamera(
+          { mediaType: 'photo', cameraType: 'back' },
+          (response) => {
+            if (response.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+              console.log('ImagePicker Error: ', response.errorMessage);
+            } else {
+              const uri = response.assets && response.assets[0].uri;
+              if (uri) {
+                setInputText((prevText) => prevText + `\n[image:${uri}]`);
+              }
+            }
+          }
+        );
+      };
+      const handleAddEntry = () => {
+        if (inputText) {
+          const newEntries = inputText.split('\n').map((text) => {
+            if (text.startsWith('[image:')) {
+              const uri = text.replace('[image:', '').replace(']', '');
+              return { type: 'image', content: uri };
+            } else {
+              return { type: 'text', content: text };
+            }
+          });
+          setJournalEntries([...journalEntries, ...newEntries]);
+          setInputText('');
+        }
+      };
+    
+      const renderEntry = ({ item }) => {
+        if (item.type === 'text') {
+          return <Text style={styles.listItem}>{item.content}</Text>;
+        } else if (item.type === 'image') {
+          return <Image source={{ uri: item.content }} style={styles.entryImage} />;
+        }
       };
 
     return (
@@ -45,16 +100,22 @@ const JournalEntryScreen: React.FC = () => {
           </>
         ) : (
           <>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{description}</Text>
+             <ScrollView>
+              {journalEntries.map((entry, index) => (
+                <View key={index}>
+                  {entry.type === 'text' ? (
+                    <Text style={styles.listItem}>{entry.content}</Text>
+                  ) : (
+                    <Image source={{ uri: entry.content }} style={styles.entryImage} />
+                  )}
+                </View>
+              ))}
+            </ScrollView>
           </>
-        )}
-        {selectedImage && (
-          <Image source={{ uri: selectedImage }} style={styles.image} />
         )}
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handleImageUpload}>
+        <TouchableOpacity onPress={handleTakePhoto}>
           <Icon name="camera" size={28} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setEditMode(!editMode)}>
@@ -63,7 +124,7 @@ const JournalEntryScreen: React.FC = () => {
         <TouchableOpacity>
           <Icon name="ellipsis-horizontal" size={28} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleImageUpload}>
           <Icon name="add-circle" size={28} color="black" />
         </TouchableOpacity>
       </View>
