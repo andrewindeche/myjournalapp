@@ -2,12 +2,21 @@ from .models import JournalEntry,Category
 from rest_framework import serializers
 
 class CategorySerializer(serializers.ModelSerializer):
+    entries = JournalEntrySerializer(many=True, read_only=True)
+    
     class Meta:
         model = Category
         fields = ['id', 'name', 'user']
         read_only_fields = ['id', 'user']
+        
 
 class JournalEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JournalEntry
+        fields = ['id', 'title', 'content', 'created_at']
+        read_only_fields = ['created_at'] 
+
+class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='name',
