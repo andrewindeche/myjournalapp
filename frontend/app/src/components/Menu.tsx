@@ -24,7 +24,7 @@ const Menu: React.FC = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuItem}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate("Home")}
         >
           <Icon name="exit-outline" size={24} color="black" />
           <Text style={styles.menuText}>Logout</Text>
@@ -35,17 +35,17 @@ const Menu: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  menuContainer: {
-    position: 'relative',
-  },
   menu: {
-    position: 'absolute',
-    right: 0,
-    top: 30,
     backgroundColor: "#CB7723",
     borderRadius: 5,
-    padding: 10,
     elevation: 75,
+    padding: 10,
+    position: "absolute",
+    right: 0,
+    top: 30,
+  },
+  menuContainer: {
+    position: "relative",
   },
   menuItem: {
     alignItems: "center",
