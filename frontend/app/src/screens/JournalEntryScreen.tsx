@@ -13,7 +13,6 @@ const JournalEntryScreen: React.FC = () => {
   );
   const [inputText, setInputText] = useState('');
   const [journalEntries, setJournalEntries] = useState([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
       const handleImageUpload = () => {
         launchImageLibrary(
