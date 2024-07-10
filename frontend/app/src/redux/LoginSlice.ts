@@ -4,6 +4,7 @@ import axios from 'axios';
 interface LoginState {
   username: string;
   password: string;
+  token: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
@@ -11,6 +12,7 @@ interface LoginState {
 const initialState: LoginState = {
   username: '',
   password: '',
+  token: null,
   status: 'idle',
   error: null,
 };
@@ -26,7 +28,7 @@ export const loginUser = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
-        return rejectWithValue('Please enter the correct credentials.');
+        return rejectWithValue('Please enter correct credentials.');
       } else {
         return rejectWithValue('Login failed. Please try again.');
       }
@@ -48,6 +50,7 @@ const loginSlice = createSlice({
     logout: (state) => {
       state.username = '';
       state.password = '';
+      state.token = null;
       state.status = 'idle';
       state.error = null;
     },
@@ -58,8 +61,9 @@ const loginSlice = createSlice({
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.token = action.payload.token;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {

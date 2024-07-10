@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { RootState } from './store';
 
 interface ProfileState {
     username: string;
     email: string;
-    profileImage: string;
+    profileImage: string | null;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
   }
@@ -12,27 +13,46 @@ interface ProfileState {
   const initialState: ProfileState = {
     username: '',
     email: '',
-    profileImage: '',
+    profileImage: null,
     status: 'idle',
     error: null,
   };
 
-  export const fetchProfileInfo = createAsyncThunk<ProfileState>(
+  export const fetchProfileInfo = createAsyncThunk<ProfileState,void,{ rejectValue: string, state: RootState }>(
     'profile/fetchProfileInfo',
-    async (_, { rejectWithValue }) => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/profile/'); 
+    async (_, { rejectWithValue, getState }) => {
+      const state = getState();
+      const token = state.login.token;
+      if (!token) {
+        return rejectWithValue('Token not available');
+      }
+        try {
+          const response = await axios.get('http://127.0.0.1:8000/api/profile/', {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          });
         return response.data;
       } catch (error:any) {
+        console.error('Fetch profile error:', error.response?.data || error.message);
         return rejectWithValue(error.response?.data || error.message);
       }
     }
   );
+
   export const updateProfileImage = createAsyncThunk<ProfileState, FormData>(
     'profile/updateProfileImage',
-    async (formData, { rejectWithValue }) => {
+    async (formData, { rejectWithValue, getState }) => {
+      const state: RootState = getState() as RootState;
+      const token = state.login.token;
+      console.log('Updating profile image with token:', token);
       try {
-        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/profile-image/', formData);
+        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/profile-image/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
         return response.data;
       } catch (error: any) {
         return rejectWithValue(error.response?.data || error.message);
@@ -42,27 +62,41 @@ interface ProfileState {
 
   export const updateUsername = createAsyncThunk<ProfileState, string>(
     'profile/updateUsername',
-    async (newUsername: string, { rejectWithValue }) => {
+    async (newUsername: string, { rejectWithValue, getState }) => {
+      const state: RootState = getState() as RootState;
+      const token = state.login.token;
+      console.log('Updating profile image with token:', token);
       try {
-        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername });
-        return response.data;
+        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername }, {
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      return response.data;
       } catch (error:any) {
         return rejectWithValue(error.response?.data || error.message);
       }
     }
   );
 
-  export const updatePassword = createAsyncThunk<ProfileState, { old_password: string, new_password: string }>(
-    'profile/updatePassword',
-    async ({ old_password, new_password }, { rejectWithValue }) => {
-      try {
-        const response = await axios.put('http://127.0.0.1:8000/api/profile/update/password-change/', { old_password, new_password });
-        return response.data;
-      } catch (error: any) {
-        return rejectWithValue(error.response?.data || error.message);
-      }
-    }
-  );
+  export const updatePassword = createAsyncThunk<{ message: string },{ old_password: string, new_password: string },
+  { rejectValue: string }>('profile/updatePassword',
+async ({ old_password, new_password }, { rejectWithValue, getState }) => {
+  const state: RootState = getState() as RootState;
+  const token = state.login.token;
+  console.log('Updating profile image with token:', token);
+  try {
+    const response = await axios.put('http://127.0.0.1:8000/api/password-change/', { old_password, new_password }, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+}
+);
 
   const profileSlice = createSlice({
     name: 'profile',

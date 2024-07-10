@@ -18,11 +18,10 @@ const LoginScreen: React.FC = () => {
   const handleSignInPress = () => {
     dispatch(loginUser({ username, password })).then(() => {
       if (status === 'succeeded') {
-        navigation.navigate('Profile');
+        navigation.navigate('JournalEntry');
       }
     });
   };
-
 
   return (
     <>

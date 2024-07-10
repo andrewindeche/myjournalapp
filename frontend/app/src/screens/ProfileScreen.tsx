@@ -1,23 +1,29 @@
-import React, {useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { fetchProfileInfo, updateProfileImage, updatePassword, updateUsername } from '../redux/ProfileSlice';
 
 const ProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const { username, email, profileImage, status, error } = useSelector((state: RootState) => state.profile);
+  const {username, email, profileImage, status, error } = useSelector((state: RootState) => state.profile);
   const [newUsername, setNewUsername] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [localImage, setLocalImage] = useState('');
 
   useEffect(() => {
     dispatch(fetchProfileInfo());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (status === 'succeeded') {
+      Alert.alert('Success', 'Profile updated successfully.');
+    } else if (status === 'failed' && error) {
+      Alert.alert('Error', error);
+    }
+  }, [status, error]);
 
   const handleUsernameChange = () => {
     if (newUsername.trim() !== '') {
@@ -42,7 +48,7 @@ const ProfileScreen: React.FC = () => {
       setNewPassword('');
       setConfirmNewPassword('');
     } else {
-      // Handle password mismatch error
+      alert('Passwords do not match');
     }
   };
 
@@ -54,16 +60,16 @@ const ProfileScreen: React.FC = () => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.outerContainer}>
-      <Text style={styles.title}>Profile Information</Text>
-      <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-        <TouchableOpacity onPress={handleProfileImageChange}>
-        <Image source={{ uri: profileImage }} style={styles.avatar} />
-        </TouchableOpacity>
-      </View>
-      <View style={{ alignItems: 'center', padding: 16 }}>
-        <Text style={styles.label}>Name : {username}</Text>
-        <Text style={styles.label}>Email: {email}</Text>
-      </View>
+        <Text style={styles.title}>Profile Information</Text>
+        <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
+          <TouchableOpacity onPress={handleProfileImageChange}>
+            <Image source={{ uri: profileImage }} style={styles.avatar} />
+          </TouchableOpacity>
+        </View>
+        <View style={{ alignItems: 'center', padding: 16 }}>
+          <Text style={styles.label}>Name: {username}</Text>
+          <Text style={styles.label}>Email: {email}</Text>
+        </View>
       </View>
       <View style={styles.innerContainer}>
         <Text style={styles.label}>Change Profile Image</Text>
@@ -71,39 +77,39 @@ const ProfileScreen: React.FC = () => {
           <TouchableOpacity style={styles.button}>
             <input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files[0])} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button,styles.uploadButton]} onPress={handleProfileImageChange}>
+          <TouchableOpacity style={[styles.button, styles.uploadButton]} onPress={handleProfileImageChange}>
             <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>
         </View>
-          <TouchableOpacity onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <TouchableOpacity onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
 
-<Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={oldPassword}
-        onChangeText={setOldPassword}
-        secureTextEntry
-      />
-      <TextInput
-            style={styles.input}
-            placeholder="New Password"
-            value={newPassword}
-            onChangeText={setNewPassword}
-            secureTextEntry
-      />
-      <TextInput
-            style={styles.input}
-            placeholder="Confirm New Password"
-            value={confirmNewPassword}
-            onChangeText={setConfirmNewPassword}
-            secureTextEntry
-      />
-      <TouchableOpacity style={styles.button}  onPress={handleSaveChanges} disabled={status === 'loading'}>
-        <Text style={styles.buttonText}>Save Changes</Text>
-      </TouchableOpacity>
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Current Password"
+          value={oldPassword}
+          onChangeText={setOldPassword}
+          secureTextEntry
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="New Password"
+          value={newPassword}
+          onChangeText={setNewPassword}
+          secureTextEntry
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm New Password"
+          value={confirmNewPassword}
+          onChangeText={setConfirmNewPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
+          <Text style={styles.buttonText}>Save Changes</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -140,6 +146,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
+    backgroundColor: 'rgba(0, 0, 255, 0.1)',
   },
   button: {
     backgroundColor: '#020035',
@@ -159,6 +166,5 @@ const styles = StyleSheet.create({
     color: 'white',
   }
 });
-
 
 export default ProfileScreen;
