@@ -14,3 +14,4 @@ urlpatterns = [
     path('categories-view/<int:pk>/', CategoryJournalEntriesView.as_view(), name='entries-by-category'),
     path('categories-create/', CategoryListCreateView.as_view(), name='category-list-create'),
 ]
+
