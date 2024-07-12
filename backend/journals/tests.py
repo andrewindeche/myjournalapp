@@ -15,7 +15,7 @@ class JournalEntryTests(APITestCase):
         self.entry = JournalEntry.objects.create(title='Original Title', content='Original Content', user=self.user, category=self.category)
 
     def test_create_journal_entry(self):
-        url = reverse('journalentry-list-create')
+        url = reverse('entries/')
         data = {
             'title': 'Test Entry',
             'content': 'This is a test entry.',
@@ -28,7 +28,7 @@ class JournalEntryTests(APITestCase):
 
     def test_update_journal_entry(self):
         entry = JournalEntry.objects.get(id=self.entry.id)
-        url = reverse('journalentry-detail', args=[entry.id])
+        url = reverse('entries-view', args=[entry.id])
         updated_data = {
             'title': 'Updated Title',
             'content': 'Updated Content',
@@ -40,13 +40,13 @@ class JournalEntryTests(APITestCase):
         self.assertEqual(entry.title, 'Updated Title')
 
     def test_retrieve_journal_entry(self):
-        url = reverse('journalentry-detail', args=[self.entry.id])
+        url = reverse('entries-view', args=[self.entry.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['title'], 'Original Title')
 
     def test_delete_journal_entry(self):
-        url = reverse('journalentry-detail', args=[self.entry.id])
+        url = reverse('entries-view', args=[self.entry.id])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertEqual(JournalEntry.objects.count(), 0)
@@ -71,7 +71,7 @@ class CategoryTests(TestCase):
 
     def test_update_category(self):
         category = Category.objects.create(name='Original Category', user=self.user)
-        url = reverse('category-detail', args=[category.id])
+        url = reverse('category', args=[category.id])
         updated_data = {
             'name': 'Updated Category',
         }
@@ -82,20 +82,20 @@ class CategoryTests(TestCase):
 
     def test_retrieve_category(self):
         category = Category.objects.create(name='Test Category', user=self.user)
-        url = reverse('category-detail', args=[category.id])
+        url = reverse('category', args=[category.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Test Category')
 
     def test_delete_category(self):
         category = Category.objects.create(name='Test Category', user=self.user)
-        url = reverse('category-detail', args=[category.id])
+        url = reverse('category', args=[category.id])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Category.objects.filter(id=category.id).exists())
 
     def test_category_edge_cases(self):
-        url = reverse('category-list-create')
+        url = reverse('category')
         response = self.client.post(url, {'name': ''}, format='json')
         self.assertEqual(response.status_code, 400) 
 
