@@ -2,13 +2,13 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { AppDispatch, RootState } from '../redux/store';
 import { setUsername, setPassword, loginUser } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-
+  const dispatch = useDispatch<AppDispatch>();
+  
   const { username, password, status, error } = useSelector((state: RootState) => state.login);
 
   const handleSignUpPress = () => {
