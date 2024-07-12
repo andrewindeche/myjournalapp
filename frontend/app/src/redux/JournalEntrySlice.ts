@@ -1,11 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import instance from '../redux/axiosInstance';
+import { RootState } from "./store";
+import { logout } from '../redux/authSlice';
 
 interface JournalEntry {
   id: number;
   title: string;
   content: string;
   created_at: string;
+  type: "text" | "image";
+  category: string;
 }
 
 interface Category {
@@ -24,6 +28,7 @@ interface JournalState {
 
 const initialState: JournalState = {
   journalEntries: [],
+  categoriesWithEntries: [],
   categories: [],
   status: 'idle',
   error: null,
@@ -31,32 +36,56 @@ const initialState: JournalState = {
 
 export const fetchJournalEntries = createAsyncThunk(
   'journal/fetchJournalEntries',
-  async () => {
-    const response = await axios.get('/api/journal-entries/');
+  async (_, { rejectWithValue }) => {
+  try {
+    const response = await instance.get('/entries/');
     return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      return rejectWithValue('Unauthorized. Please log in again.');
+    }
+    return rejectWithValue('Failed to fetch journal entries.');
+    }
   }
 );
 
 export const fetchCategories = createAsyncThunk(
   'journal/fetchCategories',
-  async () => {
-    const response = await axios.get('/api/categories/');
+  async (_, { rejectWithValue }) => {
+    try {
+    const response = await instance.get('/categories/');
     return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      return rejectWithValue('Unauthorized. Please log in again.');
+    }
+    return rejectWithValue('Failed to fetch categories.');
   }
+ }
 );
 
 export const createJournalEntry = createAsyncThunk(
   'journal/createJournalEntry',
-  async (newEntry: Omit<JournalEntry, 'id' | 'created_at'>) => {
-    const response = await axios.post('/api/journal-entries/', newEntry);
+  async (newEntry: Omit<JournalEntry, 'id' | 'created_at'>, { rejectWithValue }) => {
+    try {
+    const response = await instance.post('/entries/', newEntry);
     return response.data;
+  }catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      return rejectWithValue('Unauthorized. Please log in again.');
+    }
+    return rejectWithValue('Failed to create journal entry.');
   }
+ }
 );
 
 const journalEntriesSlice = createSlice({
   name: 'entries',
   initialState,
   reducers: {
+    addCategory(state, action: PayloadAction<Category>) {
+      state.categories.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -69,7 +98,10 @@ const journalEntriesSlice = createSlice({
       })
       .addCase(fetchJournalEntries.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch journal entries';
+        state.error = action.payload as string;
+        if (state.error === 'Unauthorized. Please log in again.') {
+          logout();
+        }
       })
       .addCase(fetchCategories.pending, (state) => {
         state.status = 'loading';
@@ -80,13 +112,27 @@ const journalEntriesSlice = createSlice({
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch categories';
+        state.error = action.payload as string;
+        if (state.error === 'Unauthorized. Please log in again.') {
+          logout();
+        }
       })
       .addCase(createJournalEntry.fulfilled, (state, action: PayloadAction<JournalEntry>) => {
         state.journalEntries.push(action.payload);
+      })
+      .addCase(createJournalEntry.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+        if (state.error === 'Unauthorized. Please log in again.') {
+          logout();
+        }
       });
   },
 });
 
-export default journalEntriesSlice.reducer;
+export const { addCategory } = journalEntriesSlice.actions;
 
+export const selectCategories = (state: RootState) =>
+  state.entries.categories;
+
+export default journalEntriesSlice.reducer;

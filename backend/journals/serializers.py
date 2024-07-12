@@ -2,8 +2,6 @@ from .models import JournalEntry,Category
 from rest_framework import serializers
 
 class CategorySerializer(serializers.ModelSerializer):
-    entries = JournalEntrySerializer(many=True, read_only=True)
-    
     class Meta:
         model = Category
         fields = ['id', 'name', 'user']

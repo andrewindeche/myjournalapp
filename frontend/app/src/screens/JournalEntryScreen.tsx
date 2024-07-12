@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,14 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import {
+  addCategory,
+  fetchJournalEntries,
+  fetchCategories,
+  createJournalEntry,
+} from "../redux/JournalEntrySlice";
+import { RootState } from "../redux/store";
+import { useDispatch, useSelector } from "react-redux";
 import Menu from "../components/Menu";
 import {
   launchCamera,
@@ -22,16 +30,28 @@ interface JournalEntry {
   id: string;
   type: "text" | "image";
   content: string;
+  title: string;
+  category: string;
+  created_at: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  const { journalEntries, categories, status, error } = useSelector(
+    (state: RootState) => state.entries,
+  );
+  const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState("");
   const [inputText, setInputText] = useState("");
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
-  const nextId = useRef(0);
+
+  useEffect(() => {
+    dispatch(fetchJournalEntries());
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
@@ -43,15 +63,33 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri) {
-          const newEntry: JournalEntry = {
-            id: `${nextId.current++}`,
+          const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
             type: "image",
             content: uri,
+            title: title,
+            category: selectedCategory,
           };
-          setJournalEntries((prevEntries) => [...prevEntries, newEntry]);
+          dispatch(createJournalEntry(newEntry));
         }
       }
     });
+  };
+
+  const handleAddCategory = () => {
+    if (newCategory.trim() === "") {
+      Alert.alert("Category name cannot be empty");
+      return;
+    }
+    const id = categories.length + 1;
+    dispatch(
+      addCategory({
+        id,
+        name: newCategory,
+        entries: [],
+      }),
+    );
+    setNewCategory("");
+    Alert.alert("Category added successfully");
   };
 
   const handleTakePhoto = () => {
@@ -64,12 +102,13 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri) {
-          const newEntry: JournalEntry = {
-            id: `${nextId.current++}`,
+          const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
             type: "image",
             content: uri,
+            title: title,
+            category: selectedCategory,
           };
-          setJournalEntries((prevEntries) => [...prevEntries, newEntry]);
+          dispatch(createJournalEntry(newEntry));
         }
       }
     });
@@ -77,20 +116,16 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleAddEntry = () => {
     if (inputText) {
-      const newEntry: JournalEntry = {
-        id: `${nextId.current++}`,
+      const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content: inputText,
+        title: title,
+        category: selectedCategory || "",
       };
       if (editEntryId !== null) {
-        setJournalEntries((prevEntries) =>
-          prevEntries.map((entry) =>
-            entry.id === editEntryId ? newEntry : entry,
-          ),
-        );
         setEditEntryId(null);
       } else {
-        setJournalEntries((prevEntries) => [...prevEntries, newEntry]);
+        dispatch(createJournalEntry(newEntry));
       }
       setInputText("");
       setEditMode(false);
@@ -106,9 +141,15 @@ const JournalEntryScreen: React.FC = () => {
     const entryToEdit = journalEntries.find((entry) => entry.id === id);
     if (entryToEdit) {
       setInputText(entryToEdit.content);
+      setTitle(entryToEdit.title);
+      setSelectedCategory(entryToEdit.category);
       setEditEntryId(id);
       setEditMode(true);
     }
+  };
+
+  const handleToggleMenu = () => {
+    setShowMenu(!showMenu);
   };
 
   const handleDeleteAll = () => {
@@ -118,11 +159,11 @@ const JournalEntryScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+        <TouchableOpacity onPress={handleToggleMenu}>
           <Icon name="menu" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      {showMenu && <Menu />}
+      {showMenu && <Menu onClose={handleToggleMenu} />}
       <View style={styles.content}>
         <Text style={styles.date}>{new Date().toDateString()}</Text>
         {editMode ? (
@@ -140,6 +181,15 @@ const JournalEntryScreen: React.FC = () => {
               value={inputText}
               onChangeText={(text) => setInputText(text)}
             />
+            <View style={styles.container}>
+              <TextInput
+                style={styles.entryInput}
+                value={newCategory}
+                placeholder="Enter new category"
+                onChangeText={(text) => setNewCategory(text)}
+              />
+              <TouchableOpacity onPress={handleAddCategory}></TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
             </TouchableOpacity>
@@ -147,27 +197,32 @@ const JournalEntryScreen: React.FC = () => {
         ) : (
           <>
             {title ? <Text style={styles.title}>{title}</Text> : null}
-            <FlatList
-              data={journalEntries}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View>
-                  <TouchableOpacity
-                    style={styles.entryContainer}
-                    onPress={() => handleEditEntry(item.id)}
-                  >
-                    {item.type === "text" ? (
-                      <Text style={styles.listItem}>{item.content}</Text>
-                    ) : (
-                      <Image
-                        source={{ uri: item.content }}
-                        style={styles.entryImage}
-                      />
-                    )}
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
+            {status === "loading" ? (
+              <Text>Loading...</Text>
+            ) : status === "failed" ? (
+              <Text>Error: {error}</Text>
+            ) : (
+              <FlatList
+                data={journalEntries}
+                renderItem={({ item }) => (
+                  <View>
+                    <TouchableOpacity
+                      style={styles.entryContainer}
+                      onPress={() => handleEditEntry(item.id)}
+                    >
+                      {item.type === "text" ? (
+                        <Text style={styles.listItem}>{item.content}</Text>
+                      ) : (
+                        <Image
+                          source={{ uri: item.content }}
+                          style={styles.entryImage}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            )}
           </>
         )}
       </View>
@@ -199,7 +254,7 @@ const styles = StyleSheet.create({
     color: "#CB7723",
     fontSize: 14,
     fontWeight: "bold",
-    marginBottom: 40,
+    marginBottom: 10,
   },
   header: {
     flexDirection: "row",
@@ -212,7 +267,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     marginBottom: 10,
-    padding: 10,
+    padding: 2,
   },
   deleteButton: {
     marginLeft: "auto",
@@ -246,7 +301,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
-    height: 400,
+    height: 200,
     marginBottom: 10,
     padding: 10,
   },
