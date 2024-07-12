@@ -1,53 +1,114 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Menu from '../components/Menu';
-import { launchCamera, launchImageLibrary, ImageLibraryOptions, CameraOptions } from 'react-native-image-picker';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  Alert,
+} from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
+import {
+  addCategory,
+  fetchJournalEntries,
+  fetchCategories,
+  createJournalEntry,
+} from "../redux/JournalEntrySlice";
+import { RootState } from "../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import Menu from "../components/Menu";
+import {
+  launchCamera,
+  launchImageLibrary,
+  ImageLibraryOptions,
+  CameraOptions,
+} from "react-native-image-picker";
 
 interface JournalEntry {
   id: string;
-  type: 'text' | 'image';
+  type: "text" | "image";
   content: string;
+  title: string;
+  category: string;
+  created_at: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  const { journalEntries, categories, status, error } = useSelector(
+    (state: RootState) => state.entries,
+  );
+  const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [title, setTitle] = useState('');
-  const [inputText, setInputText] = useState('');
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
+  const [title, setTitle] = useState("");
+  const [inputText, setInputText] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
-  const nextId = useRef(0);
+
+  useEffect(() => {
+    dispatch(fetchJournalEntries());
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleImageUpload = () => {
-    const options: ImageLibraryOptions = { mediaType: 'photo' };
+    const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
+        console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri) {
-          const newEntry: JournalEntry = { id: `${nextId.current++}`, type: 'image', content: uri };
-          setJournalEntries((prevEntries) => [...prevEntries, newEntry]);
+          const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
+            type: "image",
+            content: uri,
+            title: title,
+            category: selectedCategory,
+          };
+          dispatch(createJournalEntry(newEntry));
         }
       }
     });
   };
 
+  const handleAddCategory = () => {
+    if (newCategory.trim() === "") {
+      Alert.alert("Category name cannot be empty");
+      return;
+    }
+    const id = categories.length + 1;
+    dispatch(
+      addCategory({
+        id,
+        name: newCategory,
+        entries: [],
+      }),
+    );
+    setNewCategory("");
+    Alert.alert("Category added successfully");
+  };
+
   const handleTakePhoto = () => {
-    const options: CameraOptions = { mediaType: 'photo', cameraType: 'back' };
+    const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
+        console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri) {
-          const newEntry: JournalEntry = { id: `${nextId.current++}`, type: 'image', content: uri };
-          setJournalEntries((prevEntries) => [...prevEntries, newEntry]);
+          const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
+            type: "image",
+            content: uri,
+            title: title,
+            category: selectedCategory,
+          };
+          dispatch(createJournalEntry(newEntry));
         }
       }
     });
@@ -55,29 +116,40 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleAddEntry = () => {
     if (inputText) {
-      const newEntry: JournalEntry = { id: `${nextId.current++}`, type: 'text', content: inputText };
+      const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
+        type: "text",
+        content: inputText,
+        title: title,
+        category: selectedCategory || "",
+      };
       if (editEntryId !== null) {
-        setJournalEntries((prevEntries) =>
-          prevEntries.map(entry => entry.id === editEntryId ? newEntry : entry)
-        );
         setEditEntryId(null);
       } else {
-        setJournalEntries((prevEntries) => [...prevEntries, newEntry]);
+        dispatch(createJournalEntry(newEntry));
       }
-      setInputText('');
+      setInputText("");
       setEditMode(false);
     } else {
-      Alert.alert("Input Text is empty", "Please add some text or image before saving.");
+      Alert.alert(
+        "Input Text is empty",
+        "Please add some text or image before saving.",
+      );
     }
   };
 
   const handleEditEntry = (id: string) => {
-    const entryToEdit = journalEntries.find(entry => entry.id === id);
+    const entryToEdit = journalEntries.find((entry) => entry.id === id);
     if (entryToEdit) {
       setInputText(entryToEdit.content);
+      setTitle(entryToEdit.title);
+      setSelectedCategory(entryToEdit.category);
       setEditEntryId(id);
       setEditMode(true);
     }
+  };
+
+  const handleToggleMenu = () => {
+    setShowMenu(!showMenu);
   };
 
   const handleDeleteAll = () => {
@@ -87,11 +159,11 @@ const JournalEntryScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+        <TouchableOpacity onPress={handleToggleMenu}>
           <Icon name="menu" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      {showMenu && <Menu />}
+      {showMenu && <Menu onClose={handleToggleMenu} />}
       <View style={styles.content}>
         <Text style={styles.date}>{new Date().toDateString()}</Text>
         {editMode ? (
@@ -109,6 +181,15 @@ const JournalEntryScreen: React.FC = () => {
               value={inputText}
               onChangeText={(text) => setInputText(text)}
             />
+            <View style={styles.container}>
+              <TextInput
+                style={styles.entryInput}
+                value={newCategory}
+                placeholder="Enter new category"
+                onChangeText={(text) => setNewCategory(text)}
+              />
+              <TouchableOpacity onPress={handleAddCategory}></TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
             </TouchableOpacity>
@@ -116,24 +197,32 @@ const JournalEntryScreen: React.FC = () => {
         ) : (
           <>
             {title ? <Text style={styles.title}>{title}</Text> : null}
-            <FlatList
-              data={journalEntries}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View>
-                  <TouchableOpacity
-                    style={styles.entryContainer}
-                    onPress={() => handleEditEntry(item.id)}
-                  >
-                    {item.type === 'text' ? (
-                      <Text style={styles.listItem}>{item.content}</Text>
-                    ) : (
-                      <Image source={{ uri: item.content }} style={styles.entryImage} />
-                    )}
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
+            {status === "loading" ? (
+              <Text>Loading...</Text>
+            ) : status === "failed" ? (
+              <Text>Error: {error}</Text>
+            ) : (
+              <FlatList
+                data={journalEntries}
+                renderItem={({ item }) => (
+                  <View>
+                    <TouchableOpacity
+                      style={styles.entryContainer}
+                      onPress={() => handleEditEntry(item.id)}
+                    >
+                      {item.type === "text" ? (
+                        <Text style={styles.listItem}>{item.content}</Text>
+                      ) : (
+                        <Image
+                          source={{ uri: item.content }}
+                          style={styles.entryImage}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            )}
           </>
         )}
       </View>
@@ -157,93 +246,93 @@ const JournalEntryScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#E3F0F5",
     flex: 1,
     padding: 20,
-    backgroundColor: '#E3F0F5',
   },
   date: {
-    color: '#CB7723',
-    fontWeight: 'bold',
+    color: "#CB7723",
     fontSize: 14,
-    marginBottom: 40,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     marginBottom: 20,
   },
   entryContainer: {
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: "#E3F0F5",
+    borderColor: "#ccc",
     borderRadius: 5,
-    padding: 10,
-    backgroundColor: '#E3F0F5',
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 2,
   },
   deleteButton: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
   content: {
     flex: 1,
   },
   titleInput: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
     borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
     padding: 10,
-    backgroundColor: '#fff',
   },
-  title : {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+  title: {
+    backgroundColor: "#E3F0F5",
+    borderColor: "#ccc",
     borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
     padding: 10,
-    backgroundColor: '#E3F0F5',
   },
   entryInput: {
-    fontSize: 16,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
     borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 16,
+    height: 200,
+    marginBottom: 10,
     padding: 10,
-    backgroundColor: '#fff',
-    height: 400,
   },
   addButton: {
-    marginTop: 10,
-    backgroundColor: '#CB7723',
-    padding: 10,
+    alignItems: "center",
+    backgroundColor: "#CB7723",
     borderRadius: 5,
-    alignItems: 'center',
+    marginTop: 10,
+    padding: 10,
   },
   addButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
   listItem: {
     fontSize: 16,
     marginBottom: 5,
   },
   entryImage: {
-    width: '60%',
-    height: 100,
+    height: "100%",
     marginBottom: 10,
+    width: "60%",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 10,
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
     borderTopWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 10,
   },
 });
 

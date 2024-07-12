@@ -6,8 +6,15 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'name', 'user']
         read_only_fields = ['id', 'user']
+        
 
 class JournalEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JournalEntry
+        fields = ['id', 'title', 'content', 'created_at']
+        read_only_fields = ['created_at'] 
+
+class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='name',

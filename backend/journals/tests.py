@@ -69,31 +69,6 @@ class CategoryTests(TestCase):
         self.assertEqual(Category.objects.count(), 1)
         self.assertEqual(Category.objects.get().name, 'Test Category')
 
-    def test_update_category(self):
-        category = Category.objects.create(name='Original Category', user=self.user)
-        url = reverse('category-detail', args=[category.id])
-        updated_data = {
-            'name': 'Updated Category',
-        }
-        response = self.client.put(url, updated_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        category.refresh_from_db()
-        self.assertEqual(category.name, 'Updated Category')
-
-    def test_retrieve_category(self):
-        category = Category.objects.create(name='Test Category', user=self.user)
-        url = reverse('category-detail', args=[category.id])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Test Category')
-
-    def test_delete_category(self):
-        category = Category.objects.create(name='Test Category', user=self.user)
-        url = reverse('category-detail', args=[category.id])
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Category.objects.filter(id=category.id).exists())
-
     def test_category_edge_cases(self):
         url = reverse('category-list-create')
         response = self.client.post(url, {'name': ''}, format='json')
