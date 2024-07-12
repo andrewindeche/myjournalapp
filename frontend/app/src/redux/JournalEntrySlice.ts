@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import instance from '../redux/axiosInstance';
+import instance, { setAuthToken } from '../redux/axiosInstance';
 import { RootState } from "./store";
 import { logout } from '../redux/authSlice';
 
@@ -36,45 +36,51 @@ const initialState: JournalState = {
 
 export const fetchJournalEntries = createAsyncThunk(
   'journal/fetchJournalEntries',
-  async (_, { rejectWithValue }) => {
+  async (_, {  getState,rejectWithValue }) => {
+    const state = getState() as RootState;
+    const token = state.auth.token;
+    setAuthToken(token);
   try {
     const response = await instance.get('/entries/');
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
-      return rejectWithValue('Unauthorized. Please log in again.');
-    }
-    return rejectWithValue('Failed to fetch journal entries.');
+      return rejectWithValue('Unauthorized. Failed to fetch journal entries.');
+      }
     }
   }
 );
 
 export const fetchCategories = createAsyncThunk(
   'journal/fetchCategories',
-  async (_, { rejectWithValue }) => {
+  async (_, { getState,rejectWithValue }) => {
+    const state = getState() as RootState;
+    const token = state.auth.token;
+    setAuthToken(token);
     try {
     const response = await instance.get('/categories/');
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
-      return rejectWithValue('Unauthorized. Please log in again.');
+      return rejectWithValue('Unauthorized. Failed to fetch categories.');
     }
-    return rejectWithValue('Failed to fetch categories.');
   }
  }
 );
 
 export const createJournalEntry = createAsyncThunk(
   'journal/createJournalEntry',
-  async (newEntry: Omit<JournalEntry, 'id' | 'created_at'>, { rejectWithValue }) => {
+  async (newEntry: Omit<JournalEntry, 'id' | 'created_at'>, { getState,rejectWithValue }) => {
+    const state = getState() as RootState;
+    const token = state.auth.token;
+    setAuthToken(token);
     try {
     const response = await instance.post('/entries/', newEntry);
     return response.data;
   }catch (error: any) {
     if (error.response && error.response.status === 401) {
-      return rejectWithValue('Unauthorized. Please log in again.');
+      return rejectWithValue('Unauthorized. Error creating new entry.');
     }
-    return rejectWithValue('Failed to create journal entry.');
   }
  }
 );
@@ -99,7 +105,7 @@ const journalEntriesSlice = createSlice({
       .addCase(fetchJournalEntries.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-        if (state.error === 'Unauthorized. Please log in again.') {
+        if (state.error === 'Unauthorized. Error fetching Journals.') {
           logout();
         }
       })
@@ -113,7 +119,7 @@ const journalEntriesSlice = createSlice({
       .addCase(fetchCategories.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-        if (state.error === 'Unauthorized. Please log in again.') {
+        if (state.error === 'Unauthorized. Error fetching categories.') {
           logout();
         }
       })
@@ -123,7 +129,7 @@ const journalEntriesSlice = createSlice({
       .addCase(createJournalEntry.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-        if (state.error === 'Unauthorized. Please log in again.') {
+        if (state.error === 'Unauthorized. Error Creating Entries.') {
           logout();
         }
       });
