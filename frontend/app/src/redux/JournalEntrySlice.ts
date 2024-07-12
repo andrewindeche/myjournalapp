@@ -36,12 +36,12 @@ const initialState: JournalState = {
 
 export const fetchJournalEntries = createAsyncThunk(
   'journal/fetchJournalEntries',
-  async (_, {  getState,rejectWithValue }) => {
+  async (_id:number ,{  getState,rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
   try {
-    const response = await instance.get('/entries/');
+    const response = await instance.get('entries-update/${id}');
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -53,12 +53,12 @@ export const fetchJournalEntries = createAsyncThunk(
 
 export const fetchCategories = createAsyncThunk(
   'journal/fetchCategories',
-  async (_, { getState,rejectWithValue }) => {
+  async (_id:number, { getState,rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
     try {
-    const response = await instance.get('/categories/');
+    const response = await instance.get('categories-view/${id}/');
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
@@ -75,7 +75,7 @@ export const createJournalEntry = createAsyncThunk(
     const token = state.auth.token;
     setAuthToken(token);
     try {
-    const response = await instance.post('/entries/', newEntry);
+    const response = await instance.post('entries-create/', newEntry);
     return response.data;
   }catch (error: any) {
     if (error.response && error.response.status === 401) {

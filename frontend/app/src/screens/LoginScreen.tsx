@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +22,12 @@ const LoginScreen: React.FC = () => {
       }
     });
   };
+
+  useEffect(() => {
+    if (status === 'succeeded') {
+      navigation.navigate('JournalEntry');
+    }
+  }, [status, navigation]);
 
   return (
     <>
