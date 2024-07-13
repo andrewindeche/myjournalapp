@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser, setEmail, setFullName, setConfirmPassword, setPassword, reset } from '../redux/RegistrationSlice';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { AppDispatch,RootState } from '../redux/store';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 const RegistrationScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
-  const { username, email, password, confirm_password ,status, error } = useSelector((state: RootState) => state.registration);
+  const { username, email, password, confirm_password ,status, successMessage, error } = useSelector((state: RootState) => state.registration);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUpPress = () => {
@@ -18,9 +18,12 @@ const RegistrationScreen: React.FC = () => {
       .then(() => {
         if (status === 'succeeded') {
           navigation.navigate('Login');
+          dispatch(reset());
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        dispatch(reset());
+      });
   };
   
   return (
@@ -74,19 +77,20 @@ const RegistrationScreen: React.FC = () => {
         <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
       </Pressable>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
+      <Pressable style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
+      </Pressable>
+      <Pressable style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
         <Text>Already have an Account?</Text>
         <Text style={styles.signInText}>Log In</Text>
-      </TouchableOpacity>
+      </Pressable>
       </View>
       </View>
     </View>
     {error && (
       <Text style={styles.errorText}>{error}</Text>
     )}
+    {successMessage && <Text style={styles.successText}>{successMessage}</Text>}
     </>
   );
 };
@@ -177,6 +181,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     alignItems: 'center',
+  },
+  successText: {
+    color: 'green',
+    textAlign: 'center',
+    marginVertical: 10,
   },
   subtitle: {
     fontSize: 10,

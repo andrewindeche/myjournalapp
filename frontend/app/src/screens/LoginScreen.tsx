@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { setUsername, setPassword, loginUser } from '../redux/LoginSlice';
+import { setUsername, setPassword, loginUser, reset } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -13,14 +13,19 @@ const LoginScreen: React.FC = () => {
 
   const handleSignUpPress = () => {
     navigation.navigate('Register');
+    dispatch(reset());
   };
 
   const handleSignInPress = () => {
-    dispatch(loginUser({ username, password })).then(() => {
-      if (status === 'succeeded') {
-        navigation.navigate('JournalEntry');
-      }
-    });
+    dispatch(loginUser({ username, password }))
+      .unwrap()
+      .then(() => {
+        dispatch(reset());
+        navigation.navigate('JournalEntry'); 
+      })
+      .catch(() => {
+        dispatch(reset());
+      });
   };
 
   useEffect(() => {
@@ -57,13 +62,13 @@ const LoginScreen: React.FC = () => {
       />
       </View>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.signInButton}>
+      <Pressable style={styles.signInButton}>
         <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.newUser} onPress={handleSignUpPress}>
+      </Pressable>
+      <Pressable style={styles.newUser} onPress={handleSignUpPress}>
         <Text>I'm a new user</Text>
         <Text style={styles.signUpText}>Sign up</Text>
-      </TouchableOpacity>
+      </Pressable>
       </View>
     </View>
     {error && <Text style={styles.errorText}>{error}</Text>}

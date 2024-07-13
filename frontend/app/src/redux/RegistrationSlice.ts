@@ -8,6 +8,7 @@ interface RegistrationState {
     confirm_password: string;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
+    successMessage: string | null; 
   }
 
   const initialState: RegistrationState = {
@@ -17,6 +18,7 @@ interface RegistrationState {
     confirm_password: '',
     status: 'idle',
     error: null,
+    successMessage : null,
   };
 
   export const registerUser = createAsyncThunk(
@@ -61,7 +63,6 @@ interface RegistrationState {
         state.password = '';
         state.confirm_password = '';
         state.status = 'idle';
-        state.error = null;
       },
     },
     extraReducers: (builder) => {
@@ -69,14 +70,17 @@ interface RegistrationState {
           .addCase(registerUser.pending, (state) => {
             state.status = 'loading';
             state.error = null;
+            state.successMessage = null;
           })
           .addCase(registerUser.fulfilled, (state) => {
             state.status = 'succeeded';
             state.error = null;
+            state.successMessage = "Successfully created account."; 
           })
           .addCase(registerUser.rejected, (state, action) => {
             state.status = 'failed';
             state.error = action.payload as string;
+            state.successMessage = null;
           });
       },
     });

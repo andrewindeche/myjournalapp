@@ -24,7 +24,8 @@ export const loginUser = createAsyncThunk(
         username,
         password,
       });
-      dispatch(setToken(response.data.token));
+      const token = response.data.access;
+      dispatch(setToken(token));
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -53,6 +54,12 @@ const loginSlice = createSlice({
       state.status = 'idle';
       state.error = null;
     },
+
+    reset: (state) => {
+      state.username = '';
+      state.password = '';
+      state.status = 'idle';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -71,6 +78,6 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setUsername, setPassword, logout } = loginSlice.actions;
+export const { setUsername, setPassword, logout, reset } = loginSlice.actions;
 
 export default loginSlice.reducer;
