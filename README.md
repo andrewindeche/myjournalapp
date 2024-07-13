@@ -13,7 +13,7 @@
 | 9.Circleci | CI/Cd Pipeline| [continuous integration];[continuous delivery];|
 
 ## <h1> Description</h1>
-<p>The aim of the project is to build a journaling app using React Native for frontend and Python Django web for backend </p>
+<p>The aim of the project is to build a journaling app using React Native for frontend and Python Django for backend </p>
 <p>The project enables Users should be able to write journal entries, categorize them, and view a summary of their entries.</p>
 
 ## <h1> Set up Instructions</h1>
@@ -77,7 +77,7 @@ docker compose up --build
 
 and expo server 
 
-<b>http://localhost:8081</b</li>
+<b>http://localhost:8081</b></li>
 
 
 <p><b>Django</b></p>
