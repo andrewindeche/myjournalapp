@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { setUsername, setPassword, loginUser } from '../redux/LoginSlice';
+import { setUsername, setPassword, loginUser, reset } from '../redux/LoginSlice';
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -13,14 +13,19 @@ const LoginScreen: React.FC = () => {
 
   const handleSignUpPress = () => {
     navigation.navigate('Register');
+    dispatch(reset());
   };
 
   const handleSignInPress = () => {
-    dispatch(loginUser({ username, password })).then(() => {
-      if (status === 'succeeded') {
-        navigation.navigate('JournalEntry');
-      }
-    });
+    dispatch(loginUser({ username, password }))
+      .unwrap()
+      .then(() => {
+        dispatch(reset());
+        navigation.navigate('JournalEntry'); 
+      })
+      .catch(() => {
+        dispatch(reset());
+      });
   };
 
   useEffect(() => {

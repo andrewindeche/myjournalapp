@@ -54,6 +54,12 @@ const loginSlice = createSlice({
       state.status = 'idle';
       state.error = null;
     },
+
+    reset: (state) => {
+      state.username = '';
+      state.password = '';
+      state.status = 'idle';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,6 +78,6 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setUsername, setPassword, logout } = loginSlice.actions;
+export const { setUsername, setPassword, logout, reset } = loginSlice.actions;
 
 export default loginSlice.reducer;

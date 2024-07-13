@@ -63,8 +63,6 @@ interface RegistrationState {
         state.password = '';
         state.confirm_password = '';
         state.status = 'idle';
-        state.error = null;
-        state.successMessage = null; 
       },
     },
     extraReducers: (builder) => {

@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser, setEmail, setFullName, setConfirmPassword, setPassword } from '../redux/RegistrationSlice';
+import { registerUser, setEmail, setFullName, setConfirmPassword, setPassword, reset } from '../redux/RegistrationSlice';
 import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { AppDispatch,RootState } from '../redux/store';
@@ -18,9 +18,12 @@ const RegistrationScreen: React.FC = () => {
       .then(() => {
         if (status === 'succeeded') {
           navigation.navigate('Login');
+          dispatch(reset());
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        dispatch(reset());
+      });
   };
   
   return (
