@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   Image,
   FlatList,
   Alert,
@@ -155,17 +155,15 @@ const JournalEntryScreen: React.FC = () => {
   const handleDeleteAll = () => {
     setJournalEntries([]);
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleToggleMenu}>
+        <Pressable onPress={handleToggleMenu}>
           <Icon name="menu" size={24} color="black" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
       {showMenu && <Menu onClose={handleToggleMenu} />}
       <View style={styles.content}>
-        <Text style={styles.date}>{new Date().toDateString()}</Text>
         {editMode ? (
           <>
             <TextInput
@@ -188,11 +186,10 @@ const JournalEntryScreen: React.FC = () => {
                 placeholder="Enter new category"
                 onChangeText={(text) => setNewCategory(text)}
               />
-              <TouchableOpacity onPress={handleAddCategory}></TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleAddEntry} style={styles.addButton}>
+            <Pressable onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
-            </TouchableOpacity>
+            </Pressable>
           </>
         ) : (
           <>
@@ -205,40 +202,45 @@ const JournalEntryScreen: React.FC = () => {
               <FlatList
                 data={journalEntries}
                 renderItem={({ item }) => (
-                  <View>
-                    <TouchableOpacity
-                      style={styles.entryContainer}
-                      onPress={() => handleEditEntry(item.id)}
-                    >
-                      {item.type === "text" ? (
+                  <Pressable
+                    style={styles.entryContainer}
+                    onPress={() => handleEditEntry(item.id)}
+                  >
+                    {item.type === "text" ? (
+                      <>
                         <Text style={styles.listItem}>{item.content}</Text>
-                      ) : (
+                        <Text style={styles.date}>{new Date(item.created_at).toDateString()}</Text>
+                      </>
+                    ) : (
+                      <>
                         <Image
                           source={{ uri: item.content }}
                           style={styles.entryImage}
                         />
-                      )}
-                    </TouchableOpacity>
-                  </View>
+                        <Text style={styles.date}>{new Date(item.created_at).toDateString()}</Text>
+                      </>
+                    )}
+                  </Pressable>
                 )}
+                keyExtractor={(item) => item.id}
               />
             )}
           </>
         )}
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setEditMode(!editMode)}>
-          <Icon name="pencil" size={28} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleDeleteAll}>
-          <Icon name="trash-bin" size={28} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleImageUpload}>
-          <Icon name="add-circle" size={28} color="black" />
-        </TouchableOpacity>
+        <Pressable onPress={handleTakePhoto}>
+          <Icon name="camera" size={28} color="black" style={{ userSelect: "none" }} />
+        </Pressable>
+        <Pressable onPress={() => setEditMode(!editMode)}>
+          <Icon name="pencil" size={28} color="black" style={{ userSelect: "none" }} />
+        </Pressable>
+        <Pressable onPress={handleDeleteAll}>
+          <Icon name="trash-bin" size={28} color="black" style={{ userSelect: "none" }} />
+        </Pressable>
+        <Pressable onPress={handleImageUpload}>
+          <Icon name="add-circle" size={28} color="black" style={{ userSelect: "none" }} />
+        </Pressable>
       </View>
     </View>
   );

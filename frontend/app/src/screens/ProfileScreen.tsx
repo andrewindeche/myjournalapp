@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Image, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchProfileInfo, updateProfileImage, updatePassword, updateUsername } from '../redux/ProfileSlice';
@@ -62,9 +62,9 @@ const ProfileScreen: React.FC = () => {
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
         <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-          <TouchableOpacity onPress={handleProfileImageChange}>
+          <Pressable onPress={handleProfileImageChange}>
             <Image source={{ uri: profileImage }} style={styles.avatar} />
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <View style={{ alignItems: 'center', padding: 16 }}>
           <Text style={styles.label}>Name: {username}</Text>
@@ -74,16 +74,16 @@ const ProfileScreen: React.FC = () => {
       <View style={styles.innerContainer}>
         <Text style={styles.label}>Change Profile Image</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
-          <TouchableOpacity style={styles.button}>
+          <Pressable style={styles.button}>
             <input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files[0])} />
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.uploadButton]} onPress={handleProfileImageChange}>
+          </Pressable>
+          <Pressable style={[styles.button, styles.uploadButton]} onPress={handleProfileImageChange}>
             <Text style={styles.buttonText}>Upload</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
-        <TouchableOpacity onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <Text style={styles.label}>Password</Text>
         <TextInput
@@ -107,9 +107,9 @@ const ProfileScreen: React.FC = () => {
           onChangeText={setConfirmNewPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

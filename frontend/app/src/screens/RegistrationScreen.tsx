@@ -74,13 +74,13 @@ const RegistrationScreen: React.FC = () => {
         <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
       </Pressable>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
+      <Pressable style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
+      </Pressable>
+      <Pressable style={styles.registeredUser} onPress={() => navigation.navigate('Login')}>
         <Text>Already have an Account?</Text>
         <Text style={styles.signInText}>Log In</Text>
-      </TouchableOpacity>
+      </Pressable>
       </View>
       </View>
     </View>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, FlatList, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const SummaryScreen: React.FC = () => {
@@ -45,20 +45,20 @@ const SummaryScreen: React.FC = () => {
           <Image source={{ uri: 'https://example.com/profile.jpg' }} style={styles.profileImage} />
           <Text style={styles.greetingText}>Hi, Andrew</Text>
         </View>
-        <TouchableOpacity>
+        <Pressable>
           <Icon name="menu" size={24} color="white" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
       <Text style={styles.title}>My Notes</Text>
       <View style={styles.categoryContainer}>
         {categories.map((category) => (
-          <TouchableOpacity
+          <Pressable
             key={category}
             style={[styles.categoryButton, selectedCategory === category && styles.selectedCategoryButton]}
             onPress={() => setSelectedCategory(category)}
           >
             <Text style={styles.categoryText}>{category}</Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
       <FlatList

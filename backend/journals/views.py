@@ -1,5 +1,8 @@
 from rest_framework import generics, permissions
 from .models import JournalEntry, Category
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from .serializers import  JournalEntrySerializer, CategorySerializer
 
 class CategoryListCreateView(generics.ListCreateAPIView):
@@ -61,3 +64,14 @@ class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
             serializer.save(category=category)
         else:
             serializer.save()
+            
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def most_recent_entry(request):
+    user = request.user
+    most_recent_entry = JournalEntry.objects.filter(user=user, most_recent_entry=True).first()
+    if most_recent_entry:
+        serializer = JournalEntrySerializer(most_recent_entry)
+        return Response(serializer.data)
+    else:
+        return Response({'error': 'No recent entry found'}, status=404)

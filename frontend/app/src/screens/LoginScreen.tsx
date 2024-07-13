@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
@@ -57,13 +57,13 @@ const LoginScreen: React.FC = () => {
       />
       </View>
       <View style={styles.footer}>
-      <TouchableOpacity style={styles.signInButton}>
+      <Pressable style={styles.signInButton}>
         <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.newUser} onPress={handleSignUpPress}>
+      </Pressable>
+      <Pressable style={styles.newUser} onPress={handleSignUpPress}>
         <Text>I'm a new user</Text>
         <Text style={styles.signUpText}>Sign up</Text>
-      </TouchableOpacity>
+      </Pressable>
       </View>
     </View>
     {error && <Text style={styles.errorText}>{error}</Text>}
