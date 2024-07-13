@@ -41,7 +41,6 @@ export const fetchJournalEntries = createAsyncThunk(
   async (_, { getState, dispatch, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
-    console.log("FetchJournalsToken:", token);
     setAuthToken(token);
     try {
       const mostRecentEntry = await dispatch(fetchMostRecentEntry()).unwrap();

@@ -24,7 +24,8 @@ export const loginUser = createAsyncThunk(
         username,
         password,
       });
-      dispatch(setToken(response.data.token));
+      const token = response.data.access;
+      dispatch(setToken(token));
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {

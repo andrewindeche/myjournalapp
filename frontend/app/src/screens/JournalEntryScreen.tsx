@@ -53,6 +53,11 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log("Journal Entries:", journalEntries);
+    console.log("Categories:", categories);
+  }, [journalEntries, categories]);
+
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
@@ -74,24 +79,7 @@ const JournalEntryScreen: React.FC = () => {
       }
     });
   };
-
-  const handleAddCategory = () => {
-    if (newCategory.trim() === "") {
-      Alert.alert("Category name cannot be empty");
-      return;
-    }
-    const id = categories.length + 1;
-    dispatch(
-      addCategory({
-        id,
-        name: newCategory,
-        entries: [],
-      }),
-    );
-    setNewCategory("");
-    Alert.alert("Category added successfully");
-  };
-
+  
   const handleTakePhoto = () => {
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {

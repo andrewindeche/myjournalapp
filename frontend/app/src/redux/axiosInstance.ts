@@ -20,7 +20,6 @@ export const setAuthToken = (token: string | null) => {
 instance.interceptors.request.use(
   (config) => {
     const token = store.getState().auth.token;
-    console.log("Axios-Token:", token); 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

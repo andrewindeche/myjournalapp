@@ -4,6 +4,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import  JournalEntrySerializer, CategorySerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -69,9 +72,10 @@ class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
 @permission_classes([IsAuthenticated])
 def most_recent_entry(request):
     user = request.user
-    most_recent_entry = JournalEntry.objects.filter(user=user, most_recent_entry=True).first()
+    most_recent_entry = JournalEntry.objects.filter(user=user).order_by('-created_at').first()
     if most_recent_entry:
         serializer = JournalEntrySerializer(most_recent_entry)
         return Response(serializer.data)
     else:
+        logger.warning(f"No recent entry found for user: {user}")
         return Response({'error': 'No recent entry found'}, status=404)

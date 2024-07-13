@@ -45,7 +45,6 @@ interface ProfileState {
     async (formData, { rejectWithValue, getState }) => {
       const state: RootState = getState() as RootState;
       const token = state.login.token;
-      console.log('Updating profile image with token:', token);
       try {
         const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/profile-image/', formData, {
         headers: {
@@ -65,7 +64,6 @@ interface ProfileState {
     async (newUsername: string, { rejectWithValue, getState }) => {
       const state: RootState = getState() as RootState;
       const token = state.login.token;
-      console.log('Updating profile image with token:', token);
       try {
         const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername }, {
           headers: {
@@ -84,7 +82,6 @@ interface ProfileState {
 async ({ old_password, new_password }, { rejectWithValue, getState }) => {
   const state: RootState = getState() as RootState;
   const token = state.login.token;
-  console.log('Updating profile image with token:', token);
   try {
     const response = await axios.put('http://127.0.0.1:8000/api/password-change/', { old_password, new_password }, {
         headers: {
