@@ -162,33 +162,29 @@ npx react-native start
 
 <p><b>http://localhost:8081/api/register/</b></p>
 
-3. Bio update:
-
-<p><b>http://localhost:8081/api/profile/update/bio/</b></p>
-
 4. Profile Image Update:
 
-<p><b>http://localhost:8081/api/profile/update/profile-image/</b></p>
+<p><b>http://localhost:8081/api/update/profile-image/</b></p>
 
 5.Password change:
 
-<p><b>http://localhost:8081/api/profile/update/password-change/</b></p>
+<p><b>http://localhost:8081/api/password-change/</b></p>
 
 6. Create journal entries:
 
-<p><b>http://localhost:8081/api/entries/create/</b></p>
+<p><b>http://localhost:8081/api/entries/entries-create/</b></p>
 
 7. Retrieve, update or delete journal entries:
 
-<p><b>http://localhost:8081/api/entries/<int:pk>/edit/ </b></p>
+<p><b>http://localhost:8081/api/entries-update/<int:pk>/</b></p>
 
 8. Create categories:
 
-<p><b>http://localhost:8081/api/entries/create/</b></p>
+<p><b>http://localhost:8081/api/entries/categories-create/</b></p>
 
 9. Retrieve, update or delete categories:
 
-<p><b>http://localhost:8081/api/categories/<int:pk>/edit/</b></p>
+<p><b>http://localhost:8081/api/categories-create/<int:pk>/edit/</b></p>
 
 ## <h1> Author </h1>
 Built by <b>Andrew Indeche</b>
