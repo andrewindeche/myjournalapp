@@ -15,12 +15,6 @@ class JournalEntry(models.Model):
     content = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    most_recent_entry = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        if self.most_recent_entry:
-            JournalEntry.objects.filter(user=self.user, most_recent_entry=True).update(most_recent_entry=False)
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

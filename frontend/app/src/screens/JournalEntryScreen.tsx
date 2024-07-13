@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
-  addCategory,
   fetchJournalEntries,
   fetchCategories,
   createJournalEntry,
@@ -52,11 +51,6 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
-
-  useEffect(() => {
-    console.log("Journal Entries:", journalEntries);
-    console.log("Categories:", categories);
-  }, [journalEntries, categories]);
 
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
@@ -143,6 +137,8 @@ const JournalEntryScreen: React.FC = () => {
   const handleDeleteAll = () => {
     setJournalEntries([]);
   };
+
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>

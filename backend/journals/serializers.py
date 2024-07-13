@@ -12,7 +12,6 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = JournalEntry
         fields = ['id', 'title', 'content', 'created_at']
-        read_only_fields = ['created_at'] 
 
 class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
