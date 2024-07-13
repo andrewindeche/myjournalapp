@@ -73,7 +73,7 @@ docker compose up --build
 
 9. Access the Django development server on:
 
-http://localhost:8000/</b> 
+<b>http://localhost:8000/</b> 
 
 and expo server 
 
