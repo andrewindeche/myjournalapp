@@ -36,9 +36,10 @@ interface JournalEntry {
 
 const JournalEntryScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const { journalEntries, categories, status, error } = useSelector(
+  const { journalEntries, status, error } = useSelector(
     (state: RootState) => state.entries,
   );
+  const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -51,6 +52,12 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (journalEntries.length > 0) {
+      setCurrentEntry(journalEntries[journalEntries.length - 1]); 
+    }
+  }, [journalEntries]);
 
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
@@ -104,18 +111,12 @@ const JournalEntryScreen: React.FC = () => {
         title: title,
         category: selectedCategory || "",
       };
-      if (editEntryId !== null) {
-        setEditEntryId(null);
-      } else {
-        dispatch(createJournalEntry(newEntry));
-      }
+      dispatch(createJournalEntry(newEntry));
+      setCurrentEntry(newEntry);
       setInputText("");
       setEditMode(false);
     } else {
-      Alert.alert(
-        "Input Text is empty",
-        "Please add some text or image before saving.",
-      );
+      Alert.alert("Input Text is empty", "Please add some text before saving.");
     }
   };
 
@@ -137,12 +138,6 @@ const JournalEntryScreen: React.FC = () => {
   const handleDeleteAll = () => {
     setJournalEntries([]);
   };
-
-  const mostRecentEntry = journalEntries.length > 0
-    ? journalEntries.reduce((latest, entry) => {
-      return new Date(latest.created_at) > new Date(entry.created_at) ? latest : entry;
-    }, journalEntries[0])
-    : null;
 
   return (
     <View style={styles.container}>
@@ -168,35 +163,49 @@ const JournalEntryScreen: React.FC = () => {
               value={inputText}
               onChangeText={(text) => setInputText(text)}
             />
-            <View style={styles.container}>
-              <TextInput
-                style={styles.entryInput}
-                value={newCategory}
-                placeholder="Enter new category"
-                onChangeText={(text) => setNewCategory(text)}
-              />
-            </View>
+            <TextInput
+              style={styles.categoryInput}
+              value={newCategory}
+              placeholder="Enter new category"
+              onChangeText={(text) => setNewCategory(text)}
+            />
             <Pressable onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
             </Pressable>
           </>
         ) : (
-          mostRecentEntry && (
-            <>
-              <Text style={styles.date}>
-                {new Date(mostRecentEntry.created_at).toDateString()}
-              </Text>
-              <Text style={styles.title}>{mostRecentEntry.title}</Text>
-              {mostRecentEntry.type === "text" ? (
-                <Text style={styles.listItem}>{mostRecentEntry.content}</Text>
-              ) : (
-                <Image
-                  source={{ uri: mostRecentEntry.content }}
-                  style={styles.entryImage}
-                />
-              )}
-            </>
-          )
+          <>
+            {title ? <Text style={styles.title}>{title}</Text> : null}
+            {status === "loading" ? (
+              <Text>Loading...</Text>
+            ) : status === "failed" ? (
+              <Text>Error: {error}</Text>
+            ) : (
+              <FlatList
+                data={journalEntries}
+                renderItem={({ item }) => (
+                  <Pressable
+                    style={styles.entryContainer}
+                    onPress={() => handleEditEntry(item.id)}
+                  >
+                    <Text style={styles.date}>
+                      {new Date(item.created_at).toDateString()}
+                    </Text>
+                    <Text style={styles.title}>{item.title}</Text>
+                    {item.type === "text" ? (
+                      <Text style={styles.listItem}>{item.content}</Text>
+                    ) : (
+                      <Image
+                        source={{ uri: item.content }}
+                        style={styles.entryImage}
+                      />
+                    )}
+                  </Pressable>
+                )}
+                keyExtractor={(item) => item.id}
+              />
+            )}
+          </>
         )}
       </View>
       <View style={styles.footer}>
@@ -242,9 +251,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 2,
   },
-  deleteButton: {
-    marginLeft: "auto",
-  },
   content: {
     flex: 1,
   },
@@ -274,7 +280,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
-    height: 200,
+    height: 300,
+    marginBottom: 10,
+    padding: 10,
+  },
+  categoryInput: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 16,
+    height: 50,
     marginBottom: 10,
     padding: 10,
   },
