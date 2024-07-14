@@ -36,9 +36,10 @@ interface JournalEntry {
 
 const JournalEntryScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const { journalEntries, categories, status, error } = useSelector(
+  const { journalEntries, status, error } = useSelector(
     (state: RootState) => state.entries,
   );
+  const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -51,6 +52,12 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (journalEntries.length > 0) {
+      setCurrentEntry(journalEntries[journalEntries.length - 1]); 
+    }
+  }, [journalEntries]);
 
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
@@ -73,7 +80,7 @@ const JournalEntryScreen: React.FC = () => {
       }
     });
   };
-  
+
   const handleTakePhoto = () => {
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
@@ -104,18 +111,12 @@ const JournalEntryScreen: React.FC = () => {
         title: title,
         category: selectedCategory || "",
       };
-      if (editEntryId !== null) {
-        setEditEntryId(null);
-      } else {
-        dispatch(createJournalEntry(newEntry));
-      }
+      dispatch(createJournalEntry(newEntry));
+      setCurrentEntry(newEntry);
       setInputText("");
       setEditMode(false);
     } else {
-      Alert.alert(
-        "Input Text is empty",
-        "Please add some text or image before saving.",
-      );
+      Alert.alert("Input Text is empty", "Please add some text before saving.");
     }
   };
 
@@ -138,7 +139,6 @@ const JournalEntryScreen: React.FC = () => {
     setJournalEntries([]);
   };
 
-  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -163,14 +163,12 @@ const JournalEntryScreen: React.FC = () => {
               value={inputText}
               onChangeText={(text) => setInputText(text)}
             />
-            <View style={styles.container}>
-              <TextInput
-                style={styles.entryInput}
-                value={newCategory}
-                placeholder="Enter new category"
-                onChangeText={(text) => setNewCategory(text)}
-              />
-            </View>
+            <TextInput
+              style={styles.categoryInput}
+              value={newCategory}
+              placeholder="Enter new category"
+              onChangeText={(text) => setNewCategory(text)}
+            />
             <Pressable onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
             </Pressable>
@@ -190,19 +188,17 @@ const JournalEntryScreen: React.FC = () => {
                     style={styles.entryContainer}
                     onPress={() => handleEditEntry(item.id)}
                   >
+                    <Text style={styles.date}>
+                      {new Date(item.created_at).toDateString()}
+                    </Text>
+                    <Text style={styles.title}>{item.title}</Text>
                     {item.type === "text" ? (
-                      <>
-                        <Text style={styles.listItem}>{item.content}</Text>
-                        <Text style={styles.date}>{new Date(item.created_at).toDateString()}</Text>
-                      </>
+                      <Text style={styles.listItem}>{item.content}</Text>
                     ) : (
-                      <>
-                        <Image
-                          source={{ uri: item.content }}
-                          style={styles.entryImage}
-                        />
-                        <Text style={styles.date}>{new Date(item.created_at).toDateString()}</Text>
-                      </>
+                      <Image
+                        source={{ uri: item.content }}
+                        style={styles.entryImage}
+                      />
                     )}
                   </Pressable>
                 )}
@@ -214,16 +210,16 @@ const JournalEntryScreen: React.FC = () => {
       </View>
       <View style={styles.footer}>
         <Pressable onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon name="camera" size={28} color="black" />
         </Pressable>
         <Pressable onPress={() => setEditMode(!editMode)}>
-          <Icon name="pencil" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon name="pencil" size={28} color="black" />
         </Pressable>
         <Pressable onPress={handleDeleteAll}>
-          <Icon name="trash-bin" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <Pressable onPress={handleImageUpload}>
-          <Icon name="add-circle" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon name="add-circle" size={28} color="black" />
         </Pressable>
       </View>
     </View>
@@ -255,9 +251,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 2,
   },
-  deleteButton: {
-    marginLeft: "auto",
-  },
   content: {
     flex: 1,
   },
@@ -287,7 +280,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
-    height: 200,
+    height: 300,
+    marginBottom: 10,
+    padding: 10,
+  },
+  categoryInput: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 16,
+    height: 50,
     marginBottom: 10,
     padding: 10,
   },
