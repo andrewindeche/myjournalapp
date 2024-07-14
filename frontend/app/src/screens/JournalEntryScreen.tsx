@@ -138,6 +138,12 @@ const JournalEntryScreen: React.FC = () => {
     setJournalEntries([]);
   };
 
+  const mostRecentEntry = journalEntries.length > 0
+    ? journalEntries.reduce((latest, entry) => {
+      return new Date(latest.created_at) > new Date(entry.created_at) ? latest : entry;
+    }, journalEntries[0])
+    : null;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -175,78 +181,36 @@ const JournalEntryScreen: React.FC = () => {
             </Pressable>
           </>
         ) : (
-          <>
-            {title ? <Text style={styles.title}>{title}</Text> : null}
-            {status === "loading" ? (
-              <Text>Loading...</Text>
-            ) : status === "failed" ? (
-              <Text>Error: {error}</Text>
-            ) : (
-              <FlatList
-                data={journalEntries}
-                renderItem={({ item }) => (
-                  <Pressable
-                    style={styles.entryContainer}
-                    onPress={() => handleEditEntry(item.id)}
-                  >
-                    {item.type === "text" ? (
-                      <>
-                        <Text style={styles.listItem}>{item.content}</Text>
-                        <Text style={styles.date}>
-                          {new Date(item.created_at).toDateString()}
-                        </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Image
-                          source={{ uri: item.content }}
-                          style={styles.entryImage}
-                        />
-                        <Text style={styles.date}>
-                          {new Date(item.created_at).toDateString()}
-                        </Text>
-                      </>
-                    )}
-                  </Pressable>
-                )}
-                keyExtractor={(item) => item.id}
-              />
-            )}
-          </>
+          mostRecentEntry && (
+            <>
+              <Text style={styles.date}>
+                {new Date(mostRecentEntry.created_at).toDateString()}
+              </Text>
+              <Text style={styles.title}>{mostRecentEntry.title}</Text>
+              {mostRecentEntry.type === "text" ? (
+                <Text style={styles.listItem}>{mostRecentEntry.content}</Text>
+              ) : (
+                <Image
+                  source={{ uri: mostRecentEntry.content }}
+                  style={styles.entryImage}
+                />
+              )}
+            </>
+          )
         )}
       </View>
       <View style={styles.footer}>
         <Pressable onPress={handleTakePhoto}>
-          <Icon
-            name="camera"
-            size={28}
-            color="black"
-            style={{ userSelect: "none" }}
-          />
+          <Icon name="camera" size={28} color="black" />
         </Pressable>
         <Pressable onPress={() => setEditMode(!editMode)}>
-          <Icon
-            name="pencil"
-            size={28}
-            color="black"
-            style={{ userSelect: "none" }}
-          />
+          <Icon name="pencil" size={28} color="black" />
         </Pressable>
         <Pressable onPress={handleDeleteAll}>
-          <Icon
-            name="trash-bin"
-            size={28}
-            color="black"
-            style={{ userSelect: "none" }}
-          />
+          <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <Pressable onPress={handleImageUpload}>
-          <Icon
-            name="add-circle"
-            size={28}
-            color="black"
-            style={{ userSelect: "none" }}
-          />
+          <Icon name="add-circle" size={28} color="black" />
         </Pressable>
       </View>
     </View>
