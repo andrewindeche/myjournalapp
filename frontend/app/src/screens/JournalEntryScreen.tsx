@@ -73,7 +73,7 @@ const JournalEntryScreen: React.FC = () => {
       }
     });
   };
-  
+
   const handleTakePhoto = () => {
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
@@ -138,7 +138,6 @@ const JournalEntryScreen: React.FC = () => {
     setJournalEntries([]);
   };
 
-  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -193,7 +192,9 @@ const JournalEntryScreen: React.FC = () => {
                     {item.type === "text" ? (
                       <>
                         <Text style={styles.listItem}>{item.content}</Text>
-                        <Text style={styles.date}>{new Date(item.created_at).toDateString()}</Text>
+                        <Text style={styles.date}>
+                          {new Date(item.created_at).toDateString()}
+                        </Text>
                       </>
                     ) : (
                       <>
@@ -201,7 +202,9 @@ const JournalEntryScreen: React.FC = () => {
                           source={{ uri: item.content }}
                           style={styles.entryImage}
                         />
-                        <Text style={styles.date}>{new Date(item.created_at).toDateString()}</Text>
+                        <Text style={styles.date}>
+                          {new Date(item.created_at).toDateString()}
+                        </Text>
                       </>
                     )}
                   </Pressable>
@@ -214,16 +217,36 @@ const JournalEntryScreen: React.FC = () => {
       </View>
       <View style={styles.footer}>
         <Pressable onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon
+            name="camera"
+            size={28}
+            color="black"
+            style={{ userSelect: "none" }}
+          />
         </Pressable>
         <Pressable onPress={() => setEditMode(!editMode)}>
-          <Icon name="pencil" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon
+            name="pencil"
+            size={28}
+            color="black"
+            style={{ userSelect: "none" }}
+          />
         </Pressable>
         <Pressable onPress={handleDeleteAll}>
-          <Icon name="trash-bin" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon
+            name="trash-bin"
+            size={28}
+            color="black"
+            style={{ userSelect: "none" }}
+          />
         </Pressable>
         <Pressable onPress={handleImageUpload}>
-          <Icon name="add-circle" size={28} color="black" style={{ userSelect: "none" }} />
+          <Icon
+            name="add-circle"
+            size={28}
+            color="black"
+            style={{ userSelect: "none" }}
+          />
         </Pressable>
       </View>
     </View>

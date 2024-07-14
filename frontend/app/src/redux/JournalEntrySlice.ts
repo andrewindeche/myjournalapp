@@ -38,15 +38,12 @@ const initialState: JournalState = {
 
 export const fetchJournalEntries = createAsyncThunk(
   "journal/fetchJournalEntries",
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
     try {
-      const mostRecentEntry = await dispatch(fetchMostRecentEntry()).unwrap();
-      const response = await instance.get(
-        `entries-update/${mostRecentEntry.id}`,
-      );
+      const response = await instance.get("entries-create/");
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -61,15 +58,12 @@ export const fetchJournalEntries = createAsyncThunk(
 
 export const fetchCategories = createAsyncThunk(
   "journal/fetchCategories",
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
     try {
-      const mostRecentEntry = await dispatch(fetchMostRecentEntry()).unwrap();
-      const response = await instance.get(
-        `categories-view/${mostRecentEntry.id}/`,
-      );
+      const response = await instance.get("categories-create/");
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -97,26 +91,6 @@ export const createJournalEntry = createAsyncThunk(
         return rejectWithValue("Unauthorized. Error creating new entry.");
       }
       return rejectWithValue("Error creating new entry.");
-    }
-  },
-);
-
-export const fetchMostRecentEntry = createAsyncThunk(
-  "journal/fetchMostRecentEntry",
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState() as RootState;
-    const token = state.auth.token;
-    setAuthToken(token);
-    try {
-      const response = await instance.get("most-recent-entry/");
-      return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue(
-          "Unauthorized. Failed to fetch most recent entry.",
-        );
-      }
-      return rejectWithValue("Failed to fetch most recent entry.");
     }
   },
 );
@@ -181,25 +155,6 @@ const journalEntriesSlice = createSlice({
           logout();
         }
       })
-      .addCase(fetchMostRecentEntry.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchMostRecentEntry.fulfilled,
-        (state, action: PayloadAction<JournalEntry>) => {
-          state.status = "succeeded";
-          state.mostRecentEntry = action.payload;
-        },
-      )
-      .addCase(fetchMostRecentEntry.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload as string;
-        if (
-          state.error === "Unauthorized. Failed to fetch most recent entry."
-        ) {
-          logout();
-        }
-      });
   },
 });
 
