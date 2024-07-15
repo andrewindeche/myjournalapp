@@ -113,6 +113,9 @@ const journalEntriesSlice = createSlice({
         (state, action: PayloadAction<JournalEntry[]>) => {
           state.status = "succeeded";
           state.journalEntries = action.payload;
+          if (action.payload.length > 0) {
+            state.mostRecentEntry = action.payload[action.payload.length - 1];
+          }
         },
       )
       .addCase(fetchJournalEntries.rejected, (state, action) => {
@@ -142,10 +145,8 @@ const journalEntriesSlice = createSlice({
       .addCase(
         createJournalEntry.fulfilled,
         (state, action: PayloadAction<JournalEntry>) => {
-          if (!state.journalEntries) {
-            state.journalEntries = [];
-          }
           state.journalEntries.push(action.payload);
+          state.mostRecentEntry = action.payload;
         },
       )
       .addCase(createJournalEntry.rejected, (state, action) => {

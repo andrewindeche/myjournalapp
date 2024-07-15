@@ -1,10 +1,8 @@
 from django.contrib import admin
 from .models import User
-from journals.models import JournalEntry
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
-admin.site.register(JournalEntry)
 
 class CustomUserAdmin(UserAdmin):
     model = User
