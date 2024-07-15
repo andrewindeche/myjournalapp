@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Pressable,
   Image,
-  FlatList,
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -14,6 +13,7 @@ import {
   fetchJournalEntries,
   fetchCategories,
   createJournalEntry,
+  updateJournalEntry,
 } from "../redux/JournalEntrySlice";
 import { RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,11 +36,8 @@ interface JournalEntry {
 
 const JournalEntryScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const { journalEntries, status, error } = useSelector(
+  const { journalEntries, mostRecentEntry } = useSelector(
     (state: RootState) => state.entries,
-  );
-  const mostRecentEntry = useSelector(
-    (state: RootState) => state.entries.mostRecentEntry,
   );
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
@@ -100,32 +97,39 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleAddEntry = () => {
-    if (inputText) {
+    if (inputText || newCategory) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
-        type: "text",
-        content: inputText,
-        title: title,
-        category: selectedCategory || "",
+        type: editEntryId ? mostRecentEntry.type : "text",
+        content: inputText || mostRecentEntry.content,
+        title: title || mostRecentEntry.title,
+        category: selectedCategory || newCategory,
       };
-      if (editEntryId !== null) {
+
+      if (editEntryId) {
+        dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
         setEditEntryId(null);
       } else {
         dispatch(createJournalEntry(newEntry));
       }
+
+      // Reset state
       setInputText("");
+      setTitle("");
+      setSelectedCategory(null);
+      setNewCategory("");
       setEditMode(false);
     } else {
       Alert.alert(
         "Input Text is empty",
-        "Please add some text or image before saving.",
+        "Please add some text or image before saving."
       );
     }
   };
 
   const handleEditEntry = (id: string) => {
-    const entryToEdit = mostRecentEntry;
+    const entryToEdit = journalEntries.find(entry => entry.id === id);
     if (entryToEdit) {
-      setInputText(entryToEdit.content);
+      setInputText(entryToEdit.content as string);
       setTitle(entryToEdit.title);
       setSelectedCategory(entryToEdit.category);
       setEditEntryId(id);
@@ -138,7 +142,7 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleDeleteAll = () => {
-    setJournalEntries([]);
+    // Implement delete all functionality if needed
   };
 
   return (
@@ -203,7 +207,7 @@ const JournalEntryScreen: React.FC = () => {
                 )}
               </Pressable>
             ) : (
-              <Text>No entries yet.</Text>
+              <Text>Add an Entry</Text>
             )}
           </>
         )}
@@ -308,7 +312,6 @@ const styles = StyleSheet.create({
   listItem: {
     fontSize: 16,
     marginBottom: 5,
-    height: 200
   },
   entryImage: {
     height: "100%",

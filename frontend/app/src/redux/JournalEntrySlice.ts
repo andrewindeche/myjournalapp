@@ -56,6 +56,27 @@ export const fetchJournalEntries = createAsyncThunk(
   },
 );
 
+export const updateJournalEntry = createAsyncThunk(
+  "journal/updateJournalEntry",
+  async (
+    updatedEntry: JournalEntry,
+    { getState, rejectWithValue }
+  ) => {
+    const state = getState() as RootState;
+    const token = state.auth.token;
+    setAuthToken(token);
+    try {
+      const response = await instance.put(`entries-create/${updatedEntry.id}/`, updatedEntry);
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue("Unauthorized. Error updating entry.");
+      }
+      return rejectWithValue("Error updating entry.");
+    }
+  }
+);
+
 export const fetchCategories = createAsyncThunk(
   "journal/fetchCategories",
   async (_, { getState, rejectWithValue }) => {
@@ -72,6 +93,24 @@ export const fetchCategories = createAsyncThunk(
       return rejectWithValue("Failed to fetch categories.");
     }
   },
+);
+
+export const deleteJournalEntry = createAsyncThunk(
+  "journal/deleteJournalEntry",
+  async (entryId: number, { getState, rejectWithValue }) => {
+    const state = getState() as RootState;
+    const token = state.auth.token;
+    setAuthToken(token);
+    try {
+      await instance.delete(`entries-create/${entryId}/`);
+      return entryId; 
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue("Unauthorized. Error deleting entry.");
+      }
+      return rejectWithValue("Error deleting entry.");
+    }
+  }
 );
 
 export const createJournalEntry = createAsyncThunk(
@@ -156,6 +195,39 @@ const journalEntriesSlice = createSlice({
           logout();
         }
       })
+      .addCase(
+        deleteJournalEntry.fulfilled,
+        (state, action: PayloadAction<number>) => {
+          state.journalEntries = state.journalEntries.filter(entry => entry.id !== action.payload);
+          if (state.mostRecentEntry?.id === action.payload) {
+            state.mostRecentEntry = null;
+          }
+        }
+      )
+      .addCase(deleteJournalEntry.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+        if (state.error === "Unauthorized. Error deleting entry.") {
+          logout();
+        }
+      })
+      .addCase(
+        updateJournalEntry.fulfilled,
+        (state, action: PayloadAction<JournalEntry>) => {
+          const index = state.journalEntries.findIndex(entry => entry.id === action.payload.id);
+          if (index !== -1) {
+            state.journalEntries[index] = action.payload;
+            state.mostRecentEntry = action.payload;
+          }
+        }
+      )
+      .addCase(updateJournalEntry.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+        if (state.error === "Unauthorized. Error updating entry.") {
+          logout();
+        }
+      });
   },
 });
 
