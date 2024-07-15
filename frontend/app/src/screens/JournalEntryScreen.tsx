@@ -27,8 +27,8 @@ import {
 
 interface JournalEntry {
   id: string;
-  type: "text" | "image";
-  content: string;
+  type?: "text" | "image";
+  content: unknown;
   title: string;
   category: string;
   created_at: string;
@@ -39,7 +39,9 @@ const JournalEntryScreen: React.FC = () => {
   const { journalEntries, status, error } = useSelector(
     (state: RootState) => state.entries,
   );
-  const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
+  const mostRecentEntry = useSelector(
+    (state: RootState) => state.entries.mostRecentEntry,
+  );
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -52,12 +54,6 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (journalEntries.length > 0) {
-      setCurrentEntry(journalEntries[journalEntries.length - 1]); 
-    }
-  }, [journalEntries]);
 
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
@@ -111,17 +107,23 @@ const JournalEntryScreen: React.FC = () => {
         title: title,
         category: selectedCategory || "",
       };
-      dispatch(createJournalEntry(newEntry));
-      setCurrentEntry(newEntry);
+      if (editEntryId !== null) {
+        setEditEntryId(null);
+      } else {
+        dispatch(createJournalEntry(newEntry));
+      }
       setInputText("");
       setEditMode(false);
     } else {
-      Alert.alert("Input Text is empty", "Please add some text before saving.");
+      Alert.alert(
+        "Input Text is empty",
+        "Please add some text or image before saving.",
+      );
     }
   };
 
   const handleEditEntry = (id: string) => {
-    const entryToEdit = journalEntries.find((entry) => entry.id === id);
+    const entryToEdit = mostRecentEntry;
     if (entryToEdit) {
       setInputText(entryToEdit.content);
       setTitle(entryToEdit.title);
@@ -175,35 +177,33 @@ const JournalEntryScreen: React.FC = () => {
           </>
         ) : (
           <>
-            {title ? <Text style={styles.title}>{title}</Text> : null}
-            {status === "loading" ? (
-              <Text>Loading...</Text>
-            ) : status === "failed" ? (
-              <Text>Error: {error}</Text>
-            ) : (
-              <FlatList
-                data={journalEntries}
-                renderItem={({ item }) => (
-                  <Pressable
-                    style={styles.entryContainer}
-                    onPress={() => handleEditEntry(item.id)}
-                  >
-                    <Text style={styles.date}>
-                      {new Date(item.created_at).toDateString()}
+            {mostRecentEntry ? (
+              <Pressable
+                style={styles.entryContainer}
+                onPress={() => handleEditEntry(mostRecentEntry.id)}
+              >
+                <Text style={styles.date}>
+                  {new Date(mostRecentEntry.created_at).toDateString()}
+                </Text>
+                <Text style={styles.title}>{mostRecentEntry.title}</Text>
+                {mostRecentEntry.type === "text" ? (
+                  <>
+                    <Text style={styles.listItem}>
+                      {mostRecentEntry.content}
                     </Text>
-                    <Text style={styles.title}>{item.title}</Text>
-                    {item.type === "text" ? (
-                      <Text style={styles.listItem}>{item.content}</Text>
-                    ) : (
-                      <Image
-                        source={{ uri: item.content }}
-                        style={styles.entryImage}
-                      />
-                    )}
-                  </Pressable>
+                    <Text style={styles.listItem}>
+                      {mostRecentEntry.category}
+                    </Text>
+                  </>
+                ) : (
+                  <Image
+                    source={{ uri: mostRecentEntry.content }}
+                    style={styles.entryImage}
+                  />
                 )}
-                keyExtractor={(item) => item.id}
-              />
+              </Pressable>
+            ) : (
+              <Text>No entries yet.</Text>
             )}
           </>
         )}
@@ -308,6 +308,7 @@ const styles = StyleSheet.create({
   listItem: {
     fontSize: 16,
     marginBottom: 5,
+    height: 200
   },
   entryImage: {
     height: "100%",

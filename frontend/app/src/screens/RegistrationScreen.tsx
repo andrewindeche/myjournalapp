@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser, setEmail, setFullName, setConfirmPassword, setPassword, reset } from '../redux/RegistrationSlice';
 import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
@@ -12,15 +12,16 @@ const RegistrationScreen: React.FC = () => {
   const { username, email, password, confirm_password ,status, successMessage, error } = useSelector((state: RootState) => state.registration);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
+  useEffect(() => {
+    if (status === 'succeeded') {
+      navigation.navigate('Login');
+      dispatch(reset());
+    }
+  }, [status, navigation, dispatch]);
+
   const handleSignUpPress = () => {
     dispatch(registerUser({ username, email, password, confirm_password }))
       .unwrap()
-      .then(() => {
-        if (status === 'succeeded') {
-          navigation.navigate('Login');
-          dispatch(reset());
-        }
-      })
       .catch(() => {
         dispatch(reset());
       });
@@ -44,14 +45,13 @@ const RegistrationScreen: React.FC = () => {
         onChangeText={(text) => dispatch(setFullName(text))}
         value={username}
       />
-      {username.includes(' ') && <FontAwesome name="check" size={20} color="green" />}
+      <Text>{username.includes(' ') && <FontAwesome name="check" size={20} color="green" />}</Text>
     <Text style={styles.label}>Email Address</Text>
     <TextInput
         style={styles.input}
         placeholder="Email Address"
         onChangeText={(text) => dispatch(setEmail(text))}
         value={email}
-        {.../\S+@\S+\.\S+/.test(email) && <FontAwesome name="check" size={20} color="green" />}
       />
     <Text style={styles.label}>Password</Text>
     <TextInput
@@ -73,9 +73,6 @@ const RegistrationScreen: React.FC = () => {
               />
             </>
           )}
-       <Pressable onPress={() => setPasswordVisible(!passwordVisible)}>
-        <FontAwesome name={passwordVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
-      </Pressable>
       <View style={styles.footer}>
       <Pressable style={styles.signUpButton} onPress={handleSignUpPress} disabled={status === 'loading'}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
@@ -116,6 +113,7 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginVertical: 10,
+    marginTop: 30,
   },
   innerContainer: {
     backgroundColor: 'white',
@@ -130,6 +128,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     gap: 10,
+    flexDirection: 'row'
   },
   signUpButton: {
     backgroundColor: '#020035',
@@ -186,6 +185,7 @@ const styles = StyleSheet.create({
     color: 'green',
     textAlign: 'center',
     marginVertical: 10,
+    marginTop: 30,
   },
   subtitle: {
     fontSize: 10,
