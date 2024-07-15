@@ -14,8 +14,9 @@ import {
   fetchCategories,
   createJournalEntry,
   updateJournalEntry,
+  deleteJournalEntry,
 } from "../redux/JournalEntrySlice";
-import { RootState } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import Menu from "../components/Menu";
 import {
@@ -35,7 +36,7 @@ interface JournalEntry {
 }
 
 const JournalEntryScreen: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { journalEntries, mostRecentEntry } = useSelector(
     (state: RootState) => state.entries,
   );
@@ -112,7 +113,6 @@ const JournalEntryScreen: React.FC = () => {
         dispatch(createJournalEntry(newEntry));
       }
 
-      // Reset state
       setInputText("");
       setTitle("");
       setSelectedCategory(null);
@@ -121,13 +121,13 @@ const JournalEntryScreen: React.FC = () => {
     } else {
       Alert.alert(
         "Input Text is empty",
-        "Please add some text or image before saving."
+        "Please add some text or image before saving.",
       );
     }
   };
 
   const handleEditEntry = (id: string) => {
-    const entryToEdit = journalEntries.find(entry => entry.id === id);
+    const entryToEdit = journalEntries.find((entry) => entry.id === id);
     if (entryToEdit) {
       setInputText(entryToEdit.content as string);
       setTitle(entryToEdit.title);
@@ -142,7 +142,17 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleDeleteAll = () => {
-    // Implement delete all functionality if needed
+    const deletePromises = journalEntries.map((entry) =>
+      dispatch(deleteJournalEntry(entry.id)).unwrap(),
+    );
+
+    Promise.all(deletePromises)
+      .then(() => {
+        console.log("All entries deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Failed to delete some entries:", error);
+      });
   };
 
   return (

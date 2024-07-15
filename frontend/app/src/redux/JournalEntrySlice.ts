@@ -102,7 +102,7 @@ export const deleteJournalEntry = createAsyncThunk(
     const token = state.auth.token;
     setAuthToken(token);
     try {
-      await instance.delete(`entries-create/${entryId}/`);
+      await instance.delete(`entries-update/${entryId}/`);
       return entryId; 
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
