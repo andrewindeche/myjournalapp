@@ -64,14 +64,12 @@ const JournalEntryScreen: React.FC = () => {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
-        if (uri) {
-          const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
-            type: "image",
-            content: uri,
-            title: title,
-            category: selectedCategory,
+        if (uri && editEntryId) {
+          const updatedEntry = {
+            ...mostRecentEntry,
+            content: [...(mostRecentEntry.content as string[]), uri],
           };
-          dispatch(createJournalEntry(newEntry));
+          dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
       }
     });
@@ -86,14 +84,12 @@ const JournalEntryScreen: React.FC = () => {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
-        if (uri) {
-          const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
-            type: "image",
-            content: uri,
-            title: title,
-            category: selectedCategory,
+        if (uri && editEntryId) {
+          const updatedEntry = {
+            ...mostRecentEntry,
+            content: [...(mostRecentEntry.content as string[]), uri],
           };
-          dispatch(createJournalEntry(newEntry));
+          dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
       }
     });
@@ -196,6 +192,8 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(mostRecentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{mostRecentEntry.title}</Text>
+                <Text style={styles.content}>{mostRecentEntry.content}</Text>
+                <Text style={styles.title}>{mostRecentEntry.category}</Text>
                 {mostRecentEntry.type === "text" ? (
                   <>
                     <Text style={styles.listItem}>
@@ -263,6 +261,7 @@ const styles = StyleSheet.create({
   },
   popup: {
     marginBottom: 200,
+    position: "relative",
     zIndex: 100,
   },
   entryContainer: {
@@ -318,7 +317,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: "#02003d",
     borderRadius: 5,
     marginTop: 10,
     padding: 10,

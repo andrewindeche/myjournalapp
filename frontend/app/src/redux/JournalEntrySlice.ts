@@ -66,7 +66,7 @@ export const updateJournalEntry = createAsyncThunk(
     const token = state.auth.token;
     setAuthToken(token);
     try {
-      const response = await instance.put(`entries-create/${updatedEntry.id}/`, updatedEntry);
+      const response = await instance.put(`entries-update/${updatedEntry.id}/`, updatedEntry);
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
