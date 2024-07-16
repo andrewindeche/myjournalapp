@@ -3,9 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { NavigationProp } from '@react-navigation/native';
 
+interface MenuProps {
+  onClose: () => void;
+  navigation: NavigationProp<any>;
+}
 
-const Menu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -19,17 +24,17 @@ const Menu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <TouchableOpacity
           style={styles.menuItem}
           onPress={() => navigation.navigate('Summary')}>
-          <Icon name="home-outline" size={24} color="black" />
+          <Icon name="home-outline" size={24} color="white" />
           <Text style={styles.menuText}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuItem}
           onPress={() => navigation.navigate('Profile')}>
-          <Icon name="document-text-outline" size={24} color="black" />
+          <Icon name="document-text-outline" size={24} color="white" />
           <Text style={styles.menuText}>Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
-          <Icon name="exit-outline" size={24} color="black" />
+          <Icon name="exit-outline" size={24} color="white" />
           <Text style={styles.menuText}>Logout</Text>
         </TouchableOpacity>
       </View>

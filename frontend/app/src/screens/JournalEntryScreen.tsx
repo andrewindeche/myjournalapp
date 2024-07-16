@@ -18,7 +18,8 @@ import {
 } from "../redux/JournalEntrySlice";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import Menu from "../components/Menu";
+import EntryMenu from "../components/EntryMenu";
+import { useNavigation } from "@react-navigation/native";
 import {
   launchCamera,
   launchImageLibrary,
@@ -36,6 +37,7 @@ interface JournalEntry {
 }
 
 const JournalEntryScreen: React.FC = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries, mostRecentEntry } = useSelector(
     (state: RootState) => state.entries,
@@ -217,7 +219,9 @@ const JournalEntryScreen: React.FC = () => {
         )}
       </View>
       <View style={styles.popup}>
-        {showMenu && <Menu onClose={handleToggleMenu} />}
+        {showMenu && (
+          <EntryMenu navigation={navigation} onClose={handleToggleMenu} />
+        )}
       </View>
       <View style={styles.footer}>
         <Pressable onPress={handleTakePhoto}>
@@ -298,7 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
-    height: 300,
+    height: 400,
     marginBottom: 10,
     padding: 10,
   },
@@ -314,7 +318,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignItems: "center",
-    backgroundColor: "#CB7723",
+    backgroundColor: "#020035",
     borderRadius: 5,
     marginTop: 10,
     padding: 10,
