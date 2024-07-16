@@ -51,6 +51,9 @@ class JournalEntryListCreateView(generics.ListCreateAPIView):
             serializer.save(user=self.request.user, category=category)
         else:
             serializer.save(user=self.request.user)
+            
+    def get_object(self):
+        return JournalEntry.objects.filter(user=self.request.user).latest('created_at')
 
 class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = JournalEntry.objects.all()
@@ -59,6 +62,9 @@ class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
 
     def get_queryset(self):
         return JournalEntry.objects.filter(user=self.request.user)
+    
+    def get_object(self):
+        return JournalEntry.objects.filter(user=self.request.user).latest('created_at')
 
     def perform_update(self, serializer):
         category_name = self.request.data.get('category')

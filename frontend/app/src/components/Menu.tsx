@@ -44,7 +44,6 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
 
 const styles = StyleSheet.create({
   menu: {
-    backgroundColor: '#CB7723',
     borderRadius: 5,
     elevation: 75,
     padding: 10,
@@ -57,7 +56,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     color: 'white',
     alignItems: "center",
-    backgroundColor: "#fff",
     borderColor: "#ccc",
     borderTopWidth: 1,
     flexDirection: "row",

@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   Alert,
+  ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -66,8 +67,9 @@ const JournalEntryScreen: React.FC = () => {
         const uri = response.assets && response.assets[0].uri;
         if (uri && editEntryId) {
           const updatedEntry = {
-            ...mostRecentEntry,
-            content: [...(mostRecentEntry.content as string[]), uri],
+            content: Array.isArray(mostRecentEntry.content)
+              ? [...mostRecentEntry.content, uri]
+              : [mostRecentEntry.content, uri],
           };
           dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
@@ -183,42 +185,40 @@ const JournalEntryScreen: React.FC = () => {
           </>
         ) : (
           <>
-            {mostRecentEntry ? (
-              <Pressable
-                style={styles.entryContainer}
-                onPress={() => handleEditEntry(mostRecentEntry.id)}
-              >
-                <Text style={styles.date}>
-                  {new Date(mostRecentEntry.created_at).toDateString()}
-                </Text>
-                <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                <Text style={styles.content}>{mostRecentEntry.content}</Text>
-                <Text style={styles.title}>{mostRecentEntry.category}</Text>
-                {mostRecentEntry.type === "text" ? (
-                  <>
-                    <Text style={styles.listItem}>
-                      {mostRecentEntry.content}
-                    </Text>
-                    <Text style={styles.listItem}>
-                      {mostRecentEntry.category}
-                    </Text>
-                  </>
-                ) : (
-                  <Image
-                    source={{ uri: mostRecentEntry.content }}
-                    style={styles.entryImage}
-                  />
-                )}
-              </Pressable>
-            ) : (
-              <Text>Add an Entry</Text>
-            )}
+            {" "}
+            <ScrollView>
+              {mostRecentEntry ? (
+                <Pressable
+                  style={styles.entryContainer}
+                  onPress={() => handleEditEntry(mostRecentEntry.id)}
+                >
+                  <Text style={styles.date}>
+                    {new Date(mostRecentEntry.created_at).toDateString()}
+                  </Text>
+                  <Text style={styles.title}>{mostRecentEntry.title}</Text>
+                  <Text style={styles.content}>{mostRecentEntry.content}</Text>
+                  <Text style={styles.title}>{mostRecentEntry.category}</Text>
+                  {mostRecentEntry.type === "text" ? (
+                    <>
+                      <Text style={styles.listItem}>
+                        {mostRecentEntry.content}
+                      </Text>
+                      <Text style={styles.listItem}>
+                        {mostRecentEntry.category}
+                      </Text>
+                    </>
+                  ) : (
+                    <Image
+                      source={{ uri: mostRecentEntry.content }}
+                      style={styles.entryImage}
+                    />
+                  )}
+                </Pressable>
+              ) : (
+                <Text>Click on the Pencil icon to Add an Entry</Text>
+              )}
+            </ScrollView>
           </>
-        )}
-      </View>
-      <View style={styles.popup}>
-        {showMenu && (
-          <EntryMenu navigation={navigation} onClose={handleToggleMenu} />
         )}
       </View>
       <View style={styles.footer}>
@@ -234,6 +234,11 @@ const JournalEntryScreen: React.FC = () => {
         <Pressable onPress={handleImageUpload}>
           <Icon name="add-circle" size={28} color="black" />
         </Pressable>
+        <View style={styles.popup}>
+          {showMenu && (
+            <EntryMenu navigation={navigation} onClose={handleToggleMenu} />
+          )}
+        </View>
         <Pressable onPress={handleToggleMenu}>
           <Icon name="menu" size={24} color="black" />
         </Pressable>
@@ -243,78 +248,6 @@ const JournalEntryScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#E3F0F5",
-    flex: 1,
-    padding: 20,
-  },
-  date: {
-    color: "#CB7723",
-    fontSize: 14,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginBottom: 20,
-  },
-  popup: {
-    marginBottom: 200,
-    position: "relative",
-    zIndex: 100,
-  },
-  entryContainer: {
-    backgroundColor: "#E3F0F5",
-    borderColor: "#ccc",
-    borderRadius: 5,
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 2,
-  },
-  content: {
-    flex: 1,
-  },
-  titleInput: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderRadius: 5,
-    borderWidth: 1,
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    padding: 10,
-  },
-  title: {
-    backgroundColor: "#E3F0F5",
-    borderColor: "#ccc",
-    borderRadius: 5,
-    borderWidth: 1,
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    padding: 10,
-  },
-  entryInput: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderRadius: 5,
-    borderWidth: 1,
-    fontSize: 16,
-    height: 400,
-    marginBottom: 10,
-    padding: 10,
-  },
-  categoryInput: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderRadius: 5,
-    borderWidth: 1,
-    fontSize: 16,
-    height: 50,
-    marginBottom: 10,
-    padding: 10,
-  },
   addButton: {
     alignItems: "center",
     backgroundColor: "#02003d",
@@ -326,14 +259,54 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  listItem: {
+  categoryInput: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
     fontSize: 16,
-    marginBottom: 5,
+    height: 50,
+    marginBottom: 10,
+    padding: 10,
+  },
+  container: {
+    backgroundColor: "#E3F0F5",
+    flex: 1,
+    padding: 20,
+  },
+  content: {
+    flex: 1,
+    paddingBottom: 10,
+  },
+  date: {
+    color: "#CB7723",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 10,
+    padding: 20,
+  },
+  entryContainer: {
+    backgroundColor: "#E3F0F5",
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 2,
   },
   entryImage: {
     height: "100%",
     marginBottom: 10,
     width: "60%",
+  },
+  entryInput: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 16,
+    height: 600,
+    marginBottom: 10,
+    padding: 10,
   },
   footer: {
     alignItems: "center",
@@ -341,8 +314,44 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderTopWidth: 1,
     flexDirection: "row",
+    height: 60,
     justifyContent: "space-around",
     paddingVertical: 10,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 20,
+  },
+  listItem: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  popup: {
+    right: 10,
+    backgroundColor: "#fff",
+    marginBottom: 500,
+    marginVertical: 45,
+    position: "absolute",
+  },
+  title: {
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    padding: 10,
+  },
+  titleInput: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderRadius: 5,
+    borderWidth: 1,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    padding: 10,
   },
 });
 
