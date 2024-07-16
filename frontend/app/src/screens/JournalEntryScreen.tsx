@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Pressable,
   Image,
-  FlatList,
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -14,10 +13,13 @@ import {
   fetchJournalEntries,
   fetchCategories,
   createJournalEntry,
+  updateJournalEntry,
+  deleteJournalEntry,
 } from "../redux/JournalEntrySlice";
-import { RootState } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import Menu from "../components/Menu";
+import EntryMenu from "../components/EntryMenu";
+import { useNavigation } from "@react-navigation/native";
 import {
   launchCamera,
   launchImageLibrary,
@@ -35,12 +37,10 @@ interface JournalEntry {
 }
 
 const JournalEntryScreen: React.FC = () => {
-  const dispatch = useDispatch();
-  const { journalEntries, status, error } = useSelector(
+  const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { journalEntries, mostRecentEntry } = useSelector(
     (state: RootState) => state.entries,
-  );
-  const mostRecentEntry = useSelector(
-    (state: RootState) => state.entries.mostRecentEntry,
   );
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
@@ -100,19 +100,25 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleAddEntry = () => {
-    if (inputText) {
+    if (inputText || newCategory) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
-        type: "text",
-        content: inputText,
-        title: title,
-        category: selectedCategory || "",
+        type: editEntryId ? mostRecentEntry.type : "text",
+        content: inputText || mostRecentEntry.content,
+        title: title || mostRecentEntry.title,
+        category: selectedCategory || newCategory,
       };
-      if (editEntryId !== null) {
+
+      if (editEntryId) {
+        dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
         setEditEntryId(null);
       } else {
         dispatch(createJournalEntry(newEntry));
       }
+
       setInputText("");
+      setTitle("");
+      setSelectedCategory(null);
+      setNewCategory("");
       setEditMode(false);
     } else {
       Alert.alert(
@@ -123,9 +129,9 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleEditEntry = (id: string) => {
-    const entryToEdit = mostRecentEntry;
+    const entryToEdit = journalEntries.find((entry) => entry.id === id);
     if (entryToEdit) {
-      setInputText(entryToEdit.content);
+      setInputText(entryToEdit.content as string);
       setTitle(entryToEdit.title);
       setSelectedCategory(entryToEdit.category);
       setEditEntryId(id);
@@ -138,17 +144,21 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleDeleteAll = () => {
-    setJournalEntries([]);
+    const deletePromises = journalEntries.map((entry) =>
+      dispatch(deleteJournalEntry(entry.id)).unwrap(),
+    );
+
+    Promise.all(deletePromises)
+      .then(() => {
+        console.log("All entries deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Failed to delete some entries:", error);
+      });
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={handleToggleMenu}>
-          <Icon name="menu" size={24} color="black" />
-        </Pressable>
-      </View>
-      {showMenu && <Menu onClose={handleToggleMenu} />}
       <View style={styles.content}>
         {editMode ? (
           <>
@@ -203,9 +213,14 @@ const JournalEntryScreen: React.FC = () => {
                 )}
               </Pressable>
             ) : (
-              <Text>No entries yet.</Text>
+              <Text>Add an Entry</Text>
             )}
           </>
+        )}
+      </View>
+      <View style={styles.popup}>
+        {showMenu && (
+          <EntryMenu navigation={navigation} onClose={handleToggleMenu} />
         )}
       </View>
       <View style={styles.footer}>
@@ -220,6 +235,9 @@ const JournalEntryScreen: React.FC = () => {
         </Pressable>
         <Pressable onPress={handleImageUpload}>
           <Icon name="add-circle" size={28} color="black" />
+        </Pressable>
+        <Pressable onPress={handleToggleMenu}>
+          <Icon name="menu" size={24} color="black" />
         </Pressable>
       </View>
     </View>
@@ -242,6 +260,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     marginBottom: 20,
+  },
+  popup: {
+    marginBottom: 200,
+    zIndex: 100,
   },
   entryContainer: {
     backgroundColor: "#E3F0F5",
@@ -280,7 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
-    height: 300,
+    height: 400,
     marginBottom: 10,
     padding: 10,
   },
@@ -296,7 +318,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignItems: "center",
-    backgroundColor: "#CB7723",
+    backgroundColor: "#020035",
     borderRadius: 5,
     marginTop: 10,
     padding: 10,
@@ -308,7 +330,6 @@ const styles = StyleSheet.create({
   listItem: {
     fontSize: 16,
     marginBottom: 5,
-    height: 200
   },
   entryImage: {
     height: "100%",
