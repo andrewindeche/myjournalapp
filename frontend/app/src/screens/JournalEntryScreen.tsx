@@ -263,6 +263,7 @@ const styles = StyleSheet.create({
   },
   popup: {
     marginBottom: 200,
+    position: "relative",
     zIndex: 100,
   },
   entryContainer: {
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: "#02003d",
     borderRadius: 5,
     marginTop: 10,
     padding: 10,

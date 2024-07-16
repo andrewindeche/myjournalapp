@@ -1,21 +1,21 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/authSlice";
-import Icon from "react-native-vector-icons/Ionicons";
-import { NavigationProp } from "@react-navigation/native";
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/authSlice';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { NavigationProp } from '@react-navigation/native';
 
 interface MenuProps {
   onClose: () => void;
   navigation: NavigationProp<any>;
 }
 
-const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
+const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    dispatch(logout());
-    onClose();
+    dispatch(logout()); 
+    onClose(); 
   };
 
   return (
@@ -50,15 +50,23 @@ const styles = StyleSheet.create({
     padding: 10,
     position: 'absolute',
     right: 0,
+    color: 'white',
     top: 30,
   },
   menuContainer: {
     position: 'relative',
     color: 'white',
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderTopWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 10,
   },
   menuItem: {
     alignItems: 'center',
-    flexDirection: 'row',
+    flexDirection: 'column',
     paddingVertical: 10,
   },
   menuText: {

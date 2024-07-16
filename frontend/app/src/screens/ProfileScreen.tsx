@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Image, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
+import { useNavigation } from "@react-navigation/native";
 import { fetchProfileInfo, updateProfileImage, updatePassword, updateUsername } from '../redux/ProfileSlice';
+import Menu from "../components/Menu";
 
 const ProfileScreen: React.FC = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const {username, email, profileImage, status, error } = useSelector((state: RootState) => state.profile);
   const [newUsername, setNewUsername] = useState('');
   const [oldPassword, setOldPassword] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -30,6 +34,10 @@ const ProfileScreen: React.FC = () => {
       dispatch(updateUsername(newUsername.trim()));
       setNewUsername('');
     }
+  };
+
+  const handleToggleMenu = () => {
+    setShowMenu(!showMenu);
   };
 
   const handleProfileImageChange = () => {
@@ -110,6 +118,9 @@ const ProfileScreen: React.FC = () => {
         <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </Pressable>
+        <View style={styles.footer}>
+          <Menu />
+      </View>
       </View>
     </View>
   );
@@ -153,6 +164,15 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 4,
+  },
+  footer: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderTopWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 10,
   },
   buttonText: {
     color: 'white',
