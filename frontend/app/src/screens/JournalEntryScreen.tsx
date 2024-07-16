@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    lineHeight: 25,
     paddingBottom: 10,
   },
   date: {
