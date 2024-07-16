@@ -118,9 +118,6 @@ const ProfileScreen: React.FC = () => {
         <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </Pressable>
-        <View style={styles.footer}>
-          <Menu />
-      </View>
       </View>
     </View>
   );
