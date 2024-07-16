@@ -16,6 +16,7 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
   const handleLogout = () => {
     dispatch(logout());
     onClose();
+    navigation.navigate("Home");
   };
 
   return (
@@ -23,13 +24,15 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
       <View style={styles.menu}>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Summary')}>
+          onPress={() => navigation.navigate("Summary")}
+        >
           <Icon name="home-outline" size={24} color="white" />
           <Text style={styles.menuText}>Home</Text>
         </Pressable>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Profile')}>
+          onPress={() => navigation.navigate("Profile")}
+        >
           <Icon name="document-text-outline" size={24} color="white" />
           <Text style={styles.menuText}>Profile</Text>
         </Pressable>
