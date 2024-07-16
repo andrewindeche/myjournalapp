@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -21,7 +20,7 @@ const Menu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           style={styles.menuItem}
           onPress={() => navigation.navigate('Summary')}>
           <Icon name="home-outline" size={24} color="black" />
-          <Text style={styles.menuText}>Journal Home</Text>
+          <Text style={styles.menuText}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuItem}
@@ -39,6 +38,9 @@ const Menu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 const styles = StyleSheet.create({
+  Icon: {
+    color: 'white',
+  },
   menu: {
     backgroundColor: '#CB7723',
     borderRadius: 5,
@@ -46,10 +48,12 @@ const styles = StyleSheet.create({
     padding: 10,
     position: 'absolute',
     right: 0,
+    color: 'white',
     top: 30,
   },
   menuContainer: {
     position: 'relative',
+    color: 'white',
   },
   menuItem: {
     alignItems: 'center',
@@ -59,6 +63,7 @@ const styles = StyleSheet.create({
   menuText: {
     color: 'white',
     marginLeft: 10,
+    fontWeight: 'bold',
   },
 });
 

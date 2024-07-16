@@ -157,12 +157,6 @@ const JournalEntryScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={handleToggleMenu}>
-          <Icon name="menu" size={24} color="black" />
-        </Pressable>
-      </View>
-      {showMenu && <Menu onClose={handleToggleMenu} />}
       <View style={styles.content}>
         {editMode ? (
           <>
@@ -222,6 +216,9 @@ const JournalEntryScreen: React.FC = () => {
           </>
         )}
       </View>
+      <View style={styles.popup}>
+        {showMenu && <Menu onClose={handleToggleMenu} />}
+      </View>
       <View style={styles.footer}>
         <Pressable onPress={handleTakePhoto}>
           <Icon name="camera" size={28} color="black" />
@@ -234,6 +231,9 @@ const JournalEntryScreen: React.FC = () => {
         </Pressable>
         <Pressable onPress={handleImageUpload}>
           <Icon name="add-circle" size={28} color="black" />
+        </Pressable>
+        <Pressable onPress={handleToggleMenu}>
+          <Icon name="menu" size={24} color="black" />
         </Pressable>
       </View>
     </View>
@@ -256,6 +256,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     marginBottom: 20,
+  },
+  popup: {
+    marginBottom: 200,
+    zIndex: 100,
   },
   entryContainer: {
     backgroundColor: "#E3F0F5",
