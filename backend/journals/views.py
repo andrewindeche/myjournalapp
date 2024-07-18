@@ -41,6 +41,7 @@ class JournalEntryListCreateView(generics.ListCreateAPIView):
     queryset = JournalEntry.objects.all()
     serializer_class = JournalEntrySerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return JournalEntry.objects.filter(user=self.request.user)

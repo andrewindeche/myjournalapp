@@ -6,9 +6,8 @@ import { logout } from "../redux/authSlice";
 interface JournalEntry {
   id: number;
   title: string;
-  content: string;
+  content: string | string[];
   created_at: string;
-  type: "text" | "image";
   category: string;
 }
 
@@ -67,19 +66,14 @@ export const updateJournalEntry = createAsyncThunk(
     setAuthToken(token);
     try {
       const formData = new FormData();
-      formData.append("title", updatedEntry.title);
-      formData.append("content", updatedEntry.content);
-      formData.append("type", updatedEntry.type);
-      formData.append("category", updatedEntry.category);
-
-      if (updatedEntry.type === "image" && updatedEntry.content) {
-        formData.append("content", updatedEntry.content);
-      }
+      formData.append('title', updatedEntry.title);
+      formData.append("content", Array.isArray(updatedEntry.content) ? updatedEntry.content.join("\n") : updatedEntry.content);
+      formData.append('category', updatedEntry.category);
 
       const response = await instance.put(`entries-update/${updatedEntry.id}/`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data"
-        }
+          "Content-Type": "multipart/form-data", 
+        },
       });
       return response.data;
     } catch (error: any) {
@@ -136,8 +130,16 @@ export const createJournalEntry = createAsyncThunk(
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
+
+    const formData = new FormData();
+    formData.append("title", newEntry.title);
+    formData.append("content", Array.isArray(newEntry.content) ? newEntry.content.join("\n") : newEntry.content);
     try {
-      const response = await instance.post("entries-create/", newEntry);
+      const response = await instance.post("entries-create/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", 
+        },
+      });
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {

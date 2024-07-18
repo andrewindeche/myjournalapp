@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from './store';
 import instance, { setAuthToken } from "../redux/axiosInstance";
-import { logout } from "../redux/authSlice";
 
 interface ProfileState {
     username: string;

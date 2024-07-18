@@ -35,6 +35,7 @@ interface JournalEntry {
   title: string;
   category: string;
   created_at: string;
+  image?: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
@@ -67,6 +68,7 @@ const JournalEntryScreen: React.FC = () => {
         const uri = response.assets && response.assets[0].uri;
         if (uri && editEntryId) {
           const updatedEntry = {
+            type: "image",
             content: Array.isArray(mostRecentEntry.content)
               ? [...mostRecentEntry.content, uri]
               : [mostRecentEntry.content, uri],
@@ -196,23 +198,18 @@ const JournalEntryScreen: React.FC = () => {
                     {new Date(mostRecentEntry.created_at).toDateString()}
                   </Text>
                   <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                  <Text style={styles.content}>{mostRecentEntry.content}</Text>
-                  <Text style={styles.title}>{mostRecentEntry.category}</Text>
-                  {mostRecentEntry.type === "text" ? (
-                    <>
-                      <Text style={styles.listItem}>
-                        {mostRecentEntry.content}
-                      </Text>
-                      <Text style={styles.listItem}>
-                        {mostRecentEntry.category}
-                      </Text>
-                    </>
-                  ) : (
+                  {Array.isArray(mostRecentEntry.content) ? (
+                  mostRecentEntry.content.map((imageUri, index) => (
                     <Image
-                      source={{ uri: mostRecentEntry.content }}
+                      key={index}
+                      source={{ uri: imageUri }}
                       style={styles.entryImage}
                     />
-                  )}
+                  ))
+                ) : (
+                  // Render text content
+                  <Text style={styles.content}>{mostRecentEntry.content}</Text>
+                )}
                 </Pressable>
               ) : (
                 <Text>Click on the Pencil icon to Add an Entry</Text>
