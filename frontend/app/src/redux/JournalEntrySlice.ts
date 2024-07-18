@@ -66,7 +66,21 @@ export const updateJournalEntry = createAsyncThunk(
     const token = state.auth.token;
     setAuthToken(token);
     try {
-      const response = await instance.put(`entries-update/${updatedEntry.id}/`, updatedEntry);
+      const formData = new FormData();
+      formData.append("title", updatedEntry.title);
+      formData.append("content", updatedEntry.content);
+      formData.append("type", updatedEntry.type);
+      formData.append("category", updatedEntry.category);
+
+      if (updatedEntry.type === "image" && updatedEntry.content) {
+        formData.append("content", updatedEntry.content);
+      }
+
+      const response = await instance.put(`entries-update/${updatedEntry.id}/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {

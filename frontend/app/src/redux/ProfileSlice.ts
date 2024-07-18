@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from './store';
+import instance, { setAuthToken } from "../redux/axiosInstance";
+import { logout } from "../redux/authSlice";
 
 interface ProfileState {
     username: string;
@@ -19,39 +21,37 @@ interface ProfileState {
   export const fetchProfileInfo = createAsyncThunk<ProfileState,void,{ rejectValue: string, state: RootState }>(
     'profile/fetchProfileInfo',
     async (_, { rejectWithValue, getState }) => {
-      const state = getState();
-      const token = state.login.token;
-      if (!token) {
-        return rejectWithValue('Token not available');
-      }
+      const state = getState() as RootState;
+      const token = state.auth.token;
+      setAuthToken(token);
         try {
-          const response = await axios.get('http://127.0.0.1:8000/api/profile/', {
-              headers: {
-                  Authorization: `Bearer ${token}`,
-              },
-          });
+        const response = await instance.get("profile/");
         return response.data;
       } catch (error:any) {
-        console.error('Fetch profile error:', error.response?.data || error.message);
-        return rejectWithValue(error.response?.data || error.message);
+        if (error.response && error.response.status === 401) {
+          return rejectWithValue(
+            "Unauthorized. Failed to fetch Profile",
+          );
+        }
+        return rejectWithValue("Failed to fetch Profile.");
+        }
       }
-    }
   );
 
   export const updateUsername = createAsyncThunk<ProfileState, string>(
     'profile/updateUsername',
     async (newUsername: string, { rejectWithValue, getState }) => {
       const state: RootState = getState() as RootState;
-      const token = state.login.token;
+      const token = state.auth.token;
+      setAuthToken(token);
       try {
-        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/username/', { username: newUsername }, {
-          headers: {
-              Authorization: `Bearer ${token}`,
-          },
-      });
+        const response = await instance.patch('profile', { username: newUsername})
       return response.data;
-      } catch (error:any) {
-        return rejectWithValue(error.response?.data || error.message);
+      } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          return rejectWithValue("Unauthorized. Error updating username.");
+        }
+        return rejectWithValue("Error updating username.");
       }
     }
   );
@@ -60,12 +60,10 @@ interface ProfileState {
   { rejectValue: string }>('profile/updatePassword',
 async ({ old_password, new_password }, { rejectWithValue, getState }) => {
   const state: RootState = getState() as RootState;
-  const token = state.login.token;
+  const token = state.auth.token;
+  setAuthToken(token);
   try {
-    const response = await axios.put('http://127.0.0.1:8000/api/password-change/', { old_password, new_password }, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+    const response = await axios.put('password-change/', { old_password, new_password }, {
     });
     return response.data;
   } catch (error: any) {

@@ -11,7 +11,8 @@ class CategorySerializer(serializers.ModelSerializer):
 class JournalEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = JournalEntry
-        fields = ['id', 'title', 'content', 'created_at']
+        fields = ['id', 'title', 'content', 'created_at', 'type', 'category', 'image']
+        read_only_fields = ['created_at']
 
 class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(

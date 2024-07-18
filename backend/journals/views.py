@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import  JournalEntrySerializer, CategorySerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -59,6 +60,7 @@ class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
     queryset = JournalEntry.objects.all()
     serializer_class = JournalEntrySerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return JournalEntry.objects.filter(user=self.request.user)
