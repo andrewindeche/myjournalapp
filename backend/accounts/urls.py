@@ -1,4 +1,4 @@
-from .views import RegisterView,LoginView,UserProfileView,PasswordChangeAPIView,UserProfileImageView
+from .views import RegisterView,LoginView,UserProfileView,PasswordChangeAPIView
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
@@ -9,6 +9,5 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='api-login'),
     path('profile/', UserProfileView.as_view(), name='profile_update'),
-    path('profile/update/profile-image/', UserProfileImageView.as_view(), name='user-profile-image'),
     path('password-change/', PasswordChangeAPIView.as_view(), name='password-change'),
 ]

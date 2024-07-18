@@ -5,7 +5,6 @@ import { RootState } from './store';
 interface ProfileState {
     username: string;
     email: string;
-    profileImage: string | null;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
   }
@@ -13,7 +12,6 @@ interface ProfileState {
   const initialState: ProfileState = {
     username: '',
     email: '',
-    profileImage: null,
     status: 'idle',
     error: null,
   };
@@ -35,25 +33,6 @@ interface ProfileState {
         return response.data;
       } catch (error:any) {
         console.error('Fetch profile error:', error.response?.data || error.message);
-        return rejectWithValue(error.response?.data || error.message);
-      }
-    }
-  );
-
-  export const updateProfileImage = createAsyncThunk<ProfileState, FormData>(
-    'profile/updateProfileImage',
-    async (formData, { rejectWithValue, getState }) => {
-      const state: RootState = getState() as RootState;
-      const token = state.login.token;
-      try {
-        const response = await axios.patch('http://127.0.0.1:8000/api/profile/update/profile-image/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-        return response.data;
-      } catch (error: any) {
         return rejectWithValue(error.response?.data || error.message);
       }
     }
@@ -115,7 +94,6 @@ async ({ old_password, new_password }, { rejectWithValue, getState }) => {
             state.status = 'succeeded';
             state.username = action.payload.username;
             state.email = action.payload.email;
-            state.profileImage = action.payload.profileImage;
             state.error = null;
           })
           .addCase(fetchProfileInfo.rejected, (state, action) => {
@@ -132,19 +110,6 @@ async ({ old_password, new_password }, { rejectWithValue, getState }) => {
             state.error = null;
           })
           .addCase(updateUsername.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.payload as string;
-          })
-          .addCase(updateProfileImage.pending, (state) => {
-            state.status = 'loading';
-            state.error = null;
-          })
-          .addCase(updateProfileImage.fulfilled, (state, action) => {
-            state.status = 'succeeded';
-            state.profileImage = action.payload.profileImage;
-            state.error = null;
-          })
-          .addCase(updateProfileImage.rejected, (state, action) => {
             state.status = 'failed';
             state.error = action.payload as string;
           })

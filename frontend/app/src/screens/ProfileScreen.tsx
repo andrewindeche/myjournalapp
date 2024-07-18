@@ -5,6 +5,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import { useNavigation } from "@react-navigation/native";
 import { fetchProfileInfo, updateProfileImage, updatePassword, updateUsername } from '../redux/ProfileSlice';
 import Menu from "../components/Menu";
+import { setUsername } from '../redux/LoginSlice';
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -69,30 +70,24 @@ const ProfileScreen: React.FC = () => {
     <View style={{ flex: 1 }}>
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
-        <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-          <Pressable onPress={handleProfileImageChange}>
-            <Image source={{ uri: profileImage }} style={styles.avatar} />
-          </Pressable>
-        </View>
         <View style={{ alignItems: 'center', padding: 16 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
         </View>
       </View>
-      <View style={styles.innerContainer}>
-        <Text style={styles.label}>Change Profile Image</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
-          <Pressable style={styles.button}>
-            <input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files[0])} />
-          </Pressable>
-          <Pressable style={[styles.button, styles.uploadButton]} onPress={handleProfileImageChange}>
-            <Text style={styles.buttonText}>Upload</Text>
-          </Pressable>
-        </View>
         <Pressable onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </Pressable>
-
+        <TextInput
+              style={styles.input}
+              placeholder="Enter Username"
+              onChangeText={(text) => setUsername(text)}
+            />
+         <TextInput
+              style={styles.input}
+              placeholder="Change username"
+              onChangeText={(text) => setUsername(text)}
+            />
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
@@ -119,7 +114,6 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.buttonText}>Save Changes</Text>
         </Pressable>
       </View>
-    </View>
   );
 };
 
@@ -129,15 +123,9 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'center',
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'white',
-  },
   outerContainer: {
     backgroundColor: '#020035',
-    height: 20,
+    height: 10,
     width: '100%',
     flex: 1,
     alignItems: 'center',

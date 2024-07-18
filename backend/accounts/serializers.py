@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.contrib.auth.hashers import make_password
 
 User = get_user_model()
 
@@ -49,7 +48,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio', 'profile_image']
+        fields = ['id', 'username', 'email', 'bio']
         
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
@@ -99,8 +98,3 @@ class TokenPairSerializer(serializers.Serializer):
     
 class LoginSerializer(TokenObtainPairSerializer):
     pass
-
-class UserProfileImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['profile_image']
