@@ -9,9 +9,29 @@ class CategorySerializer(serializers.ModelSerializer):
         
 
 class JournalEntrySerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name', allow_blank=True, required=False)
+    
     class Meta:
         model = JournalEntry
         fields = ['id', 'title', 'content', 'created_at', 'category', 'image']
+    
+    def validate_category(self, value):
+        if value:
+            category, created = Category.objects.get_or_create(name=value, user=self.context['request'].user)
+            return category
+        return None
+    
+    def update(self, instance, validated_data):
+        category_name = validated_data.pop('category', None)
+        if category_name:
+            category, created = Category.objects.get_or_create(name=category_name, user=self.context['request'].user)
+            instance.category = category
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        instance.save()
+        return instance
 
 class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(

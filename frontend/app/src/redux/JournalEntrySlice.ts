@@ -7,6 +7,7 @@ interface JournalEntry {
   id: number;
   title: string;
   content: string | string[];
+  image?: File; 
   created_at: string;
   category: string;
 }
@@ -70,11 +71,14 @@ export const updateJournalEntry = createAsyncThunk(
       formData.append("content", Array.isArray(updatedEntry.content) ? updatedEntry.content.join("\n") : updatedEntry.content);
       formData.append('category', updatedEntry.category);
 
+      if (updatedEntry.image) {
+        formData.append('image', updatedEntry.image, updatedEntry.image.name);
+      }
       const response = await instance.put(`entries-update/${updatedEntry.id}/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", 
-        },
-      });
+      headers: {
+        "Content-Type": "multipart/form-data", 
+      },
+    });
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -134,6 +138,10 @@ export const createJournalEntry = createAsyncThunk(
     const formData = new FormData();
     formData.append("title", newEntry.title);
     formData.append("content", Array.isArray(newEntry.content) ? newEntry.content.join("\n") : newEntry.content);
+    if (newEntry.image) {
+      formData.append('image', newEntry.image, newEntry.image.name);
+    }
+    
     try {
       const response = await instance.post("entries-create/", formData, {
         headers: {
