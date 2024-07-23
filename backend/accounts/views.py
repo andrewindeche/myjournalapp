@@ -5,7 +5,7 @@ from .models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserProfileSerializer,TokenObtainSerializer,UserProfileImageSerializer
+from .serializers import UserProfileSerializer,TokenObtainSerializer
 from .serializers import TokenPairSerializer,RegisterSerializer,LoginSerializer,PasswordChangeSerializer
 from rest_framework.permissions import AllowAny 
 
@@ -30,14 +30,6 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
     
-    def get_object(self):
-        return self.request.user
-
-class UserProfileImageView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserProfileImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
     def get_object(self):
         return self.request.user
     

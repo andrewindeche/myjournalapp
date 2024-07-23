@@ -31,7 +31,7 @@ import {
 interface JournalEntry {
   id: string;
   type?: "text" | "image";
-  content: unknown;
+  content: (string | { uri: string })[];
   title: string;
   category: string;
   created_at: string;
@@ -50,6 +50,7 @@ const JournalEntryScreen: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -66,10 +67,10 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri && editEntryId) {
+          setImageUri(uri);
           const updatedEntry = {
-            content: Array.isArray(mostRecentEntry.content)
-              ? [...mostRecentEntry.content, uri]
-              : [mostRecentEntry.content, uri],
+            ...mostRecentEntry,
+            content: [...mostRecentEntry.content, { uri }],
           };
           dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
@@ -87,9 +88,10 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri && editEntryId) {
+          setImageUri(uri);
           const updatedEntry = {
             ...mostRecentEntry,
-            content: [...(mostRecentEntry.content as string[]), uri],
+            content: [...mostRecentEntry.content, { uri }],
           };
           dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
@@ -100,8 +102,8 @@ const JournalEntryScreen: React.FC = () => {
   const handleAddEntry = () => {
     if (inputText || newCategory) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
-        type: editEntryId ? mostRecentEntry.type : "text",
-        content: inputText || mostRecentEntry.content,
+        type: "text",
+        content: imageUri ? [{ uri: imageUri }, inputText] : [inputText],
         title: title || mostRecentEntry.title,
         category: selectedCategory || newCategory,
       };
@@ -118,6 +120,7 @@ const JournalEntryScreen: React.FC = () => {
       setSelectedCategory(null);
       setNewCategory("");
       setEditMode(false);
+      setImageUri(null);
     } else {
       Alert.alert(
         "Input Text is empty",
@@ -134,6 +137,18 @@ const JournalEntryScreen: React.FC = () => {
       setSelectedCategory(entryToEdit.category);
       setEditEntryId(id);
       setEditMode(true);
+
+      const entryContent = Array.isArray(entryToEdit.content) ? entryToEdit.content : [entryToEdit.content];
+
+      const textContent = entryToEdit.content
+        .filter((item) => typeof item === "string")
+        .join(" ");
+      const imageContent = entryToEdit.content.filter(
+        (item) => typeof item === "object",
+      ) as { uri: string }[];
+
+      setInputText(textContent);
+      setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
     }
   };
 
@@ -173,6 +188,9 @@ const JournalEntryScreen: React.FC = () => {
               value={inputText}
               onChangeText={(text) => setInputText(text)}
             />
+            {imageUri && (
+              <Image source={{ uri: imageUri }} style={styles.entryImage} />
+            )}
             <TextInput
               style={styles.categoryInput}
               value={newCategory}
@@ -196,22 +214,30 @@ const JournalEntryScreen: React.FC = () => {
                     {new Date(mostRecentEntry.created_at).toDateString()}
                   </Text>
                   <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                  <Text style={styles.content}>{mostRecentEntry.content}</Text>
-                  <Text style={styles.title}>{mostRecentEntry.category}</Text>
-                  {mostRecentEntry.type === "text" ? (
-                    <>
-                      <Text style={styles.listItem}>
-                        {mostRecentEntry.content}
-                      </Text>
-                      <Text style={styles.listItem}>
-                        {mostRecentEntry.category}
-                      </Text>
-                    </>
-                  ) : (
+                  {mostRecentEntry.imageUrl && (
                     <Image
-                      source={{ uri: mostRecentEntry.content }}
+                      source={{ uri: mostRecentEntry.imageUrl }}
                       style={styles.entryImage}
                     />
+                  )}
+                  {Array.isArray(mostRecentEntry.content) ? (
+                    mostRecentEntry.content.map((item, index) =>
+                      typeof item === "string" ? (
+                        <Text key={index} style={styles.content}>
+                          {item}
+                        </Text>
+                      ) : (
+                        <Image
+                          key={index}
+                          source={{ uri: item.uri }}
+                          style={styles.entryImage}
+                        />
+                      ),
+                    )
+                  ) : (
+                    <Text style={styles.content}>
+                      {mostRecentEntry.content}
+                    </Text>
                   )}
                 </Pressable>
               ) : (
@@ -276,6 +302,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    lineHeight: 25,
     paddingBottom: 10,
   },
   date: {
@@ -294,9 +321,10 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   entryImage: {
-    height: "100%",
+    height: 60,
     marginBottom: 10,
-    width: "60%",
+    width: 60,
+    resizeMode: "contain",
   },
   entryInput: {
     backgroundColor: "#fff",

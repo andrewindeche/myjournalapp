@@ -22,7 +22,7 @@ class JournalEntryTests(APITestCase):
             'category': self.category.name, 
             'user': self.user.id,
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(JournalEntry.objects.count(), 2)
 
@@ -34,7 +34,7 @@ class JournalEntryTests(APITestCase):
             'content': 'Updated Content',
             'category': self.category.name 
         }
-        response = self.client.put(url, updated_data, format='json')
+        response = self.client.put(url, updated_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         entry.refresh_from_db()
         self.assertEqual(entry.title, 'Updated Title')

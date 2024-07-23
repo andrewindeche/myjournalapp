@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useNavigation } from "@react-navigation/native";
-import { fetchProfileInfo, updateProfileImage, updatePassword, updateUsername } from '../redux/ProfileSlice';
+import { fetchProfileInfo, updatePassword, updateUsername } from '../redux/ProfileSlice';
 import Menu from "../components/Menu";
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const {username, email, profileImage, status, error } = useSelector((state: RootState) => state.profile);
+  const { username = '', email = '', status, error } = useSelector((state: RootState) => state.profile || {});
   const [newUsername, setNewUsername] = useState('');
   const [oldPassword, setOldPassword] = useState('');
-  const [showMenu, setShowMenu] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   useEffect(() => {
     dispatch(fetchProfileInfo());
@@ -36,19 +34,6 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  const handleToggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
-  const handleProfileImageChange = () => {
-    if (selectedImage) {
-      const formData = new FormData();
-      formData.append('profile_image', selectedImage);
-      dispatch(updateProfileImage(formData));
-      setSelectedImage(null);
-    }
-  };
-
   const handlePasswordChange = () => {
     if (newPassword === confirmNewPassword) {
       dispatch(updatePassword({ old_password: oldPassword, new_password: newPassword }));
@@ -61,39 +46,36 @@ const ProfileScreen: React.FC = () => {
   };
 
   const handleSaveChanges = () => {
+    handleUsernameChange();
     handlePasswordChange();
-    handleProfileImageChange();
   };
+
+  if (!username || !email) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
-        <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-          <Pressable onPress={handleProfileImageChange}>
-            <Image source={{ uri: profileImage }} style={styles.avatar} />
-          </Pressable>
-        </View>
-        <View style={{ alignItems: 'center', padding: 16 }}>
+        <View style={{ alignItems: 'center', padding: 20 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
         </View>
       </View>
-      <View style={styles.innerContainer}>
-        <Text style={styles.label}>Change Profile Image</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
-          <Pressable style={styles.button}>
-            <input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files[0])} />
-          </Pressable>
-          <Pressable style={[styles.button, styles.uploadButton]} onPress={handleProfileImageChange}>
-            <Text style={styles.buttonText}>Upload</Text>
-          </Pressable>
-        </View>
-        <Pressable onPress={handleSaveChanges} disabled={status === 'loading'}>
-          <Text style={styles.buttonText}>Save Changes</Text>
+        <TextInput
+              style={styles.input}
+              placeholder="Enter Username"
+              onChangeText={(text) => setNewUsername(text)}
+            />
+         <TextInput
+              style={styles.input}
+              placeholder="Change username"
+              onChangeText={(text) => setNewUsername(text)}
+            />
+        <Pressable style={styles.outerbutton} onPress={handleSaveChanges} disabled={status === 'loading'}>
+          <Text style={styles.OuterButtonText}>Update Username</Text>
         </Pressable>
-
-        <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
           placeholder="Current Password"
@@ -116,41 +98,37 @@ const ProfileScreen: React.FC = () => {
           secureTextEntry
         />
         <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
-          <Text style={styles.buttonText}>Save Changes</Text>
+          <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
+        <Menu navigation={navigation} />
       </View>
-    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
     justifyContent: 'center',
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'white',
   },
   outerContainer: {
     backgroundColor: '#020035',
-    height: 20,
+    height: 10,
     width: '100%',
     flex: 1,
     alignItems: 'center',
+    marginBottom: 16,
   },
   innerContainer: {
     backgroundColor: 'white',
-    height: '70%',
+    height: '90%',
     marginBottom: 10,
-    padding: 30,
+    width: '100%',
+    padding: 60,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#020035',
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
@@ -161,6 +139,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 4,
+    marginBottom: 16,
+  },
+  outerbutton: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 4,
+    backgroundColor: '#020035',
+    borderWidth: 1,
+    borderColor: 'white',
+    marginBottom: 16,
   },
   footer: {
     alignItems: "center",
@@ -175,12 +163,19 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  OuterButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   label: {
-    fontSize: 16,
-    margin: 5,
+    fontSize: 13,
+    margin: 2,
+    color: 'white',
   },
   title: {
     color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
   }
 });
 
