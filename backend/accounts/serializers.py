@@ -98,3 +98,10 @@ class TokenPairSerializer(serializers.Serializer):
     
 class LoginSerializer(TokenObtainPairSerializer):
     pass
+
+class DeleteUserSerializer(serializers.Serializer):
+    """
+    Serializer for deleting a user account.
+    """
+    def validate(self, attrs):
+        return attrs

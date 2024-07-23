@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert, Modal, } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, Modal } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useNavigation } from "@react-navigation/native";
-import { fetchProfileInfo, updatePassword, updateUsername } from '../redux/ProfileSlice';
+import { fetchProfileInfo, updatePassword, updateUsername, deleteUserAccount  } from '../redux/ProfileSlice';
 import Menu from "../components/Menu";
 
 const ProfileScreen: React.FC = () => {
@@ -57,6 +57,11 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handleDeleteAccount = () => {
+    dispatch(deleteUserAccount());
+  };
+
+
   if (!username || !email) {
     return <Text>Loading...</Text>;
   }
@@ -79,9 +84,9 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>{successMessage}</Text>
-            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-              <Text style={styles.modalButtonText}>Close</Text>
-            </TouchableOpacity>
+            <Pressable style={styles.modalButton} onPress={closeModal}>
+              <Text style={styles.buttonText}>Close</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -122,7 +127,7 @@ const ProfileScreen: React.FC = () => {
         <Pressable style={styles.button} onPress={handlePasswordChange} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
-        <Menu navigation={navigation} />
+        <Menu navigation={navigation} onDeleteAccount={handleDeleteAccount} />
       </View>
   );
 };

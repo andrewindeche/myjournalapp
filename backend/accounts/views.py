@@ -5,7 +5,7 @@ from .models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserProfileSerializer,TokenObtainSerializer
+from .serializers import UserProfileSerializer,TokenObtainSerializer,DeleteUserSerializer
 from .serializers import TokenPairSerializer,RegisterSerializer,LoginSerializer,PasswordChangeSerializer
 from rest_framework.permissions import AllowAny 
 
@@ -57,3 +57,15 @@ class PasswordChangeAPIView(generics.UpdateAPIView):
             serializer.save()
             return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class DeleteUserView(generics.DestroyAPIView):
+    serializer_class = DeleteUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
+    
+    def delete(self, request, *args, **kwargs):
+        self.perform_destroy(self.get_object())
+        logout(request)  # Log out the user
+        return Response({'message': 'Account deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)

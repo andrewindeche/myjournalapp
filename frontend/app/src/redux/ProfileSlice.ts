@@ -37,6 +37,24 @@ interface ProfileState {
       }
   );
 
+  export const deleteUserAccount = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>(
+  'profile/deleteUserAccount',
+  async (_, { rejectWithValue, getState }) => {
+    const state: RootState = getState() as RootState;
+    const token = state.auth.token;
+    setAuthToken(token);
+    try {
+      await instance.delete('profile/delete/');
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
   export const updateUsername = createAsyncThunk<ProfileState, string>(
     'profile/updateUsername',
     async (newUsername: string, { rejectWithValue, getState }) => {
@@ -119,6 +137,20 @@ async ({ old_password, new_password }, { rejectWithValue, getState }) => {
             state.error = null;
           })
           .addCase(updatePassword.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload as string;
+          })
+          .addCase(deleteUserAccount.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+          })
+          .addCase(deleteUserAccount.fulfilled, (state) => {
+            state.status = 'succeeded';
+            state.username = '';
+            state.email = '';
+            state.error = null;
+          })
+          .addCase(deleteUserAccount.rejected, (state, action) => {
             state.status = 'failed';
             state.error = action.payload as string;
           });

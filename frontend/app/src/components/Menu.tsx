@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet,Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -7,14 +7,26 @@ import { NavigationProp} from '@react-navigation/native';
 
 interface MenuProps {
   navigation: NavigationProp<any>;
+  onDeleteAccount: () => void;
 }
 
-const Menu: React.FC<MenuProps> = ({ navigation }) =>  {
+const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout()); 
     navigation.navigate("Home");
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Confirm Deletion',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Yes, Delete', onPress: onDeleteAccount },
+      ]
+    );
   };
 
   return (
@@ -32,7 +44,7 @@ const Menu: React.FC<MenuProps> = ({ navigation }) =>  {
         </Pressable>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Delete')}>
+          onPress={handleDeleteAccount}>
           <Icon name="trash-outline" size={28} color="black" />
         </Pressable>
         <Pressable style={styles.menuItem} onPress={handleLogout}>
