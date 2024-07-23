@@ -61,17 +61,14 @@ const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <View>
+    <View style={{ flex: 0.8 }}>
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
-        <View style={{ alignItems: 'center', padding: 3 }}>
+        <View style={{ alignItems: 'center', padding: 10 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
         </View>
       </View>
-        <Pressable style={styles.outerbutton} onPress={handleSaveChanges} disabled={status === 'loading'}>
-          <Text style={styles.buttonText}>Save Changes</Text>
-        </Pressable>
         <TextInput
               style={styles.input}
               placeholder="Enter Username"
@@ -82,7 +79,9 @@ const ProfileScreen: React.FC = () => {
               placeholder="Change username"
               onChangeText={(text) => setNewUsername(text)}
             />
-        <Text style={styles.label}>Password</Text>
+        <Pressable style={styles.outerbutton} onPress={handleSaveChanges} disabled={status === 'loading'}>
+          <Text style={styles.OuterButtonText}>Update Username</Text>
+        </Pressable>
         <TextInput
           style={styles.input}
           placeholder="Current Password"
@@ -105,7 +104,7 @@ const ProfileScreen: React.FC = () => {
           secureTextEntry
         />
         <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
-          <Text style={styles.buttonText}>Save Changes</Text>
+          <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
       </View>
   );
@@ -123,16 +122,18 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     alignItems: 'center',
+    marginBottom: 16,
   },
   innerContainer: {
     backgroundColor: 'white',
     height: '90%',
     marginBottom: 10,
+    width: '100%',
     padding: 60,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#020035',
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
@@ -148,6 +149,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 4,
+    backgroundColor: '#020035',
+    borderWidth: 1,
+    borderColor: 'white',
+    marginBottom: 16,
   },
   footer: {
     alignItems: "center",
@@ -162,12 +167,19 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  OuterButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   label: {
-    fontSize: 6,
+    fontSize: 13,
     margin: 2,
+    color: 'white',
   },
   title: {
     color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
   }
 });
 
