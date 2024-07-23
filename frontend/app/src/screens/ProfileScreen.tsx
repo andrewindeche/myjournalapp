@@ -61,15 +61,15 @@ const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
-        <View style={{ alignItems: 'center', padding: 16 }}>
+        <View style={{ alignItems: 'center', padding: 3 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
         </View>
       </View>
-        <Pressable onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable style={styles.outerbutton} onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </Pressable>
         <TextInput
@@ -126,9 +126,9 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     backgroundColor: 'white',
-    height: '70%',
+    height: '90%',
     marginBottom: 10,
-    padding: 30,
+    padding: 60,
   },
   input: {
     height: 40,
@@ -140,6 +140,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#020035',
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 4,
+  },
+  outerbutton: {
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 4,
@@ -158,8 +163,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   label: {
-    fontSize: 16,
-    margin: 5,
+    fontSize: 6,
+    margin: 2,
   },
   title: {
     color: 'white',
