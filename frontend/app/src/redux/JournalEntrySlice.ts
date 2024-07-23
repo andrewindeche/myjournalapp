@@ -7,7 +7,8 @@ interface JournalEntry {
   id: number;
   title: string;
   content: string | string[];
-  image?: File; 
+  image?: File;
+  imageUrl?: string;
   created_at: string;
   category: string;
 }
@@ -58,27 +59,33 @@ export const fetchJournalEntries = createAsyncThunk(
 
 export const updateJournalEntry = createAsyncThunk(
   "journal/updateJournalEntry",
-  async (
-    updatedEntry: JournalEntry,
-    { getState, rejectWithValue }
-  ) => {
+  async (updatedEntry: JournalEntry, { getState, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
     try {
       const formData = new FormData();
-      formData.append('title', updatedEntry.title);
-      formData.append("content", Array.isArray(updatedEntry.content) ? updatedEntry.content.join("\n") : updatedEntry.content);
-      formData.append('category', updatedEntry.category);
+      formData.append("title", updatedEntry.title);
+      formData.append(
+        "content",
+        Array.isArray(updatedEntry.content)
+          ? updatedEntry.content.join("\n")
+          : updatedEntry.content,
+      );
+      formData.append("category", updatedEntry.category);
 
       if (updatedEntry.image) {
-        formData.append('image', updatedEntry.image, updatedEntry.image.name);
+        formData.append("image", updatedEntry.image, updatedEntry.image.name);
       }
-      const response = await instance.put(`entries-update/${updatedEntry.id}/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", 
-      },
-    });
+      const response = await instance.put(
+        `entries-update/${updatedEntry.id}/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -86,7 +93,7 @@ export const updateJournalEntry = createAsyncThunk(
       }
       return rejectWithValue("Error updating entry.");
     }
-  }
+  },
 );
 
 export const fetchCategories = createAsyncThunk(
@@ -115,14 +122,14 @@ export const deleteJournalEntry = createAsyncThunk(
     setAuthToken(token);
     try {
       await instance.delete(`entries-update/${entryId}/`);
-      return entryId; 
+      return entryId;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         return rejectWithValue("Unauthorized. Error deleting entry.");
       }
       return rejectWithValue("Error deleting entry.");
     }
-  }
+  },
 );
 
 export const createJournalEntry = createAsyncThunk(
@@ -137,15 +144,25 @@ export const createJournalEntry = createAsyncThunk(
 
     const formData = new FormData();
     formData.append("title", newEntry.title);
-    formData.append("content", Array.isArray(newEntry.content) ? newEntry.content.join("\n") : newEntry.content);
-    if (newEntry.image) {
-      formData.append('image', newEntry.image, newEntry.image.name);
+    formData.append("category", newEntry.category);
+    formData.append(
+      "content",
+      Array.isArray(newEntry.content)
+        ? newEntry.content.join("\n")
+        : newEntry.content,
+    );
+    if (newEntry.imageUrl) {
+      formData.append("image", {
+        uri: newEntry.imageUrl,
+        name: "image.jpg",
+        type: "image/jpeg",
+      } as any);
     }
-    
+
     try {
       const response = await instance.post("entries-create/", formData, {
         headers: {
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "multipart/form-data",
         },
       });
       return response.data;
@@ -222,11 +239,13 @@ const journalEntriesSlice = createSlice({
       .addCase(
         deleteJournalEntry.fulfilled,
         (state, action: PayloadAction<number>) => {
-          state.journalEntries = state.journalEntries.filter(entry => entry.id !== action.payload);
+          state.journalEntries = state.journalEntries.filter(
+            (entry) => entry.id !== action.payload,
+          );
           if (state.mostRecentEntry?.id === action.payload) {
             state.mostRecentEntry = null;
           }
-        }
+        },
       )
       .addCase(deleteJournalEntry.rejected, (state, action) => {
         state.status = "failed";
@@ -238,12 +257,14 @@ const journalEntriesSlice = createSlice({
       .addCase(
         updateJournalEntry.fulfilled,
         (state, action: PayloadAction<JournalEntry>) => {
-          const index = state.journalEntries.findIndex(entry => entry.id === action.payload.id);
+          const index = state.journalEntries.findIndex(
+            (entry) => entry.id === action.payload.id,
+          );
           if (index !== -1) {
             state.journalEntries[index] = action.payload;
             state.mostRecentEntry = action.payload;
           }
-        }
+        },
       )
       .addCase(updateJournalEntry.rejected, (state, action) => {
         state.status = "failed";

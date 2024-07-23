@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useNavigation } from "@react-navigation/native";
-import { fetchProfileInfo, updateProfileImage, updatePassword, updateUsername } from '../redux/ProfileSlice';
+import { fetchProfileInfo, updatePassword, updateUsername } from '../redux/ProfileSlice';
 import Menu from "../components/Menu";
 import { setUsername } from '../redux/LoginSlice';
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const {username, email, profileImage, status, error } = useSelector((state: RootState) => state.profile);
+  const { username = '', email = '', status, error } = useSelector((state: RootState) => state.profile || {});
   const [newUsername, setNewUsername] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   useEffect(() => {
     dispatch(fetchProfileInfo());
@@ -41,15 +40,6 @@ const ProfileScreen: React.FC = () => {
     setShowMenu(!showMenu);
   };
 
-  const handleProfileImageChange = () => {
-    if (selectedImage) {
-      const formData = new FormData();
-      formData.append('profile_image', selectedImage);
-      dispatch(updateProfileImage(formData));
-      setSelectedImage(null);
-    }
-  };
-
   const handlePasswordChange = () => {
     if (newPassword === confirmNewPassword) {
       dispatch(updatePassword({ old_password: oldPassword, new_password: newPassword }));
@@ -62,9 +52,13 @@ const ProfileScreen: React.FC = () => {
   };
 
   const handleSaveChanges = () => {
+    handleUsernameChange();
     handlePasswordChange();
-    handleProfileImageChange();
   };
+
+  if (!username || !email) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -81,12 +75,12 @@ const ProfileScreen: React.FC = () => {
         <TextInput
               style={styles.input}
               placeholder="Enter Username"
-              onChangeText={(text) => setUsername(text)}
+              onChangeText={(text) => setNewUsername(text)}
             />
          <TextInput
               style={styles.input}
               placeholder="Change username"
-              onChangeText={(text) => setUsername(text)}
+              onChangeText={(text) => setNewUsername(text)}
             />
         <Text style={styles.label}>Password</Text>
         <TextInput
