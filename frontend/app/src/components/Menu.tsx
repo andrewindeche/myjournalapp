@@ -3,7 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp} from '@react-navigation/native';
 
 interface MenuProps {
   onClose: () => void;
@@ -15,7 +15,8 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
 
   const handleLogout = () => {
     dispatch(logout()); 
-    onClose(); 
+    onClose();
+    navigation.navigate("Home");
   };
 
   return (
@@ -28,7 +29,7 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
         </Pressable>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Profile')}>
+          onPress={() => navigation.navigate('JournalEntry')}>
           <Icon name="document-text-outline" size={28} color="black" />
         </Pressable>
         <Pressable

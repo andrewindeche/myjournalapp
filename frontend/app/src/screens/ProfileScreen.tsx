@@ -5,7 +5,6 @@ import { AppDispatch, RootState } from '../redux/store';
 import { useNavigation } from "@react-navigation/native";
 import { fetchProfileInfo, updatePassword, updateUsername } from '../redux/ProfileSlice';
 import Menu from "../components/Menu";
-import { setUsername } from '../redux/LoginSlice';
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -13,7 +12,6 @@ const ProfileScreen: React.FC = () => {
   const { username = '', email = '', status, error } = useSelector((state: RootState) => state.profile || {});
   const [newUsername, setNewUsername] = useState('');
   const [oldPassword, setOldPassword] = useState('');
-  const [showMenu, setShowMenu] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
@@ -34,10 +32,6 @@ const ProfileScreen: React.FC = () => {
       dispatch(updateUsername(newUsername.trim()));
       setNewUsername('');
     }
-  };
-
-  const handleToggleMenu = () => {
-    setShowMenu(!showMenu);
   };
 
   const handlePasswordChange = () => {
@@ -106,7 +100,7 @@ const ProfileScreen: React.FC = () => {
         <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
-        <Menu />
+        <Menu navigation={navigation} />
       </View>
   );
 };
