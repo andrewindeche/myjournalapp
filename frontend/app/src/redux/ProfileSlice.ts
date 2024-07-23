@@ -44,7 +44,7 @@ interface ProfileState {
       const token = state.auth.token;
       setAuthToken(token);
       try {
-        const response = await instance.patch('profile', { username: newUsername})
+        const response = await instance.patch('profile/', { username: newUsername})
       return response.data;
       } catch (error: any) {
         if (error.response && error.response.status === 401) {
@@ -62,7 +62,7 @@ async ({ old_password, new_password }, { rejectWithValue, getState }) => {
   const token = state.auth.token;
   setAuthToken(token);
   try {
-    const response = await axios.put('password-change/', { old_password, new_password }, {
+    const response = await instance.put('password-change/', { old_password, new_password }, {
     });
     return response.data;
   } catch (error: any) {

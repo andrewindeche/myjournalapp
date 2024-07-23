@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, Modal, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +14,8 @@ const ProfileScreen: React.FC = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     dispatch(fetchProfileInfo());
@@ -22,6 +24,11 @@ const ProfileScreen: React.FC = () => {
   useEffect(() => {
     if (status === 'succeeded') {
       Alert.alert('Success', 'Profile updated successfully.');
+      setNewUsername('');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+
     } else if (status === 'failed' && error) {
       Alert.alert('Error', error);
     }
@@ -34,6 +41,11 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const closeModal = () => {
+    setModalVisible(false);
+    setSuccessMessage('');
+  };
+
   const handlePasswordChange = () => {
     if (newPassword === confirmNewPassword) {
       dispatch(updatePassword({ old_password: oldPassword, new_password: newPassword }));
@@ -43,11 +55,6 @@ const ProfileScreen: React.FC = () => {
     } else {
       alert('Passwords do not match');
     }
-  };
-
-  const handleSaveChanges = () => {
-    handleUsernameChange();
-    handlePasswordChange();
   };
 
   if (!username || !email) {
@@ -63,6 +70,21 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.label}>Email: {email}</Text>
         </View>
       </View>
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>{successMessage}</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
         <TextInput
               style={styles.input}
               placeholder="Enter Username"
@@ -73,7 +95,7 @@ const ProfileScreen: React.FC = () => {
               placeholder="Change username"
               onChangeText={(text) => setNewUsername(text)}
             />
-        <Pressable style={styles.outerbutton} onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable style={styles.outerbutton} onPress={handleUsernameChange } disabled={status === 'loading'}>
           <Text style={styles.OuterButtonText}>Update Username</Text>
         </Pressable>
         <TextInput
@@ -97,7 +119,7 @@ const ProfileScreen: React.FC = () => {
           onChangeText={setConfirmNewPassword}
           secureTextEntry
         />
-        <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable style={styles.button} onPress={handlePasswordChange} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
         <Menu navigation={navigation} />
