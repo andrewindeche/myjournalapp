@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -24,18 +24,20 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
         <Pressable
           style={styles.menuItem}
           onPress={() => navigation.navigate('Summary')}>
-          <Icon name="home-outline" size={24} color="white" />
-          <Text style={styles.menuText}>Home</Text>
+          <Icon name="home-outline" size={28} color="black" />
         </Pressable>
         <Pressable
           style={styles.menuItem}
           onPress={() => navigation.navigate('Profile')}>
-          <Icon name="document-text-outline" size={24} color="white" />
-          <Text style={styles.menuText}>Profile</Text>
+          <Icon name="document-text-outline" size={28} color="black" />
+        </Pressable>
+        <Pressable
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('Delete')}>
+          <Icon name="trash-outline" size={28} color="black" />
         </Pressable>
         <Pressable style={styles.menuItem} onPress={handleLogout}>
-          <Icon name="exit-outline" size={24} color="white" />
-          <Text style={styles.menuText}>Logout</Text>
+          <Icon name="exit-outline" size={28} color="black" />
         </Pressable>
       </View>
     </View>
@@ -45,32 +47,28 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
 const styles = StyleSheet.create({
   menu: {
     borderRadius: 5,
-    elevation: 75,
-    padding: 10,
-    position: 'absolute',
-    right: 0,
-    color: 'white',
-    top: 30,
+    elevation: 3,
+    padding: 5,
+    position: 'relative',
+    color: '#CB7723',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   menuContainer: {
     position: 'relative',
-    color: 'white',
+    backgroundColor: 'white',
     alignItems: "center",
     borderColor: "#ccc",
     borderTopWidth: 1,
-    flexDirection: "row",
+    display: 'flex',
     justifyContent: "space-around",
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   menuItem: {
     alignItems: 'center',
     flexDirection: 'column',
-    paddingVertical: 10,
-  },
-  menuText: {
-    color: 'white',
-    marginLeft: 10,
-    fontWeight: 'bold',
+    paddingVertical: 4,
+    marginHorizontal: 30,
   },
 });
 

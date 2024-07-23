@@ -61,10 +61,10 @@ const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <View style={{ flex: 0.8 }}>
+    <View style={{ flex: 1 }}>
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
-        <View style={{ alignItems: 'center', padding: 10 }}>
+        <View style={{ alignItems: 'center', padding: 20 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
         </View>
@@ -106,6 +106,7 @@ const ProfileScreen: React.FC = () => {
         <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
+        <Menu />
       </View>
   );
 };
@@ -113,7 +114,7 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
     justifyContent: 'center',
   },
   outerContainer: {
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 4,
+    marginBottom: 16,
   },
   outerbutton: {
     paddingVertical: 12,
