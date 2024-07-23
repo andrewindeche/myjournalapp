@@ -45,11 +45,6 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  const handleSaveChanges = () => {
-    handleUsernameChange();
-    handlePasswordChange();
-  };
-
   if (!username || !email) {
     return <Text>Loading...</Text>;
   }
@@ -73,7 +68,7 @@ const ProfileScreen: React.FC = () => {
               placeholder="Change username"
               onChangeText={(text) => setNewUsername(text)}
             />
-        <Pressable style={styles.outerbutton} onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable style={styles.outerbutton} onPress={handleUsernameChange } disabled={status === 'loading'}>
           <Text style={styles.OuterButtonText}>Update Username</Text>
         </Pressable>
         <TextInput
@@ -97,7 +92,7 @@ const ProfileScreen: React.FC = () => {
           onChangeText={setConfirmNewPassword}
           secureTextEntry
         />
-        <Pressable style={styles.button} onPress={handleSaveChanges} disabled={status === 'loading'}>
+        <Pressable style={styles.button} onPress={handlePasswordChange} disabled={status === 'loading'}>
           <Text style={styles.buttonText}>Update Password</Text>
         </Pressable>
         <Menu navigation={navigation} />
