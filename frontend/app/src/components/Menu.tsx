@@ -6,16 +6,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationProp} from '@react-navigation/native';
 
 interface MenuProps {
-  onClose: () => void;
   navigation: NavigationProp<any>;
 }
 
-const Menu: React.FC<MenuProps> = ({ onClose, navigation }) =>  {
+const Menu: React.FC<MenuProps> = ({ navigation }) =>  {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout()); 
-    onClose();
     navigation.navigate("Home");
   };
 
