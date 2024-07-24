@@ -40,16 +40,22 @@ const ProfileScreen: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (status === "succeeded") {
+    if (
+      status === "succeeded" &&
+      successMessage === "Password changed successfully."
+    ) {
       Alert.alert("Success", "Profile updated successfully.");
       setNewUsername("");
       setOldPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
+      setSuccessMessage("");
+      setModalVisible(false);
     } else if (status === "failed" && error) {
       Alert.alert("Error", error);
+      setModalVisible(false);
     }
-  }, [status, error]);
+  }, [status, error, successMessage]);
 
   const handleUsernameChange = () => {
     if (newUsername.trim() !== "") {
@@ -80,6 +86,26 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handlePasswordChangeConfirmation = () => {
+    if (newPassword === confirmNewPassword) {
+      dispatch(
+        updatePassword({
+          old_password: oldPassword,
+          new_password: newPassword,
+          confirm_new_password: confirmNewPassword,
+        }),
+      );
+      setSuccessMessage("Password changed successfully.");
+    } else {
+      Alert.alert("Error", "Passwords do not match");
+      setModalVisible(false);
+    }
+  };
+
+  const openPasswordChangeModal = () => {
+    setModalVisible(true);
+  };
+
   const handleDeleteAccount = () => {
     dispatch(deleteUserAccount());
   };
@@ -105,10 +131,20 @@ const ProfileScreen: React.FC = () => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>{successMessage}</Text>
-            <Pressable style={styles.modalButton} onPress={closeModal}>
-              <Text style={styles.buttonText}>Close</Text>
-            </Pressable>
+            <Text style={styles.modalText}>
+              Are you sure you want to change your password?
+            </Text>
+            <View style={styles.modalButtonsContainer}>
+              <Pressable
+                style={styles.modalButton}
+                onPress={handlePasswordChangeConfirmation}
+              >
+                <Text style={styles.buttonText}>Yes</Text>
+              </Pressable>
+              <Pressable style={styles.modalButton} onPress={closeModal}>
+                <Text style={styles.buttonText}>No</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
@@ -152,7 +188,7 @@ const ProfileScreen: React.FC = () => {
       />
       <Pressable
         style={styles.button}
-        onPress={handlePasswordChange}
+        onPress={openPasswordChangeModal}
         disabled={status === "loading"}
       >
         <Text style={styles.buttonText}>Update Password</Text>
@@ -224,15 +260,46 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  modalButton: {
+    flex: 1,
+    marginHorizontal: 10,
+    backgroundColor: "#020035",
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 5,
+  },
   label: {
     fontSize: 13,
     margin: 2,
     color: "white",
   },
   title: {
-    color: "white",
-    fontWeight: "bold",
+    color: "#FFFFFF",
     fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
