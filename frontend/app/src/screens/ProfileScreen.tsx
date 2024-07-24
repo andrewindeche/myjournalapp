@@ -33,6 +33,7 @@ const ProfileScreen: React.FC = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [usernameModalVisible, setUsernameModalVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
@@ -51,6 +52,14 @@ const ProfileScreen: React.FC = () => {
       setConfirmNewPassword("");
       setSuccessMessage("");
       setModalVisible(false);
+    } else if (
+      status === "succeeded" &&
+      successMessage === "Username updated successfully."
+    ) {
+      Alert.alert("Success", successMessage);
+      setNewUsername("");
+      setSuccessMessage("");
+      setUsernameModalVisible(false);
     } else if (status === "failed" && error) {
       Alert.alert("Error", error);
       setModalVisible(false);
@@ -64,26 +73,23 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handleUsernameChangeConfirmation = () => {
+    if (newUsername.trim() !== "") {
+      dispatch(updateUsername(newUsername.trim()));
+      setSuccessMessage("Username updated successfully.");
+    } else {
+      Alert.alert("Error", "Username cannot be empty");
+      setUsernameModalVisible(false);
+    }
+  };
+
+  const openUsernameChangeModal = () => {
+    setUsernameModalVisible(true);
+  };
+
   const closeModal = () => {
     setModalVisible(false);
     setSuccessMessage("");
-  };
-
-  const handlePasswordChange = () => {
-    if (newPassword === confirmNewPassword) {
-      dispatch(
-        updatePassword({
-          old_password: oldPassword,
-          new_password: newPassword,
-          confirm_new_password: confirmNewPassword,
-        }),
-      );
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-    } else {
-      alert("Passwords do not match");
-    }
   };
 
   const handlePasswordChangeConfirmation = () => {
@@ -108,6 +114,10 @@ const ProfileScreen: React.FC = () => {
 
   const handleDeleteAccount = () => {
     dispatch(deleteUserAccount());
+  };
+
+  const closeUsernameModal = () => {
+    setUsernameModalVisible(false);
   };
 
   if (!username || !email) {
@@ -148,6 +158,34 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+      <Modal
+        transparent={true}
+        visible={usernameModalVisible}
+        animationType="slide"
+        onRequestClose={closeUsernameModal}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>
+              Are you sure you want to change your username?
+            </Text>
+            <View style={styles.modalButtonsContainer}>
+              <Pressable
+                style={styles.modalButton}
+                onPress={handleUsernameChangeConfirmation}
+              >
+                <Text style={styles.buttonText}>Yes</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalButton}
+                onPress={closeUsernameModal}
+              >
+                <Text style={styles.buttonText}>No</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <TextInput
         style={styles.input}
         placeholder="Enter Username"
@@ -160,7 +198,7 @@ const ProfileScreen: React.FC = () => {
       />
       <Pressable
         style={styles.outerbutton}
-        onPress={handleUsernameChange}
+        onPress={openUsernameChangeModal}
         disabled={status === "loading"}
       >
         <Text style={styles.OuterButtonText}>Update Username</Text>
