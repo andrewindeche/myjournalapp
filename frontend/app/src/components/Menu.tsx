@@ -35,20 +35,20 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
         <Pressable
           style={styles.menuItem}
           onPress={() => navigation.navigate('Summary')}>
-          <Icon name="home-outline" size={28} color="black" />
+          <Icon name="home-outline" size={24} color="black" />
         </Pressable>
         <Pressable
           style={styles.menuItem}
           onPress={() => navigation.navigate('JournalEntry')}>
-          <Icon name="document-text-outline" size={28} color="black" />
+          <Icon name="document-text-outline" size={24} color="black" />
         </Pressable>
         <Pressable
           style={styles.menuItem}
           onPress={handleDeleteAccount}>
-          <Icon name="trash-outline" size={28} color="black" />
+          <Icon name="trash-outline" size={24} color="black" />
         </Pressable>
         <Pressable style={styles.menuItem} onPress={handleLogout}>
-          <Icon name="exit-outline" size={28} color="black" />
+          <Icon name="exit-outline" size={24} color="black" />
         </Pressable>
       </View>
     </View>

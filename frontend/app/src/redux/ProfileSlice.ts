@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import instance, { setAuthToken } from "../redux/axiosInstance";
 
@@ -73,21 +72,20 @@ interface ProfileState {
     }
   );
 
-  export const updatePassword = createAsyncThunk<{ message: string },{ old_password: string, new_password: string },
-  { rejectValue: string }>('profile/updatePassword',
-async ({ old_password, new_password }, { rejectWithValue, getState }) => {
-  const state: RootState = getState() as RootState;
-  const token = state.auth.token;
-  setAuthToken(token);
-  try {
-    const response = await instance.put('password-change/', { old_password, new_password }, {
-    });
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data || error.message);
-  }
-}
-);
+  export const updatePassword = createAsyncThunk<{ message: string }, { old_password: string, new_password: string, confirm_new_password: string }, { rejectValue: string }>(
+    'profile/updatePassword',
+    async ({ old_password, new_password, confirm_new_password }, { rejectWithValue, getState }) => {
+      const state: RootState = getState() as RootState;
+      const token = state.auth.token;
+      setAuthToken(token);
+      try {
+        const response = await instance.put('password-change/', { old_password, new_password, confirm_new_password });
+        return response.data;
+      } catch (error: any) {
+        return rejectWithValue(error.response?.data || error.message);
+      }
+    }
+  );
 
   const profileSlice = createSlice({
     name: 'profile',
@@ -136,9 +134,9 @@ async ({ old_password, new_password }, { rejectWithValue, getState }) => {
             state.status = 'succeeded';
             state.error = null;
           })
-          .addCase(updatePassword.rejected, (state, action) => {
+          .addCase(updatePassword.rejected, (state, action: PayloadAction<string | undefined>) => {
             state.status = 'failed';
-            state.error = action.payload as string;
+            state.error = action.payload || 'Failed to update password';
           })
           .addCase(deleteUserAccount.pending, (state) => {
             state.status = 'loading';
