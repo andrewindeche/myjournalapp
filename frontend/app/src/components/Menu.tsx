@@ -1,20 +1,43 @@
-import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import React, { useState} from 'react';
+import { View, Pressable, StyleSheet,Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationProp} from '@react-navigation/native';
+import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
 
 interface MenuProps {
   navigation: NavigationProp<any>;
+  onDeleteAccount: () => void;
 }
 
-const Menu: React.FC<MenuProps> = ({ navigation }) =>  {
+const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
   const dispatch = useDispatch();
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const handleLogout = () => {
-    dispatch(logout()); 
+    setLogoutModalVisible(true);
+  };
+
+  const confirmLogout = () => {
+    dispatch(logout());
     navigation.navigate("Home");
+    setLogoutModalVisible(false); 
+  };
+
+  const cancelLogout = () => {
+    setLogoutModalVisible(false); 
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Confirm Deletion',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Yes, Delete', onPress: onDeleteAccount },
+      ]
+    );
   };
 
   return (
@@ -23,22 +46,27 @@ const Menu: React.FC<MenuProps> = ({ navigation }) =>  {
         <Pressable
           style={styles.menuItem}
           onPress={() => navigation.navigate('Summary')}>
-          <Icon name="home-outline" size={28} color="black" />
+          <Icon name="home-outline" size={24} color="black" />
         </Pressable>
         <Pressable
           style={styles.menuItem}
           onPress={() => navigation.navigate('JournalEntry')}>
-          <Icon name="document-text-outline" size={28} color="black" />
+          <Icon name="document-text-outline" size={24} color="black" />
         </Pressable>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Delete')}>
-          <Icon name="trash-outline" size={28} color="black" />
+          onPress={handleDeleteAccount}>
+          <Icon name="trash-outline" size={24} color="black" />
         </Pressable>
         <Pressable style={styles.menuItem} onPress={handleLogout}>
-          <Icon name="exit-outline" size={28} color="black" />
+          <Icon name="exit-outline" size={24} color="black" />
         </Pressable>
       </View>
+      <LogoutConfirmationModal
+        visible={logoutModalVisible}
+        onClose={cancelLogout}
+        onConfirm={confirmLogout}
+      />
     </View>
   );
 };
