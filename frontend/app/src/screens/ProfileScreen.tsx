@@ -66,13 +66,6 @@ const ProfileScreen: React.FC = () => {
     }
   }, [status, error, successMessage]);
 
-  const handleUsernameChange = () => {
-    if (newUsername.trim() !== "") {
-      dispatch(updateUsername(newUsername.trim()));
-      setNewUsername("");
-    }
-  };
-
   const handleUsernameChangeConfirmation = () => {
     if (newUsername.trim() !== "") {
       dispatch(updateUsername(newUsername.trim()));
