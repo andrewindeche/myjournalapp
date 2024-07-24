@@ -35,6 +35,7 @@ const ProfileScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [usernameModalVisible, setUsernameModalVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     dispatch(fetchProfileInfo());
@@ -61,8 +62,32 @@ const ProfileScreen: React.FC = () => {
       setSuccessMessage("");
       setUsernameModalVisible(false);
     } else if (status === "failed" && error) {
+      setErrorMessage(error);
       Alert.alert("Error", error);
       setModalVisible(false);
+      setUsernameModalVisible(false);
+      setTimeout(() => {
+        setErrorMessage("");
+        setNewUsername("");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      }, 4000);
+    }
+  }, [status, error, successMessage]);
+
+  useEffect(() => {
+    if (status === "failed" && error) {
+      setErrorMessage(error);
+      setModalVisible(false);
+      setUsernameModalVisible(false);
+      setTimeout(() => {
+        setErrorMessage("");
+        setNewUsername("");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      }, 4000);
     }
   }, [status, error, successMessage]);
 
@@ -71,8 +96,12 @@ const ProfileScreen: React.FC = () => {
       dispatch(updateUsername(newUsername.trim()));
       setSuccessMessage("Username updated successfully.");
     } else {
-      Alert.alert("Error", "Username cannot be empty");
+      setErrorMessage("Username cannot be empty");
       setUsernameModalVisible(false);
+      setTimeout(() => {
+        setErrorMessage("");
+        setNewUsername("");
+      }, 4000);
     }
   };
 
@@ -86,19 +115,30 @@ const ProfileScreen: React.FC = () => {
   };
 
   const handlePasswordChangeConfirmation = () => {
-    if (newPassword === confirmNewPassword) {
-      dispatch(
-        updatePassword({
-          old_password: oldPassword,
-          new_password: newPassword,
-          confirm_new_password: confirmNewPassword,
-        }),
-      );
-      setSuccessMessage("Password changed successfully.");
-    } else {
-      Alert.alert("Error", "Passwords do not match");
+    if (!oldPassword || !newPassword || !confirmNewPassword) {
+      setErrorMessage("Password fields cannot be empty");
       setModalVisible(false);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 4000);
+      return;
     }
+    if (newPassword !== confirmNewPassword) {
+      setErrorMessage("Passwords do not match");
+      setModalVisible(false);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 4000);
+      return;
+    }
+    dispatch(
+      updatePassword({
+        old_password: oldPassword,
+        new_password: newPassword,
+        confirm_new_password: confirmNewPassword,
+      }),
+    );
+    setSuccessMessage("Password changed successfully.");
   };
 
   const openPasswordChangeModal = () => {
@@ -180,14 +220,17 @@ const ProfileScreen: React.FC = () => {
         </View>
       </Modal>
       <TextInput
-        style={styles.input}
-        placeholder="Enter Username"
+        style={[
+          styles.input,
+          errorMessage.includes("Username") && styles.errorInput,
+        ]}
+        placeholder={
+          errorMessage.includes("Username")
+            ? errorMessage
+            : "Enter New Username"
+        }
         onChangeText={(text) => setNewUsername(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Change username"
-        onChangeText={(text) => setNewUsername(text)}
+        value={newUsername}
       />
       <Pressable
         style={styles.outerbutton}
@@ -197,22 +240,39 @@ const ProfileScreen: React.FC = () => {
         <Text style={styles.OuterButtonText}>Update Username</Text>
       </Pressable>
       <TextInput
-        style={styles.input}
-        placeholder="Current Password"
+        style={[
+          styles.input,
+          errorMessage.includes("Password") && styles.errorInput,
+        ]}
+        placeholder={
+          errorMessage.includes("Password") ? errorMessage : "Current Password"
+        }
         value={oldPassword}
         onChangeText={setOldPassword}
         secureTextEntry
       />
       <TextInput
-        style={styles.input}
-        placeholder="New Password"
+        style={[
+          styles.input,
+          errorMessage.includes("Password") && styles.errorInput,
+        ]}
+        placeholder={
+          errorMessage.includes("Password") ? errorMessage : "New Password"
+        }
         value={newPassword}
         onChangeText={setNewPassword}
         secureTextEntry
       />
       <TextInput
-        style={styles.input}
-        placeholder="Confirm New Password"
+        style={[
+          styles.input,
+          errorMessage.includes("Password") && styles.errorInput,
+        ]}
+        placeholder={
+          errorMessage.includes("Password")
+            ? errorMessage
+            : "Confirm New Password"
+        }
         value={confirmNewPassword}
         onChangeText={setConfirmNewPassword}
         secureTextEntry
@@ -243,6 +303,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     width: "100%",
   },
+  errorInput: {
+    borderColor: "red",
+    color: "red",
+  },
   innerContainer: {
     backgroundColor: "white",
     height: "90%",
@@ -258,21 +322,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: "rgba(0, 0, 255, 0.1)",
   },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+  },
   button: {
-    backgroundColor: "#020035",
-    paddingVertical: 12,
     alignItems: "center",
+    backgroundColor: "#020035",
     borderRadius: 4,
     marginBottom: 16,
+    paddingVertical: 12,
   },
   outerbutton: {
-    paddingVertical: 12,
     alignItems: "center",
-    borderRadius: 4,
     backgroundColor: "#020035",
-    borderWidth: 1,
     borderColor: "white",
+    borderRadius: 4,
+    borderWidth: 1,
     marginBottom: 16,
+    paddingVertical: 12,
   },
   footer: {
     alignItems: "center",
@@ -292,17 +361,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   modalBackground: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    flex: 1,
+    justifyContent: "center",
   },
   modalContainer: {
-    width: "80%",
+    alignItems: "center",
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    alignItems: "center",
+    width: "80%",
   },
   modalText: {
     fontSize: 18,
@@ -315,17 +384,17 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalButton: {
+    alignItems: "center",
+    backgroundColor: "#020035",
+    borderRadius: 5,
     flex: 1,
     marginHorizontal: 10,
-    backgroundColor: "#020035",
     paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 5,
   },
   label: {
+    color: "white",
     fontSize: 13,
     margin: 2,
-    color: "white",
   },
   title: {
     color: "#FFFFFF",
