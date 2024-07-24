@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationProp } from "@react-navigation/native";
+import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
 
 interface MenuProps {
   onClose: () => void;
@@ -12,11 +13,21 @@ interface MenuProps {
 
 const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
   const dispatch = useDispatch();
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const handleLogout = () => {
+     setLogoutModalVisible(true);
+  };
+
+  const confirmLogout = () => {
     dispatch(logout());
-    onClose();
-    navigation.navigate("Home");
+    onClose(); 
+    navigation.navigate("Home"); 
+    setLogoutModalVisible(false); 
+  };
+
+  const cancelLogout = () => {
+    setLogoutModalVisible(false); 
   };
 
   return (
@@ -41,6 +52,11 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
           <Text style={styles.menuText}>Logout</Text>
         </Pressable>
       </View>
+      <LogoutConfirmationModal
+        visible={logoutModalVisible}
+        onClose={cancelLogout}
+        onConfirm={confirmLogout}
+      />
     </View>
   );
 };
