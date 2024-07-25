@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalButton: {
-    padding: 20,
+    padding: 10,
+    width:100,
     backgroundColor: "#020035",
     borderRadius: 5,
     marginHorizontal: 10,
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    alignItems: "center",
   },
 });
 

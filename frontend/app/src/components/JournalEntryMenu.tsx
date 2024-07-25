@@ -1,33 +1,33 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationProp } from "@react-navigation/native";
-import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
+import LogoutConfirmationModal from "./LogoutConfirmationModal";
 
 interface MenuProps {
   onClose: () => void;
   navigation: NavigationProp<any>;
 }
 
-const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
+const SubMenu: React.FC<MenuProps> = ({ onClose, navigation }) => {
   const dispatch = useDispatch();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const handleLogout = () => {
-     setLogoutModalVisible(true);
+    setLogoutModalVisible(true);
   };
 
   const confirmLogout = () => {
     dispatch(logout());
-    onClose(); 
-    navigation.navigate("Home"); 
-    setLogoutModalVisible(false); 
+    onClose();
+    navigation.navigate("Home");
+    setLogoutModalVisible(false);
   };
 
   const cancelLogout = () => {
-    setLogoutModalVisible(false); 
+    setLogoutModalVisible(false);
   };
 
   return (
@@ -63,28 +63,28 @@ const Menu: React.FC<MenuProps> = ({ onClose, navigation }) => {
 
 const styles = StyleSheet.create({
   menu: {
-    backgroundColor: '#CB7723',
+    backgroundColor: "#CB7723",
     borderRadius: 5,
     elevation: 75,
     padding: 10,
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     top: 30,
   },
   menuContainer: {
-    position: 'relative',
-    color: 'white',
+    position: "relative",
+    color: "white",
   },
   menuItem: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
     paddingVertical: 10,
   },
   menuText: {
-    color: 'white',
+    color: "white",
     marginLeft: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
-export default Menu;
+export default SubMenu;
