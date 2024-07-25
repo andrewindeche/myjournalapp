@@ -42,28 +42,17 @@ const ProfileScreen: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (
-      status === "succeeded" &&
-      successMessage === "Password changed successfully."
-    ) {
-      Alert.alert("Success", "Profile updated successfully.");
-      setNewUsername("");
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      setSuccessMessage("");
-      setModalVisible(false);
-    } else if (
-      status === "succeeded" &&
-      successMessage === "Username updated successfully."
-    ) {
-      Alert.alert("Success", successMessage);
-      setNewUsername("");
-      setSuccessMessage("");
-      setUsernameModalVisible(false);
+    if (status === "succeeded") {
+      if (successMessage) {
+        setModalVisible(false);
+        setTimeout(() => setSuccessMessage(""), 3000)
+        setNewUsername("");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      } 
     } else if (status === "failed" && error) {
       setErrorMessage(error);
-      Alert.alert("Error", error);
       setModalVisible(false);
       setUsernameModalVisible(false);
       setTimeout(() => {
@@ -94,6 +83,7 @@ const ProfileScreen: React.FC = () => {
   const handleUsernameChangeConfirmation = () => {
     if (newUsername.trim() !== "") {
       dispatch(updateUsername(newUsername.trim()));
+      setUsernameModalVisible(false);
       setSuccessMessage("Username updated successfully.");
     } else {
       setErrorMessage("Username cannot be empty");
@@ -139,6 +129,7 @@ const ProfileScreen: React.FC = () => {
       }),
     );
     setSuccessMessage("Password changed successfully.");
+    setModalVisible(false);
   };
 
   const openPasswordChangeModal = () => {
@@ -164,6 +155,12 @@ const ProfileScreen: React.FC = () => {
         <View style={{ alignItems: "center", padding: 20 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
+          {successMessage ? (
+            <Text style={styles.successText}>{successMessage}</Text>
+          ) : null}
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          ) : null}
         </View>
       </View>
       <Modal
@@ -324,8 +321,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    fontSize: 14,
-    marginBottom: 10,
+    fontSize: 18,
+    marginTop: 20,
+    fontWeight: 'bold',
+  },
+  successText: {
+    color: "green",
+    fontSize: 18,
+    marginTop: 20,
+    fontWeight: 'bold',
   },
   button: {
     alignItems: "center",
@@ -393,7 +397,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "white",
-    fontSize: 15,
+    fontSize: 18,
     margin: 2,
   },
   title: {
