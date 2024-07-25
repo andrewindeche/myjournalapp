@@ -19,7 +19,7 @@ import {
 } from "../redux/JournalEntrySlice";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import EntryMenu from "../components/EntryMenu";
+import SubMenu from "../components/JournalEntryMenu";
 import { useNavigation } from "@react-navigation/native";
 import {
   launchCamera,
@@ -262,7 +262,7 @@ const JournalEntryScreen: React.FC = () => {
         </Pressable>
         <View style={styles.popup}>
           {showMenu && (
-            <EntryMenu navigation={navigation} onClose={handleToggleMenu} />
+            <SubMenu navigation={navigation} onClose={handleToggleMenu} />
           )}
         </View>
         <Pressable onPress={handleToggleMenu}>

@@ -72,7 +72,7 @@ const ProfileScreen: React.FC = () => {
         setOldPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-      }, 4000);
+      }, 2000);
     }
   }, [status, error, successMessage]);
 
@@ -87,7 +87,7 @@ const ProfileScreen: React.FC = () => {
         setOldPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-      }, 4000);
+      }, 2000);
     }
   }, [status, error, successMessage]);
 
@@ -101,7 +101,7 @@ const ProfileScreen: React.FC = () => {
       setTimeout(() => {
         setErrorMessage("");
         setNewUsername("");
-      }, 4000);
+      }, 2000);
     }
   };
 
@@ -120,7 +120,7 @@ const ProfileScreen: React.FC = () => {
       setModalVisible(false);
       setTimeout(() => {
         setErrorMessage("");
-      }, 4000);
+      }, 2000);
       return;
     }
     if (newPassword !== confirmNewPassword) {
@@ -128,7 +128,7 @@ const ProfileScreen: React.FC = () => {
       setModalVisible(false);
       setTimeout(() => {
         setErrorMessage("");
-      }, 4000);
+      }, 2000);
       return;
     }
     dispatch(
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: "bold",
   },
 });

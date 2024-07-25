@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User
+from django.contrib.auth import logout
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -65,7 +66,10 @@ class DeleteUserView(generics.DestroyAPIView):
     def get_object(self):
         return self.request.user
     
+    def perform_destroy(self, instance):
+        instance.delete()
+        logout(self.request)
+    
     def delete(self, request, *args, **kwargs):
         self.perform_destroy(self.get_object())
-        logout(request)  # Log out the user
         return Response({'message': 'Account deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)

@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
+import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
 
-interface LogoutConfirmationModalProps {
+interface DeleteConfirmationModalProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   visible,
   onClose,
   onConfirm,
@@ -22,7 +22,8 @@ const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalText}>
-            Are you sure you want to log out?
+            Are you sure you want to delete your account? This action cannot be
+            undone.
           </Text>
           <View style={styles.modalButtonsContainer}>
             <Pressable style={styles.modalButton} onPress={onConfirm}>
@@ -53,8 +54,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalText: {
-    marginBottom: 20,
     fontSize: 18,
+    marginBottom: 20,
     textAlign: "center",
   },
   modalButtonsContainer: {
@@ -63,17 +64,17 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalButton: {
-    padding: 10,
-    width:100,
-    backgroundColor: "#020035",
-    borderRadius: 5,
+    flex: 1,
     marginHorizontal: 10,
+    backgroundColor: "#020035",
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 5,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
-    alignItems: "center",
   },
 });
 
-export default LogoutConfirmationModal;
+export default DeleteConfirmationModal;

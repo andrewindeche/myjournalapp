@@ -1,19 +1,22 @@
-import React, { useState} from 'react';
-import { View, Pressable, StyleSheet,Alert } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { logout } from '../redux/authSlice';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { NavigationProp} from '@react-navigation/native';
-import LogoutConfirmationModal from '../components/LogoutConfirmationModal';
+import React, { useState } from "react";
+import { View, Pressable, StyleSheet, Alert } from "react-native";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
+import Icon from "react-native-vector-icons/Ionicons";
+import { NavigationProp } from "@react-navigation/native";
+import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import { deleteUserAccount } from "../redux/ProfileSlice";
 
 interface MenuProps {
   navigation: NavigationProp<any>;
   onDeleteAccount: () => void;
 }
 
-const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
+const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
   const dispatch = useDispatch();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const handleLogout = () => {
     setLogoutModalVisible(true);
@@ -22,22 +25,29 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
   const confirmLogout = () => {
     dispatch(logout());
     navigation.navigate("Home");
-    setLogoutModalVisible(false); 
+    setLogoutModalVisible(false);
   };
 
   const cancelLogout = () => {
-    setLogoutModalVisible(false); 
+    setLogoutModalVisible(false);
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      'Confirm Deletion',
-      'Are you sure you want to delete your account? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Yes, Delete', onPress: onDeleteAccount },
-      ]
-    );
+    setDeleteModalVisible(true);
+  };
+
+  const confirmDeleteAccount = async () => {
+    try {
+      await dispatch(deleteUserAccount()).unwrap();
+      dispatch(logout());
+      onDeleteAccount();
+      Alert.alert("Success", "Account deleted successfully.");
+      navigation.navigate("Home");
+    } catch (error) {
+      Alert.alert("Error", "Failed to delete account.");
+    } finally {
+      setDeleteModalVisible(false);
+    }
   };
 
   return (
@@ -45,17 +55,17 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
       <View style={styles.menu}>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Summary')}>
+          onPress={() => navigation.navigate("Summary")}
+        >
           <Icon name="home-outline" size={24} color="black" />
         </Pressable>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate('JournalEntry')}>
+          onPress={() => navigation.navigate("JournalEntry")}
+        >
           <Icon name="document-text-outline" size={24} color="black" />
         </Pressable>
-        <Pressable
-          style={styles.menuItem}
-          onPress={handleDeleteAccount}>
+        <Pressable style={styles.menuItem} onPress={handleDeleteAccount}>
           <Icon name="trash-outline" size={24} color="black" />
         </Pressable>
         <Pressable style={styles.menuItem} onPress={handleLogout}>
@@ -67,6 +77,11 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
         onClose={cancelLogout}
         onConfirm={confirmLogout}
       />
+      <DeleteConfirmationModal
+        visible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        onConfirm={confirmDeleteAccount}
+      />
     </View>
   );
 };
@@ -74,28 +89,28 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount  }) =>  {
 const styles = StyleSheet.create({
   menu: {
     borderRadius: 5,
+    color: "#CB7723",
     elevation: 3,
+    flexDirection: "row",
+    justifyContent: "space-around",
     padding: 5,
-    position: 'relative',
-    color: '#CB7723',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    position: "relative",
   },
   menuContainer: {
-    position: 'relative',
-    backgroundColor: 'white',
     alignItems: "center",
+    backgroundColor: "white",
     borderColor: "#ccc",
     borderTopWidth: 1,
-    display: 'flex',
+    display: "flex",
     justifyContent: "space-around",
     paddingVertical: 8,
+    position: "relative",
   },
   menuItem: {
-    alignItems: 'center',
-    flexDirection: 'column',
-    paddingVertical: 4,
+    alignItems: "center",
+    flexDirection: "column",
     marginHorizontal: 30,
+    paddingVertical: 4,
   },
 });
 
