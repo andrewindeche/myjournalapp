@@ -309,10 +309,10 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     backgroundColor: "white",
-    height: "90%",
+    height: "80%",
     marginBottom: 10,
     width: "100%",
-    padding: 60,
+    padding: 40,
   },
   input: {
     height: 40,
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "white",
-    fontSize: 13,
+    fontSize: 15,
     margin: 2,
   },
   title: {
