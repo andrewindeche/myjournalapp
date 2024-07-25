@@ -5,6 +5,8 @@ import { logout } from "../redux/authSlice";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationProp } from "@react-navigation/native";
 import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import { deleteUserAccount } from "../redux/ProfileSlice";
 
 interface MenuProps {
   navigation: NavigationProp<any>;
@@ -14,6 +16,7 @@ interface MenuProps {
 const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
   const dispatch = useDispatch();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const handleLogout = () => {
     setLogoutModalVisible(true);
@@ -30,14 +33,21 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      "Confirm Deletion",
-      "Are you sure you want to delete your account? This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Yes, Delete", onPress: onDeleteAccount },
-      ],
-    );
+    setDeleteModalVisible(true);
+  };
+
+  const confirmDeleteAccount = async () => {
+    try {
+      await dispatch(deleteUserAccount()).unwrap();
+      dispatch(logout());
+      onDeleteAccount();
+      Alert.alert("Success", "Account deleted successfully.");
+      navigation.navigate("Home");
+    } catch (error) {
+      Alert.alert("Error", "Failed to delete account.");
+    } finally {
+      setDeleteModalVisible(false);
+    }
   };
 
   return (
@@ -66,6 +76,11 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
         visible={logoutModalVisible}
         onClose={cancelLogout}
         onConfirm={confirmLogout}
+      />
+      <DeleteConfirmationModal
+        visible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        onConfirm={confirmDeleteAccount}
       />
     </View>
   );

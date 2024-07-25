@@ -45,6 +45,7 @@ interface ProfileState {
   async (_, { rejectWithValue, getState }) => {
     const state: RootState = getState() as RootState;
     const token = state.auth.token;
+    console.log('Token:', token);
     setAuthToken(token);
     try {
       await instance.delete('profile/delete/');
