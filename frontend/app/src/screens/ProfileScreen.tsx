@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  Alert,
   Modal,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,28 +44,13 @@ const ProfileScreen: React.FC = () => {
     if (status === "succeeded") {
       if (successMessage) {
         setModalVisible(false);
-        setTimeout(() => setSuccessMessage(""), 3000)
+        setTimeout(() => setSuccessMessage(""), 3000);
         setNewUsername("");
         setOldPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-      } 
+      }
     } else if (status === "failed" && error) {
-      setErrorMessage(error);
-      setModalVisible(false);
-      setUsernameModalVisible(false);
-      setTimeout(() => {
-        setErrorMessage("");
-        setNewUsername("");
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      }, 2000);
-    }
-  }, [status, error, successMessage]);
-
-  useEffect(() => {
-    if (status === "failed" && error) {
       setErrorMessage(error);
       setModalVisible(false);
       setUsernameModalVisible(false);
@@ -107,29 +91,29 @@ const ProfileScreen: React.FC = () => {
   const handlePasswordChangeConfirmation = () => {
     if (!oldPassword || !newPassword || !confirmNewPassword) {
       setErrorMessage("Password fields cannot be empty");
-      setModalVisible(false);
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2000);
       return;
     }
     if (newPassword !== confirmNewPassword) {
       setErrorMessage("Passwords do not match");
-      setModalVisible(false);
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2000);
       return;
     }
+
     dispatch(
       updatePassword({
         old_password: oldPassword,
         new_password: newPassword,
         confirm_new_password: confirmNewPassword,
       }),
-    );
-    setSuccessMessage("Password changed successfully.");
-    setModalVisible(false);
+    ).then((result) => {
+      if (updatePassword.fulfilled.match(result)) {
+        setSuccessMessage("Password changed successfully.");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      } else if (updatePassword.rejected.match(result)) {
+        setErrorMessage(result.payload as string);
+      }
+    });
   };
 
   const openPasswordChangeModal = () => {
@@ -144,6 +128,10 @@ const ProfileScreen: React.FC = () => {
     setUsernameModalVisible(false);
   };
 
+  if (status === "loading") {
+    return <Text>Loading...</Text>;
+  }
+  
   if (!username || !email) {
     return <Text>Loading...</Text>;
   }
@@ -323,13 +311,13 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 18,
     marginTop: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   successText: {
     color: "green",
     fontSize: 18,
     marginTop: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   button: {
     alignItems: "center",
