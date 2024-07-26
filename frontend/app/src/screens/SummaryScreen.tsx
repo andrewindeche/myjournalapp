@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, FlatList, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from "@react-navigation/native";
+import HomeMenu from '../components/HomeMenu';
 
 const SummaryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const navigation = useNavigation();
 
   const categories = ['All', 'Important', 'Bookmarked'];
   const notes = [
@@ -39,7 +42,7 @@ const SummaryScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <><View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.profileContainer}>
           <Image source={{ uri: 'https://example.com/profile.jpg' }} style={styles.profileImage} />
@@ -65,9 +68,8 @@ const SummaryScreen: React.FC = () => {
         data={notes}
         renderItem={renderNote}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.notesContainer}
-      />
-    </View>
+        contentContainerStyle={styles.notesContainer} />
+    </View><HomeMenu navigation={navigation} onDeleteAccount={() => { } } /></>
   );
 };
 

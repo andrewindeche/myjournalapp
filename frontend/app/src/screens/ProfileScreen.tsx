@@ -131,7 +131,7 @@ const ProfileScreen: React.FC = () => {
   if (status === "loading") {
     return <Text>Loading...</Text>;
   }
-  
+
   if (!username || !email) {
     return <Text>Loading...</Text>;
   }
