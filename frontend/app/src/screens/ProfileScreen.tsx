@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  Alert,
   Modal,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,42 +41,16 @@ const ProfileScreen: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (
-      status === "succeeded" &&
-      successMessage === "Password changed successfully."
-    ) {
-      Alert.alert("Success", "Profile updated successfully.");
-      setNewUsername("");
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      setSuccessMessage("");
-      setModalVisible(false);
-    } else if (
-      status === "succeeded" &&
-      successMessage === "Username updated successfully."
-    ) {
-      Alert.alert("Success", successMessage);
-      setNewUsername("");
-      setSuccessMessage("");
-      setUsernameModalVisible(false);
-    } else if (status === "failed" && error) {
-      setErrorMessage(error);
-      Alert.alert("Error", error);
-      setModalVisible(false);
-      setUsernameModalVisible(false);
-      setTimeout(() => {
-        setErrorMessage("");
+    if (status === "succeeded") {
+      if (successMessage) {
+        setModalVisible(false);
+        setTimeout(() => setSuccessMessage(""), 3000);
         setNewUsername("");
         setOldPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-      }, 2000);
-    }
-  }, [status, error, successMessage]);
-
-  useEffect(() => {
-    if (status === "failed" && error) {
+      }
+    } else if (status === "failed" && error) {
       setErrorMessage(error);
       setModalVisible(false);
       setUsernameModalVisible(false);
@@ -94,6 +67,7 @@ const ProfileScreen: React.FC = () => {
   const handleUsernameChangeConfirmation = () => {
     if (newUsername.trim() !== "") {
       dispatch(updateUsername(newUsername.trim()));
+      setUsernameModalVisible(false);
       setSuccessMessage("Username updated successfully.");
     } else {
       setErrorMessage("Username cannot be empty");
@@ -117,28 +91,29 @@ const ProfileScreen: React.FC = () => {
   const handlePasswordChangeConfirmation = () => {
     if (!oldPassword || !newPassword || !confirmNewPassword) {
       setErrorMessage("Password fields cannot be empty");
-      setModalVisible(false);
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2000);
       return;
     }
     if (newPassword !== confirmNewPassword) {
       setErrorMessage("Passwords do not match");
-      setModalVisible(false);
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2000);
       return;
     }
+
     dispatch(
       updatePassword({
         old_password: oldPassword,
         new_password: newPassword,
         confirm_new_password: confirmNewPassword,
       }),
-    );
-    setSuccessMessage("Password changed successfully.");
+    ).then((result) => {
+      if (updatePassword.fulfilled.match(result)) {
+        setSuccessMessage("Password changed successfully.");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      } else if (updatePassword.rejected.match(result)) {
+        setErrorMessage(result.payload as string);
+      }
+    });
   };
 
   const openPasswordChangeModal = () => {
@@ -153,6 +128,10 @@ const ProfileScreen: React.FC = () => {
     setUsernameModalVisible(false);
   };
 
+  if (status === "loading") {
+    return <Text>Loading...</Text>;
+  }
+  
   if (!username || !email) {
     return <Text>Loading...</Text>;
   }
@@ -164,6 +143,12 @@ const ProfileScreen: React.FC = () => {
         <View style={{ alignItems: "center", padding: 20 }}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
+          {successMessage ? (
+            <Text style={styles.successText}>{successMessage}</Text>
+          ) : null}
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          ) : null}
         </View>
       </View>
       <Modal
@@ -309,10 +294,10 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     backgroundColor: "white",
-    height: "90%",
+    height: "80%",
     marginBottom: 10,
     width: "100%",
-    padding: 60,
+    padding: 40,
   },
   input: {
     height: 40,
@@ -324,8 +309,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    fontSize: 14,
-    marginBottom: 10,
+    fontSize: 18,
+    marginTop: 20,
+    fontWeight: "bold",
+  },
+  successText: {
+    color: "green",
+    fontSize: 18,
+    marginTop: 20,
+    fontWeight: "bold",
   },
   button: {
     alignItems: "center",
@@ -393,7 +385,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "white",
-    fontSize: 13,
+    fontSize: 18,
     margin: 2,
   },
   title: {

@@ -44,8 +44,8 @@ const SubMenu: React.FC<MenuProps> = ({ onClose, navigation }) => {
           style={styles.menuItem}
           onPress={() => navigation.navigate("Profile")}
         >
-          <Icon name="document-text-outline" size={24} color="white" />
-          <Text style={styles.menuText}>Profile</Text>
+          <Icon name="settings-outline" size={24} color="white" />
+          <Text style={styles.menuText}>Settings</Text>
         </Pressable>
         <Pressable style={styles.menuItem} onPress={handleLogout}>
           <Icon name="exit-outline" size={24} color="white" />
