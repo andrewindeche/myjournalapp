@@ -60,7 +60,7 @@ const JournalEntryScreen: React.FC = () => {
   useEffect(() => {
     if (editMode && mostRecentEntry) {
       setTitle(mostRecentEntry.title);
-      setSelectedCategory(mostRecentEntry.category); // Populate category field
+      setSelectedCategory(mostRecentEntry.category);
       const entryContent = Array.isArray(mostRecentEntry.content) ? mostRecentEntry.content : [mostRecentEntry.content];
       const textContent = entryContent
         .filter((item) => typeof item === "string")
@@ -84,7 +84,7 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri && editEntryId) {
-          setImageUri(uri);
+          setImageUri(uri); // Update local image state
           const updatedEntry = {
             ...mostRecentEntry,
             content: [...mostRecentEntry.content, { uri }],
@@ -122,7 +122,7 @@ const JournalEntryScreen: React.FC = () => {
         type: "text",
         content: imageUri ? [{ uri: imageUri }, inputText] : [inputText],
         title: title || mostRecentEntry.title,
-        category: selectedCategory || newCategory, // Use selectedCategory
+        category: selectedCategory || newCategory,
       };
 
       if (editEntryId) {
@@ -148,7 +148,7 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleEditEntry = (entry: JournalEntry) => {
     setEditEntryId(entry.id);
-    setEditMode(true); // Set edit mode
+    setEditMode(true);
   };
 
   const handleToggleMenu = () => {
@@ -204,9 +204,9 @@ const JournalEntryScreen: React.FC = () => {
             )}
             <TextInput
               style={styles.categoryInput}
-              value={selectedCategory || newCategory} // Display the current category or new category
+              value={selectedCategory || newCategory}
               placeholder="Enter category"
-              onChangeText={(text) => setSelectedCategory(text)} // Update selectedCategory
+              onChangeText={(text) => setSelectedCategory(text)}
             />
             <Pressable onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
