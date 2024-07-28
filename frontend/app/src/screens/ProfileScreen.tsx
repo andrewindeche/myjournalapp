@@ -90,11 +90,19 @@ const ProfileScreen: React.FC = () => {
 
   const handlePasswordChangeConfirmation = () => {
     if (!oldPassword || !newPassword || !confirmNewPassword) {
+      setModalVisible(false);
       setErrorMessage("Password fields cannot be empty");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
       return;
     }
     if (newPassword !== confirmNewPassword) {
+      setModalVisible(false);
       setErrorMessage("Passwords do not match");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
       return;
     }
 
@@ -106,6 +114,7 @@ const ProfileScreen: React.FC = () => {
       }),
     ).then((result) => {
       if (updatePassword.fulfilled.match(result)) {
+        setUsernameModalVisible(false);
         setSuccessMessage("Password changed successfully.");
         setOldPassword("");
         setNewPassword("");
@@ -131,7 +140,7 @@ const ProfileScreen: React.FC = () => {
   if (status === "loading") {
     return <Text>Loading...</Text>;
   }
-  
+
   if (!username || !email) {
     return <Text>Loading...</Text>;
   }

@@ -57,6 +57,23 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (editMode && mostRecentEntry) {
+      setTitle(mostRecentEntry.title);
+      setSelectedCategory(mostRecentEntry.category);
+      const entryContent = Array.isArray(mostRecentEntry.content) ? mostRecentEntry.content : [mostRecentEntry.content];
+      const textContent = entryContent
+        .filter((item) => typeof item === "string")
+        .join(" ");
+      const imageContent = entryContent.filter(
+        (item) => typeof item === "object" && item.uri
+      ) as { uri: string }[];
+
+      setInputText(textContent);
+      setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
+    }
+  }, [editMode, mostRecentEntry]);
+
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
@@ -67,7 +84,7 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         const uri = response.assets && response.assets[0].uri;
         if (uri && editEntryId) {
-          setImageUri(uri);
+          setImageUri(uri); // Update local image state
           const updatedEntry = {
             ...mostRecentEntry,
             content: [...mostRecentEntry.content, { uri }],
@@ -100,7 +117,7 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleAddEntry = () => {
-    if (inputText || newCategory) {
+    if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content: imageUri ? [{ uri: imageUri }, inputText] : [inputText],
@@ -129,32 +146,26 @@ const JournalEntryScreen: React.FC = () => {
     }
   };
 
-  const handleEditEntry = (id: string) => {
-    const entryToEdit = journalEntries.find((entry) => entry.id === id);
-    if (entryToEdit) {
-      setInputText(entryToEdit.content as string);
-      setTitle(entryToEdit.title);
-      setSelectedCategory(entryToEdit.category);
-      setEditEntryId(id);
-      setEditMode(true);
-
-      const entryContent = Array.isArray(entryToEdit.content) ? entryToEdit.content : [entryToEdit.content];
-
-      const textContent = entryToEdit.content
-        .filter((item) => typeof item === "string")
-        .join(" ");
-      const imageContent = entryToEdit.content.filter(
-        (item) => typeof item === "object",
-      ) as { uri: string }[];
-
-      setInputText(textContent);
-      setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
-    }
+  const handleEditEntry = (entry: JournalEntry) => {
+    setEditEntryId(entry.id);
+    setEditMode(true);
   };
 
   const handleToggleMenu = () => {
     setShowMenu(!showMenu);
   };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (showMenu) {
+      timer = setTimeout(() => {
+        setShowMenu(false);
+      }, 4000);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showMenu]);
 
   const handleDeleteAll = () => {
     const deletePromises = journalEntries.map((entry) =>
@@ -193,58 +204,50 @@ const JournalEntryScreen: React.FC = () => {
             )}
             <TextInput
               style={styles.categoryInput}
-              value={newCategory}
-              placeholder="Enter new category"
-              onChangeText={(text) => setNewCategory(text)}
+              value={selectedCategory || newCategory}
+              placeholder="Enter category"
+              onChangeText={(text) => setSelectedCategory(text)}
             />
             <Pressable onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
             </Pressable>
           </>
         ) : (
-          <>
-            {" "}
-            <ScrollView>
-              {mostRecentEntry ? (
-                <Pressable
-                  style={styles.entryContainer}
-                  onPress={() => handleEditEntry(mostRecentEntry.id)}
-                >
-                  <Text style={styles.date}>
-                    {new Date(mostRecentEntry.created_at).toDateString()}
+          <ScrollView>
+            {mostRecentEntry ? (
+              <Pressable
+                style={styles.entryContainer}
+                onPress={() => handleEditEntry(mostRecentEntry)}
+              >
+                <Text style={styles.date}>
+                  {new Date(mostRecentEntry.created_at).toDateString()}
+                </Text>
+                <Text style={styles.title}>{mostRecentEntry.title}</Text>
+                <Text style={styles.category}>Category: {mostRecentEntry.category}</Text>
+                {Array.isArray(mostRecentEntry.content) ? (
+                  mostRecentEntry.content.map((item, index) =>
+                    typeof item === "string" ? (
+                      <Text key={index} style={styles.content}>
+                        {item}
+                      </Text>
+                    ) : (
+                      <Image
+                        key={index}
+                        source={{ uri: item.uri }}
+                        style={styles.entryImage}
+                      />
+                    ),
+                  )
+                ) : (
+                  <Text style={styles.content}>
+                    {mostRecentEntry.content}
                   </Text>
-                  <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                  {mostRecentEntry.imageUrl && (
-                    <Image
-                      source={{ uri: mostRecentEntry.imageUrl }}
-                      style={styles.entryImage}
-                    />
-                  )}
-                  {Array.isArray(mostRecentEntry.content) ? (
-                    mostRecentEntry.content.map((item, index) =>
-                      typeof item === "string" ? (
-                        <Text key={index} style={styles.content}>
-                          {item}
-                        </Text>
-                      ) : (
-                        <Image
-                          key={index}
-                          source={{ uri: item.uri }}
-                          style={styles.entryImage}
-                        />
-                      ),
-                    )
-                  ) : (
-                    <Text style={styles.content}>
-                      {mostRecentEntry.content}
-                    </Text>
-                  )}
-                </Pressable>
-              ) : (
-                <Text>Click on the Pencil icon to Add an Entry</Text>
-              )}
-            </ScrollView>
-          </>
+                )}
+              </Pressable>
+            ) : (
+              <Text>Click on the Pencil icon to Add an Entry</Text>
+            )}
+          </ScrollView>
         )}
       </View>
       <View style={styles.footer}>
@@ -258,7 +261,7 @@ const JournalEntryScreen: React.FC = () => {
           <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <Pressable onPress={handleImageUpload}>
-          <Icon name="add-circle" size={28} color="black" />
+          <Icon name="image" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>
           {showMenu && (
@@ -381,6 +384,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
   },
+  category: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  }
 });
 
 export default JournalEntryScreen;
