@@ -57,6 +57,23 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (editMode && mostRecentEntry) {
+      setTitle(mostRecentEntry.title);
+      setSelectedCategory(mostRecentEntry.category); // Populate category field
+      const entryContent = Array.isArray(mostRecentEntry.content) ? mostRecentEntry.content : [mostRecentEntry.content];
+      const textContent = entryContent
+        .filter((item) => typeof item === "string")
+        .join(" ");
+      const imageContent = entryContent.filter(
+        (item) => typeof item === "object" && item.uri
+      ) as { uri: string }[];
+
+      setInputText(textContent);
+      setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
+    }
+  }, [editMode, mostRecentEntry]);
+
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
@@ -105,7 +122,7 @@ const JournalEntryScreen: React.FC = () => {
         type: "text",
         content: imageUri ? [{ uri: imageUri }, inputText] : [inputText],
         title: title || mostRecentEntry.title,
-        category: selectedCategory || newCategory,
+        category: selectedCategory || newCategory, // Use selectedCategory
       };
 
       if (editEntryId) {
@@ -130,24 +147,8 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleEditEntry = (entry: JournalEntry) => {
-    const entryToEdit = journalEntries.find((e) => e.id === entry.id);
-    if (entryToEdit) {
-      setTitle(entryToEdit.title);
-      setSelectedCategory(entryToEdit.category);
-      setEditEntryId(entry.id);
-      setEditMode(true);
-
-      const entryContent = Array.isArray(entryToEdit.content) ? entryToEdit.content : [entryToEdit.content];
-      const textContent = entryContent
-        .filter((item) => typeof item === "string")
-        .join(" ");
-      const imageContent = entryContent.filter(
-        (item) => typeof item === "object" && item.uri
-      ) as { uri: string }[];
-
-      setInputText(textContent);
-      setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
-    }
+    setEditEntryId(entry.id);
+    setEditMode(true); // Set edit mode
   };
 
   const handleToggleMenu = () => {
@@ -203,9 +204,9 @@ const JournalEntryScreen: React.FC = () => {
             )}
             <TextInput
               style={styles.categoryInput}
-              value={newCategory}
-              placeholder="Enter new category"
-              onChangeText={(text) => setNewCategory(text)}
+              value={selectedCategory || newCategory} // Display the current category or new category
+              placeholder="Enter category"
+              onChangeText={(text) => setSelectedCategory(text)} // Update selectedCategory
             />
             <Pressable onPress={handleAddEntry} style={styles.addButton}>
               <Text style={styles.addButtonText}>Save Changes</Text>
@@ -222,7 +223,7 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(mostRecentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                <Text style={styles.category}>{mostRecentEntry.category}</Text>
+                <Text style={styles.category}>Category: {mostRecentEntry.category}</Text>
                 {Array.isArray(mostRecentEntry.content) ? (
                   mostRecentEntry.content.map((item, index) =>
                     typeof item === "string" ? (
