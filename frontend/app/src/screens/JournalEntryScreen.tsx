@@ -222,6 +222,7 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(mostRecentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{mostRecentEntry.title}</Text>
+                <Text style={styles.category}>{mostRecentEntry.category}</Text>
                 {Array.isArray(mostRecentEntry.content) ? (
                   mostRecentEntry.content.map((item, index) =>
                     typeof item === "string" ? (
@@ -382,6 +383,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
   },
+  category: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  }
 });
 
 export default JournalEntryScreen;
