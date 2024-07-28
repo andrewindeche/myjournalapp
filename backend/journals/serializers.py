@@ -19,6 +19,9 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             return value
         return None
     
+    def validate_content(self, value):
+        return value
+    
     def create(self, validated_data):
         category_name = validated_data.pop('category', None)
         request = self.context.get('request', None)
