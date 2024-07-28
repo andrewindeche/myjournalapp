@@ -132,29 +132,41 @@ const JournalEntryScreen: React.FC = () => {
   const handleEditEntry = (id: string) => {
     const entryToEdit = journalEntries.find((entry) => entry.id === id);
     if (entryToEdit) {
-      setInputText(entryToEdit.content as string);
       setTitle(entryToEdit.title);
       setSelectedCategory(entryToEdit.category);
       setEditEntryId(id);
       setEditMode(true);
-
+  
       const entryContent = Array.isArray(entryToEdit.content) ? entryToEdit.content : [entryToEdit.content];
-
-      const textContent = entryToEdit.content
+  
+      const textContent = entryContent
         .filter((item) => typeof item === "string")
         .join(" ");
-      const imageContent = entryToEdit.content.filter(
-        (item) => typeof item === "object",
-      ) as { uri: string }[];
-
+      const imageContent = entryContent.filter(
+        (item) => typeof item === "object" && item.uri
+      ) as unknown as { uri: string }[];
+  
       setInputText(textContent);
       setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
     }
   };
+  
 
   const handleToggleMenu = () => {
     setShowMenu(!showMenu);
   };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (showMenu) {
+      timer = setTimeout(() => {
+        setShowMenu(false);
+      }, 4000); 
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showMenu]);
 
   const handleDeleteAll = () => {
     const deletePromises = journalEntries.map((entry) =>

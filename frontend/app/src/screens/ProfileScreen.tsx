@@ -90,10 +90,12 @@ const ProfileScreen: React.FC = () => {
 
   const handlePasswordChangeConfirmation = () => {
     if (!oldPassword || !newPassword || !confirmNewPassword) {
+      setUsernameModalVisible(false);
       setErrorMessage("Password fields cannot be empty");
       return;
     }
     if (newPassword !== confirmNewPassword) {
+      setUsernameModalVisible(false);
       setErrorMessage("Passwords do not match");
       return;
     }
@@ -106,6 +108,7 @@ const ProfileScreen: React.FC = () => {
       }),
     ).then((result) => {
       if (updatePassword.fulfilled.match(result)) {
+        setUsernameModalVisible(false);
         setSuccessMessage("Password changed successfully.");
         setOldPassword("");
         setNewPassword("");
