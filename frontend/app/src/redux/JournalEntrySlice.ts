@@ -6,7 +6,9 @@ import { logout } from "../redux/authSlice";
 interface JournalEntry {
   id: number;
   title: string;
-  content: (string | { type: 'text' | 'image', value: string })[];
+  content: (string | {
+    uri: boolean; type: 'text' | 'image', value: string 
+})[];
   image?: File;
   imageUrl?: string;
   created_at: string;

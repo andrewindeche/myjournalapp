@@ -6,24 +6,21 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'name', 'user']
         read_only_fields = ['id', 'user']
-        
-        
+                
 class JournalEntrySerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name', allow_blank=True, required=False)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = JournalEntry
         fields = ['id', 'title', 'content', 'created_at', 'category', 'image']
         read_only_fields = ['id', 'created_at']
 
-    def validate_category(self, value):
-        if value:
-            return value
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
         return None
-    
-    def validate_content(self, value):
-        return value
-    
+
     def create(self, validated_data):
         category_name = validated_data.pop('category', None)
         request = self.context.get('request', None)
