@@ -59,14 +59,16 @@ const JournalEntryScreen: React.FC = () => {
 
   useEffect(() => {
     if (editMode && mostRecentEntry) {
-      setTitle(mostRecentEntry.title);
-      setSelectedCategory(mostRecentEntry.category);
-      const entryContent = Array.isArray(mostRecentEntry.content) ? mostRecentEntry.content : [mostRecentEntry.content];
+      setTitle(mostRecentEntry.title || "");
+      setSelectedCategory(mostRecentEntry.category || "");
+      const entryContent = Array.isArray(mostRecentEntry.content)
+        ? mostRecentEntry.content
+        : [];
       const textContent = entryContent
         .filter((item) => typeof item === "string")
         .join(" ");
       const imageContent = entryContent.filter(
-        (item) => typeof item === "object" && item.uri
+        (item) => typeof item === "object" && item.uri,
       ) as { uri: string }[];
 
       setInputText(textContent);
@@ -83,8 +85,8 @@ const JournalEntryScreen: React.FC = () => {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
-        if (uri && editEntryId) {
-          setImageUri(uri); // Update local image state
+        if (uri && editEntryId && mostRecentEntry) {
+          setImageUri(uri);
           const updatedEntry = {
             ...mostRecentEntry,
             content: [...mostRecentEntry.content, { uri }],
@@ -104,7 +106,7 @@ const JournalEntryScreen: React.FC = () => {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
-        if (uri && editEntryId) {
+        if (uri && editEntryId && mostRecentEntry) {
           setImageUri(uri);
           const updatedEntry = {
             ...mostRecentEntry,
@@ -121,17 +123,15 @@ const JournalEntryScreen: React.FC = () => {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content: imageUri ? [{ uri: imageUri }, inputText] : [inputText],
-        title: title || mostRecentEntry.title,
+        title: title || (mostRecentEntry ? mostRecentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
-
       if (editEntryId) {
         dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
         setEditEntryId(null);
       } else {
         dispatch(createJournalEntry(newEntry));
       }
-
       setInputText("");
       setTitle("");
       setSelectedCategory(null);
@@ -223,7 +223,9 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(mostRecentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                <Text style={styles.category}>Category: {mostRecentEntry.category}</Text>
+                <Text style={styles.category}>
+                  Category: {mostRecentEntry.category}
+                </Text>
                 {Array.isArray(mostRecentEntry.content) ? (
                   mostRecentEntry.content.map((item, index) =>
                     typeof item === "string" ? (
@@ -239,9 +241,7 @@ const JournalEntryScreen: React.FC = () => {
                     ),
                   )
                 ) : (
-                  <Text style={styles.content}>
-                    {mostRecentEntry.content}
-                  </Text>
+                  <Text style={styles.content}>{mostRecentEntry.content}</Text>
                 )}
               </Pressable>
             ) : (
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-  }
+  },
 });
 
 export default JournalEntryScreen;

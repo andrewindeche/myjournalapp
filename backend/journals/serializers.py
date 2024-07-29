@@ -7,13 +7,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'user']
         read_only_fields = ['id', 'user']
         
+        
 class JournalEntrySerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name', allow_blank=True, required=False)
-    
+
     class Meta:
         model = JournalEntry
         fields = ['id', 'title', 'content', 'created_at', 'category', 'image']
-    
+        read_only_fields = ['id', 'created_at']
+
     def validate_category(self, value):
         if value:
             return value
@@ -25,16 +27,18 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         category_name = validated_data.pop('category', None)
         request = self.context.get('request', None)
+        
         if category_name:
             category, created = Category.objects.get_or_create(name=category_name, user=request.user)
             validated_data['category'] = category
+
         return JournalEntry.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
         category_name = validated_data.pop('category', None)
-        request = self.context.get('request', None)
+        
         if category_name:
-            category, created = Category.objects.get_or_create(name=category_name, user=request.user)
+            category, created = Category.objects.get_or_create(name=category_name, user=self.context['request'].user)
             instance.category = category
 
         for attr, value in validated_data.items():
