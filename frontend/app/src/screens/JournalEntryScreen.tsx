@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   date: {
-    color: "#CB7723",
+    color: "#cb7723",
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 10,

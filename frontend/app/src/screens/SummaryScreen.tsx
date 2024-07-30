@@ -18,7 +18,6 @@ import JournalEntry from "../redux/JournalEntrySlice";
 const colorPalette = [
   "#FFDEE9", "#BDE0FE", "#FFEDCC", "#E4E5E6", "#C6F6D5", "#FED7D7"
 ];
-
 const SummaryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = React.useState("All");
   const navigation = useNavigation();
@@ -43,10 +42,8 @@ const SummaryScreen: React.FC = () => {
       ]}
     >
       <Text style={styles.noteTitle}>{item.title}</Text>
-      <Text style={styles.noteDescription}>{item.content_text}</Text>
-      {item.content_image && (
-        <Image source={{ uri: item.content_image.uri }} style={styles.noteImage} />
-      )}
+      <Text style={styles.noteDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
+      <Text style={styles.noteCategory}>{item.category}</Text>
     </View>
   );
 
@@ -121,11 +118,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   greetingText: {
-    color: "white",
+    color: "#e3e6f5",
     fontSize: 16,
   },
   title: {
-    color: "white",
+    color: "#e3e6f5",
     fontSize: 32,
     fontWeight: "bold",
     marginBottom: 20,
@@ -139,13 +136,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     backgroundColor: "#333",
-    marginRight: 10, // Add margin to separate categories
+    marginRight: 10, 
   },
   selectedCategoryButton: {
     backgroundColor: "#666",
   },
   categoryText: {
-    color: "white",
+    color: "#cb7723",
     fontSize: 16,
   },
   notesContainer: {
@@ -159,20 +156,20 @@ const styles = StyleSheet.create({
   noteTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
   },
-  noteDescription: {
+  noteDate: {
+    fontSize: 14,
+    color: "#e3e6f5",
+    marginBottom: 5,
+  },
+  noteCategory: {
     fontSize: 16,
-    marginBottom: 10,
-  },
-  noteImage: {
-    width: "100%",
-    height: 100,
-    borderRadius: 10,
-    marginTop: 10,
+    fontStyle: "italic",
+    color: "#fff",
   },
   loadingText: {
-    color: "white",
+    color: "#cb7723",
     textAlign: "center",
     marginTop: 20,
   },
