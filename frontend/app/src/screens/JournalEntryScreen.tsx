@@ -31,7 +31,7 @@ import {
 interface JournalEntry {
   id: string;
   type?: "text" | "image";
-  content: (string | { uri: string })[];
+  content: (string | { uri: string; caption?: string })[];
   title: string;
   category: string;
   created_at: string;
@@ -51,6 +51,7 @@ const JournalEntryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageCaption, setImageCaption] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
-    backgroundColor: "#E3F0F5",
+    backgroundColor: "#e3e6f5",
     flex: 1,
     padding: 20,
   },
@@ -314,7 +315,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   entryContainer: {
-    backgroundColor: "#E3F0F5",
+    backgroundColor: "#e3e6f5",
     borderColor: "#ccc",
     borderRadius: 5,
     borderWidth: 1,
