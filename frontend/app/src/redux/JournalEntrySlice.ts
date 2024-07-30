@@ -74,7 +74,13 @@ export const updateJournalEntry = createAsyncThunk(
     }
 
     if (updatedEntry.content_image) {
-      formData.append("content_image", updatedEntry.content_image.uri);
+      const { uri, name } = updatedEntry.content_image;
+      const fileType = `image/${name.split('.').pop()}`;
+
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      formData.append("content_image", blob, name);
     }
 
     try {
@@ -149,7 +155,10 @@ export const createJournalEntry = createAsyncThunk(
     }
 
     if (newEntry.content_image) {
-      formData.append("content_image", newEntry.content_image.uri);
+      const { uri, name } = newEntry.content_image;
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      formData.append("content_image", blob, name);
     }
 
     try {
@@ -161,7 +170,7 @@ export const createJournalEntry = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
-        return rejectWithValue("Unauthorized. Error creating new entry.");
+        return rejectWithValue("Unauthorized. Error Creating Entries.");
       }
       return rejectWithValue("Error creating new entry.");
     }

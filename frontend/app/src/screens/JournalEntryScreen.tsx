@@ -35,8 +35,8 @@ interface JournalEntry {
   title: string;
   category: string;
   created_at: string;
-  content_text?: string;  // Added
-  content_image?: { uri: string; name: string } | null;  // Added
+  content_text?: string;
+  content_image?: { uri: string; name: string } | null;
 }
 
 const JournalEntryScreen: React.FC = () => {
@@ -61,10 +61,10 @@ const JournalEntryScreen: React.FC = () => {
 
   useEffect(() => {
     if (editMode && mostRecentEntry) {
+      console.log("Most Recent Entry:", mostRecentEntry);
       setTitle(mostRecentEntry.title || "");
       setSelectedCategory(mostRecentEntry.category || "");
       setInputText(mostRecentEntry.content_text || "");
-
       setImageUri(mostRecentEntry.content_image?.uri || null);
     }
   }, [editMode, mostRecentEntry]);
@@ -77,14 +77,19 @@ const JournalEntryScreen: React.FC = () => {
       } else if (response.errorCode) {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
-        const uri = response.assets?.[0]?.uri;
-        if (uri && editEntryId && mostRecentEntry) {
-          setImageUri(uri);
-          const updatedEntry = {
-            ...mostRecentEntry,
-            content_image: { uri, name: response.assets[0].fileName },  // Updated
-          };
-          dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+        if (response.assets && response.assets.length > 0) {
+          const uri = response.assets[0]?.uri;
+          if (uri && editEntryId && mostRecentEntry) {
+            setImageUri(uri);
+            const updatedEntry = {
+              ...mostRecentEntry,
+              content_image: {
+                uri,
+                name: response.assets[0]?.fileName || "image.png",
+              },
+            };
+            dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+          }
         }
       }
     });
@@ -98,14 +103,19 @@ const JournalEntryScreen: React.FC = () => {
       } else if (response.errorCode) {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
-        const uri = response.assets?.[0]?.uri;
-        if (uri && editEntryId && mostRecentEntry) {
-          setImageUri(uri);
-          const updatedEntry = {
-            ...mostRecentEntry,
-            content_image: { uri, name: response.assets[0].fileName },  // Updated
-          };
-          dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+        if (response.assets && response.assets.length > 0) {
+          const uri = response.assets[0]?.uri;
+          if (uri && editEntryId && mostRecentEntry) {
+            setImageUri(uri);
+            const updatedEntry = {
+              ...mostRecentEntry,
+              content_image: {
+                uri,
+                name: response.assets[0]?.fileName || "image.png",
+              },
+            };
+            dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+          }
         }
       }
     });
@@ -116,7 +126,7 @@ const JournalEntryScreen: React.FC = () => {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content_text: inputText || "",
-        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,  // Updated
+        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null, // Updated
         title: title || (mostRecentEntry ? mostRecentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
@@ -179,7 +189,7 @@ const JournalEntryScreen: React.FC = () => {
     if (editEntryId && mostRecentEntry) {
       const updatedEntry = {
         ...mostRecentEntry,
-        content_image: null,  // Updated
+        content_image: null, // Updated
       };
 
       dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
@@ -241,7 +251,9 @@ const JournalEntryScreen: React.FC = () => {
                   Category: {mostRecentEntry.category}
                 </Text>
                 {mostRecentEntry.content_text && (
-                  <Text style={styles.content}>{mostRecentEntry.content_text}</Text>
+                  <Text style={styles.content}>
+                    {mostRecentEntry.content_text}
+                  </Text>
                 )}
                 {mostRecentEntry.content_image && (
                   <Image
