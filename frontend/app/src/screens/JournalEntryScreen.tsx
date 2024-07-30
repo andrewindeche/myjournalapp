@@ -61,12 +61,15 @@ const JournalEntryScreen: React.FC = () => {
     if (editMode && mostRecentEntry) {
       setTitle(mostRecentEntry.title || "");
       setSelectedCategory(mostRecentEntry.category || "");
+
       const entryContent = Array.isArray(mostRecentEntry.content)
         ? mostRecentEntry.content
         : [];
+
       const textContent = entryContent
         .filter((item) => typeof item === "string")
         .join(" ");
+
       const imageContent = entryContent.filter(
         (item) => typeof item === "object" && item.uri,
       ) as { uri: string }[];
@@ -228,7 +231,9 @@ const JournalEntryScreen: React.FC = () => {
                   Category: {mostRecentEntry.category}
                 </Text>
                 {mostRecentEntry.content_text && (
-                  <Text style={styles.content}>{mostRecentEntry.content_text}</Text>
+                  <Text style={styles.content}>
+                    {mostRecentEntry.content_text}
+                  </Text>
                 )}
                 {mostRecentEntry.content_image && (
                   <Image
