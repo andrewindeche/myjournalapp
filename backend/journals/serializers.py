@@ -6,43 +6,35 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'name', 'user']
         read_only_fields = ['id', 'user']
-        
+                
 class JournalEntrySerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name', allow_blank=True, required=False)
-    
+    content_text = serializers.CharField(required=False, allow_blank=True)
+    content_image = serializers.ImageField(required=False, allow_null=True)
+
     class Meta:
         model = JournalEntry
-        fields = ['id', 'title', 'content', 'created_at', 'category', 'image']
-    
-    def validate_category(self, value):
-        if value:
-            return value
-        return None
-    
-    def validate_content(self, value):
-        return value
-    
+        fields = ['id', 'title', 'content_text', 'content_image', 'created_at', 'category']
+        read_only_fields = ['id', 'created_at']
+
     def create(self, validated_data):
         category_name = validated_data.pop('category', None)
         request = self.context.get('request', None)
+        
         if category_name:
             category, created = Category.objects.get_or_create(name=category_name, user=request.user)
             validated_data['category'] = category
+
         return JournalEntry.objects.create(**validated_data)
-    
+
     def update(self, instance, validated_data):
         category_name = validated_data.pop('category', None)
-        request = self.context.get('request', None)
         if category_name:
-            category, created = Category.objects.get_or_create(name=category_name, user=request.user)
-            instance.category = category
+            category, created = Category.objects.get_or_create(name=category_name, user=self.context['request'].user)
+            validated_data['category'] = category
 
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        
-        instance.save()
-        return instance
-
+        return super().update(instance, validated_data)
+    
 class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),

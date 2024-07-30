@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import  JournalEntrySerializer, CategorySerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.http import Http404
+from django.shortcuts import get_object_or_404
 import logging
 
 logger = logging.getLogger(__name__)
@@ -53,9 +55,6 @@ class JournalEntryListCreateView(generics.ListCreateAPIView):
             serializer.save(user=self.request.user, category=category)
         else:
             serializer.save(user=self.request.user)
-            
-    def get_object(self):
-        return JournalEntry.objects.filter(user=self.request.user).latest('created_at')
 
 class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = JournalEntry.objects.all()
@@ -67,7 +66,8 @@ class JournalEntryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
         return JournalEntry.objects.filter(user=self.request.user)
     
     def get_object(self):
-        return JournalEntry.objects.filter(user=self.request.user).latest('created_at')
+        obj = get_object_or_404(JournalEntry, pk=self.kwargs.get('pk'), user=self.request.user)
+        return obj
 
     def perform_update(self, serializer):
         category_name = self.request.data.get('category')

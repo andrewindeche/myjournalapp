@@ -10,12 +10,12 @@ class Category(models.Model):
         return self.name
     
 class JournalEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='entries')
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    image = models.ImageField(upload_to='journal_images/', null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    content_text = models.TextField(blank=True, null=True)
+    content_image = models.ImageField(upload_to='images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
 def __str__(self):
         return self.title

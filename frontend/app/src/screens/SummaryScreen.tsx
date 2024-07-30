@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -6,48 +6,52 @@ import {
   Pressable,
   FlatList,
   Image,
+  ScrollView,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import HomeMenu from "../components/HomeMenu";
+import { fetchJournalEntries, fetchCategories } from "../redux/JournalEntrySlice";
+import { RootState } from "../redux/store";
+import { fetchProfileInfo } from "../redux/ProfileSlice";
 
+const colorPalette = [
+  "#FFDEE9", "#BDE0FE", "#FFEDCC", "#E4E5E6", "#C6F6D5", "#FED7D7"
+];
 const SummaryScreen: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = React.useState("All");
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const categories = ["All", "Important", "Bookmarked"];
-  const notes = [
-    {
-      id: "1",
-      title: "Buy honey 100% original",
-      description: "Buy the new brand honey for my family. Here is the pic.",
-      backgroundColor: "#FFDEE9",
-      image: "https://example.com/honey.jpg",
-    },
-    {
-      id: "2",
-      title: "Tax payment before the end of March",
-      description:
-        "This is a reminder note, so as not to forget to pay taxes before the end of March. Don't miss it, you could be fined!\n\nList of assets that must be reported.",
-      backgroundColor: "#BDE0FE",
-    },
-    {
-      id: "3",
-      title: "Password WiFi gelato cafe near the station",
-      description:
-        "WiFi indoor: to reset the wifi password on time to don't get confusion after every time change.\n\nThis is a gentle reminder.",
-      backgroundColor: "#FFEDCC",
-    },
-  ];
+  const entries = useSelector((state: RootState) => state.entries.journalEntries);
+  const categories = useSelector((state: RootState) => state.entries.categories);
+  const status = useSelector((state: RootState) => state.entries.status);
+  const username = useSelector((state: RootState) => state.profile.username);
+  const profileStatus = useSelector((state: RootState) => state.profile.status);
 
-  const renderNote = ({ item }: { item: (typeof notes)[0] }) => (
-    <View style={[styles.noteCard, { backgroundColor: item.backgroundColor }]}>
+  useEffect(() => {
+    dispatch(fetchJournalEntries());
+    dispatch(fetchCategories());
+    dispatch(fetchProfileInfo());
+  }, [dispatch]);
+
+  const getColorForIndex = (index: number) => colorPalette[index % colorPalette.length];
+
+  const renderEntry = ({ item, index }: { item: JournalEntry, index: number }) => (
+    <View
+      style={[
+        styles.noteCard,
+        { backgroundColor: getColorForIndex(index) },
+      ]}
+    >
       <Text style={styles.noteTitle}>{item.title}</Text>
-      <Text style={styles.noteDescription}>{item.description}</Text>
-      {item.image && (
-        <Image source={{ uri: item.image }} style={styles.noteImage} />
-      )}
+      <Text style={styles.noteDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
+      <Text style={styles.noteCategory}>{item.category}</Text>
     </View>
+  );
+
+  const filteredEntries = entries.filter((entry) =>
+    selectedCategory === "All" || entry.category === selectedCategory
   );
 
   return (
@@ -55,34 +59,38 @@ const SummaryScreen: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileContainer}>
-            <Image
-              source={{ uri: "https://example.com/profile.jpg" }}
-              style={styles.profileImage}
-            />
-            <Text style={styles.greetingText}>Hi, Andrew</Text>
+            {profileStatus === 'loading' ? (
+                <Text style={styles.greetingText}>Loading...</Text>
+              ) : (
+                <Text style={styles.greetingText}>Hi, {username}</Text>
+              )}
           </View>
         </View>
         <Text style={styles.title}>My Notes</Text>
-        <View style={styles.categoryContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
           {categories.map((category) => (
             <Pressable
-              key={category}
+              key={category.id}
               style={[
                 styles.categoryButton,
-                selectedCategory === category && styles.selectedCategoryButton,
+                selectedCategory === category.name && styles.selectedCategoryButton,
               ]}
-              onPress={() => setSelectedCategory(category)}
+              onPress={() => setSelectedCategory(category.name)}
             >
-              <Text style={styles.categoryText}>{category}</Text>
+              <Text style={styles.categoryText}>{category.name}</Text>
             </Pressable>
           ))}
-        </View>
-        <FlatList
-          data={notes}
-          renderItem={renderNote}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.notesContainer}
-        />
+        </ScrollView>
+        {status === "loading" ? (
+          <Text style={styles.loadingText}>Loading...</Text>
+        ) : (
+          <FlatList
+            data={filteredEntries}
+            renderItem={renderEntry}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.notesContainer}
+          />
+        )}
       </View>
       <HomeMenu navigation={navigation} onDeleteAccount={() => {}} />
     </>
@@ -113,18 +121,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   greetingText: {
-    color: "white",
+    color: "#e3e6f5",
     fontSize: 16,
   },
   title: {
-    color: "white",
+    color: "#e3e6f5",
     fontSize: 32,
     fontWeight: "bold",
     marginBottom: 20,
   },
-  categoryContainer: {
+  categoryScroll: {
     flexDirection: "row",
-    justifyContent: "space-between",
     marginBottom: 20,
   },
   categoryButton: {
@@ -132,12 +139,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     backgroundColor: "#333",
+    marginRight: 10, 
   },
   selectedCategoryButton: {
     backgroundColor: "#666",
   },
   categoryText: {
-    color: "white",
+    color: "#cb7723",
     fontSize: 16,
   },
   notesContainer: {
@@ -151,17 +159,22 @@ const styles = StyleSheet.create({
   noteTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
   },
-  noteDescription: {
+  noteDate: {
+    fontSize: 14,
+    color: "#e3e6f5",
+    marginBottom: 5,
+  },
+  noteCategory: {
     fontSize: 16,
-    marginBottom: 10,
+    fontStyle: "italic",
+    color: "#fff",
   },
-  noteImage: {
-    width: "100%",
-    height: 100,
-    borderRadius: 10,
-    marginTop: 10,
+  loadingText: {
+    color: "#cb7723",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
 
