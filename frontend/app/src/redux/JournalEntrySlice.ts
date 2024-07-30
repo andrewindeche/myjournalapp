@@ -2,15 +2,12 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import instance, { setAuthToken } from "../redux/axiosInstance";
 import { RootState } from "./store";
 import { logout } from "../redux/authSlice";
+import { getFileExtension } from "../../fileUtils";
 
 interface JournalEntry {
   id: number;
   title: string;
-  content: (string | {
-    uri: boolean; type: 'text' | 'image', value: string 
-})[];
-  image?: File;
-  imageUrl?: string;
+  content: (string | { uri: string; type: "text" | "image"; value: string })[];
   created_at: string;
   category: string;
 }
@@ -65,20 +62,24 @@ export const updateJournalEntry = createAsyncThunk(
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
-    try {
-      const formData = new FormData();
-      formData.append("title", updatedEntry.title);
-      formData.append(
-        "content",
-        Array.isArray(updatedEntry.content)
-          ? updatedEntry.content.join("\n")
-          : updatedEntry.content,
-      );
-      formData.append("category", updatedEntry.category);
 
-      if (updatedEntry.image) {
-        formData.append("image", updatedEntry.image, updatedEntry.image.name);
-      }
+    const formData = new FormData();
+    formData.append("title", updatedEntry.title);
+    formData.append("category", updatedEntry.category);
+
+    if (updatedEntry.content_text) {
+      formData.append("content_text", updatedEntry.content_text);
+    }
+
+    if (updatedEntry.content_image) {
+      formData.append(
+        "content_image",
+        updatedEntry.content_image,
+        updatedEntry.content_image.name,
+      );
+    }
+
+    try {
       const response = await instance.put(
         `entries-update/${updatedEntry.id}/`,
         formData,
@@ -147,18 +148,17 @@ export const createJournalEntry = createAsyncThunk(
     const formData = new FormData();
     formData.append("title", newEntry.title);
     formData.append("category", newEntry.category);
-    formData.append(
-      "content",
-      Array.isArray(newEntry.content)
-        ? newEntry.content.join("\n")
-        : newEntry.content,
-    );
-    if (newEntry.imageUrl) {
-      formData.append("image", {
-        uri: newEntry.imageUrl,
-        name: "image.jpg",
-        type: "image/jpeg",
-      } as any);
+
+    if (newEntry.content_text) {
+      formData.append("content_text", newEntry.content_text);
+    }
+
+    if (newEntry.content_image) {
+      formData.append(
+        "content_image",
+        newEntry.content_image,
+        newEntry.content_image.name,
+      );
     }
 
     try {

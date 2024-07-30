@@ -10,7 +10,6 @@ import {
   ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import {
   fetchJournalEntries,
   fetchCategories,
@@ -28,7 +27,6 @@ import {
   ImageLibraryOptions,
   CameraOptions,
 } from "react-native-image-picker";
-import ProgressOverlay from '../components/ProgressOverlay';
 
 interface JournalEntry {
   id: string;
@@ -53,8 +51,6 @@ const JournalEntryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -63,54 +59,54 @@ const JournalEntryScreen: React.FC = () => {
 
   useEffect(() => {
     if (editMode && mostRecentEntry) {
-      setTitle(mostRecentEntry.title);
-      setSelectedCategory(mostRecentEntry.category);
-      const entryContent = Array.isArray(mostRecentEntry.content) ? mostRecentEntry.content : [mostRecentEntry.content];
+      setTitle(mostRecentEntry.title || "");
+      setSelectedCategory(mostRecentEntry.category || "");
+      const entryContent = Array.isArray(mostRecentEntry.content)
+        ? mostRecentEntry.content
+        : [];
       const textContent = entryContent
-        .filter((item) => typeof item === 'string')
-        .join(' ');
+        .filter((item) => typeof item === "string")
+        .join(" ");
       const imageContent = entryContent.filter(
-        (item) => typeof item === 'object' && item.uri
+        (item) => typeof item === "object" && item.uri,
       ) as { uri: string }[];
-  
+
       setInputText(textContent);
       setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
     }
   }, [editMode, mostRecentEntry]);
 
   const handleImageUpload = () => {
-    const options: ImageLibraryOptions = { mediaType: 'photo' };
-  launchImageLibrary(options, (response) => {
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.errorCode) {
-      console.log('ImagePicker Error: ', response.errorMessage);
-    } else {
-      const uri = response.assets && response.assets[0].uri;
-      if (uri && editEntryId) {
-        setImageUri(uri); 
-        const updatedEntry = {
-          ...mostRecentEntry,
-          content: [...(Array.isArray(mostRecentEntry.content) ? mostRecentEntry.content : [mostRecentEntry.content]), { uri }],
-        };
-        dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
-      }
-    }
-  });
-  };
-
-  const handleTakePhoto = () => {
-    setUploading(true);
-    const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
-    launchCamera(options, (response) => {
-      setUploading(false);
+    const options: ImageLibraryOptions = { mediaType: "photo" };
+    launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log("User cancelled image picker");
       } else if (response.errorCode) {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         const uri = response.assets && response.assets[0].uri;
-        if (uri && editEntryId) {
+        if (uri && editEntryId && mostRecentEntry) {
+          setImageUri(uri);
+          const updatedEntry = {
+            ...mostRecentEntry,
+            content: [...mostRecentEntry.content, { uri }],
+          };
+          dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+        }
+      }
+    });
+  };
+
+  const handleTakePhoto = () => {
+    const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
+    launchCamera(options, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.errorCode) {
+        console.log("ImagePicker Error: ", response.errorMessage);
+      } else {
+        const uri = response.assets && response.assets[0].uri;
+        if (uri && editEntryId && mostRecentEntry) {
           setImageUri(uri);
           const updatedEntry = {
             ...mostRecentEntry,
@@ -126,21 +122,17 @@ const JournalEntryScreen: React.FC = () => {
     if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
-        content: [
-          ...(inputText ? [inputText] : []),
-          ...(imageUri ? [{ uri: imageUri }] : []),
-        ],
-        title: title || mostRecentEntry.title,
+        content_text: inputText,
+        content_image: imageUri ? { uri: imageUri } : null,
+        title: title || (mostRecentEntry ? mostRecentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
-  
       if (editEntryId) {
         dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
         setEditEntryId(null);
       } else {
         dispatch(createJournalEntry(newEntry));
       }
-  
       setInputText("");
       setTitle("");
       setSelectedCategory(null);
@@ -177,35 +169,21 @@ const JournalEntryScreen: React.FC = () => {
   }, [showMenu]);
 
   const handleDeleteAll = () => {
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = () => {
-    setShowDeleteModal(false);
     const deletePromises = journalEntries.map((entry) =>
       dispatch(deleteJournalEntry(entry.id)).unwrap(),
     );
+
     Promise.all(deletePromises)
       .then(() => {
-        console.log('All entries deleted successfully');
+        console.log("All entries deleted successfully");
       })
       .catch((error) => {
-        console.error('Failed to delete some entries:', error);
+        console.error("Failed to delete some entries:", error);
       });
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
   };
 
   return (
     <View style={styles.container}>
-      <ConfirmDeleteModal 
-        isOpen={showDeleteModal} 
-        onConfirm={confirmDelete} 
-        onCancel={cancelDelete} 
-      />
-    {uploading && <ProgressOverlay />}
       <View style={styles.content}>
         {editMode ? (
           <>
@@ -246,32 +224,17 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(mostRecentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{mostRecentEntry.title}</Text>
-                <Text style={styles.category}>Category: {mostRecentEntry.category}</Text>
-                {Array.isArray(mostRecentEntry.content) ? (
-                mostRecentEntry.content.map((item, index) => {
-                  if (typeof item === 'string') {
-                    return (
-                      <Text key={index} style={styles.content}>
-                        {item.split('\n').map((line, lineIndex) => (
-                          <Text key={lineIndex}>{line}{'\n'}</Text>
-                        ))}
-                      </Text>
-                    );
-                  } else if (typeof item === 'object' && item.uri) {
-                    return (
-                      <Image
-                        key={index}
-                        source={{ uri: item.uri }}
-                        style={styles.entryImage}
-                      />
-                    );
-                  }
-                  return null;
-                })
-                ) : (
-                  <Text style={styles.content}>
-                    {mostRecentEntry.content}
-                  </Text>
+                <Text style={styles.category}>
+                  Category: {mostRecentEntry.category}
+                </Text>
+                {mostRecentEntry.content_text && (
+                  <Text style={styles.content}>{mostRecentEntry.content_text}</Text>
+                )}
+                {mostRecentEntry.content_image && (
+                  <Image
+                    source={{ uri: mostRecentEntry.content_image }}
+                    style={styles.entryImage}
+                  />
                 )}
               </Pressable>
             ) : (
@@ -329,8 +292,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
-    backgroundColor: "#e1e7f5",
-    color: "white",
+    backgroundColor: "#E3F0F5",
     flex: 1,
     padding: 20,
   },
@@ -347,7 +309,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   entryContainer: {
-    backgroundColor: "rgba(0, 0, 255, 0.1)",
+    backgroundColor: "#E3F0F5",
     borderColor: "#ccc",
     borderRadius: 5,
     borderWidth: 1,
@@ -355,9 +317,9 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   entryImage: {
-    height: 70,
+    height: 60,
     marginBottom: 10,
-    width: 80,
+    width: 60,
     resizeMode: "contain",
   },
   entryInput: {
@@ -419,7 +381,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-  }
+  },
 });
 
 export default JournalEntryScreen;
