@@ -35,6 +35,8 @@ interface JournalEntry {
   title: string;
   category: string;
   created_at: string;
+  content_text?: string;  // Added
+  content_image?: { uri: string; name: string } | null;  // Added
 }
 
 const JournalEntryScreen: React.FC = () => {
@@ -51,7 +53,6 @@ const JournalEntryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [imageCaption, setImageCaption] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -62,21 +63,9 @@ const JournalEntryScreen: React.FC = () => {
     if (editMode && mostRecentEntry) {
       setTitle(mostRecentEntry.title || "");
       setSelectedCategory(mostRecentEntry.category || "");
+      setInputText(mostRecentEntry.content_text || "");
 
-      const entryContent = Array.isArray(mostRecentEntry.content)
-        ? mostRecentEntry.content
-        : [];
-
-      const textContent = entryContent
-        .filter((item) => typeof item === "string")
-        .join(" ");
-
-      const imageContent = entryContent.filter(
-        (item) => typeof item === "object" && item.uri,
-      ) as { uri: string }[];
-
-      setInputText(textContent);
-      setImageUri(imageContent.length > 0 ? imageContent[0].uri : null);
+      setImageUri(mostRecentEntry.content_image?.uri || null);
     }
   }, [editMode, mostRecentEntry]);
 
@@ -88,12 +77,12 @@ const JournalEntryScreen: React.FC = () => {
       } else if (response.errorCode) {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
-        const uri = response.assets && response.assets[0].uri;
+        const uri = response.assets?.[0]?.uri;
         if (uri && editEntryId && mostRecentEntry) {
           setImageUri(uri);
           const updatedEntry = {
             ...mostRecentEntry,
-            content: [...mostRecentEntry.content, { uri }],
+            content_image: { uri, name: response.assets[0].fileName },  // Updated
           };
           dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
@@ -109,12 +98,12 @@ const JournalEntryScreen: React.FC = () => {
       } else if (response.errorCode) {
         console.log("ImagePicker Error: ", response.errorMessage);
       } else {
-        const uri = response.assets && response.assets[0].uri;
+        const uri = response.assets?.[0]?.uri;
         if (uri && editEntryId && mostRecentEntry) {
           setImageUri(uri);
           const updatedEntry = {
             ...mostRecentEntry,
-            content: [...mostRecentEntry.content, { uri }],
+            content_image: { uri, name: response.assets[0].fileName },  // Updated
           };
           dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
         }
@@ -126,8 +115,8 @@ const JournalEntryScreen: React.FC = () => {
     if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
-        content_text: inputText,
-        content_image: imageUri ? { uri: imageUri } : null,
+        content_text: inputText || "",
+        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,  // Updated
         title: title || (mostRecentEntry ? mostRecentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
@@ -186,6 +175,18 @@ const JournalEntryScreen: React.FC = () => {
       });
   };
 
+  const handleDeleteImage = () => {
+    if (editEntryId && mostRecentEntry) {
+      const updatedEntry = {
+        ...mostRecentEntry,
+        content_image: null,  // Updated
+      };
+
+      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+      setImageUri(null);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -205,7 +206,15 @@ const JournalEntryScreen: React.FC = () => {
               onChangeText={(text) => setInputText(text)}
             />
             {imageUri && (
-              <Image source={{ uri: imageUri }} style={styles.entryImage} />
+              <View>
+                <Image source={{ uri: imageUri }} style={styles.entryImage} />
+                <Pressable
+                  onPress={handleDeleteImage}
+                  style={styles.deleteImageButton}
+                >
+                  <Text style={styles.deleteImageButtonText}>Delete Image</Text>
+                </Pressable>
+              </View>
             )}
             <TextInput
               style={styles.categoryInput}
@@ -232,13 +241,11 @@ const JournalEntryScreen: React.FC = () => {
                   Category: {mostRecentEntry.category}
                 </Text>
                 {mostRecentEntry.content_text && (
-                  <Text style={styles.content}>
-                    {mostRecentEntry.content_text}
-                  </Text>
+                  <Text style={styles.content}>{mostRecentEntry.content_text}</Text>
                 )}
                 {mostRecentEntry.content_image && (
                   <Image
-                    source={{ uri: mostRecentEntry.content_image }}
+                    source={{ uri: mostRecentEntry.content_image.uri }}
                     style={styles.entryImage}
                   />
                 )}
@@ -387,6 +394,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  deleteImageButton: {
+    backgroundColor: "red",
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+  },
+  deleteImageButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
