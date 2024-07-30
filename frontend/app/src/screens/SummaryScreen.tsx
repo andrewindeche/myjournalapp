@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import HomeMenu from "../components/HomeMenu";
 import { fetchJournalEntries, fetchCategories } from "../redux/JournalEntrySlice";
 import { RootState } from "../redux/store";
-import JournalEntry from "../redux/JournalEntrySlice"; 
+import { fetchProfileInfo } from "../redux/ProfileSlice";
 
 const colorPalette = [
   "#FFDEE9", "#BDE0FE", "#FFEDCC", "#E4E5E6", "#C6F6D5", "#FED7D7"
@@ -26,10 +26,13 @@ const SummaryScreen: React.FC = () => {
   const entries = useSelector((state: RootState) => state.entries.journalEntries);
   const categories = useSelector((state: RootState) => state.entries.categories);
   const status = useSelector((state: RootState) => state.entries.status);
+  const username = useSelector((state: RootState) => state.profile.username);
+  const profileStatus = useSelector((state: RootState) => state.profile.status);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
+    dispatch(fetchProfileInfo());
   }, [dispatch]);
 
   const getColorForIndex = (index: number) => colorPalette[index % colorPalette.length];
@@ -56,11 +59,11 @@ const SummaryScreen: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profileContainer}>
-            <Image
-              source={{ uri: "https://example.com/profile.jpg" }}
-              style={styles.profileImage}
-            />
-            <Text style={styles.greetingText}>Hi, Andrew</Text>
+            {profileStatus === 'loading' ? (
+                <Text style={styles.greetingText}>Loading...</Text>
+              ) : (
+                <Text style={styles.greetingText}>Hi, {username}</Text>
+              )}
           </View>
         </View>
         <Text style={styles.title}>My Notes</Text>

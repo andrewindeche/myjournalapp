@@ -43,7 +43,7 @@ const JournalEntryScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries, mostRecentEntry } = useSelector(
-    (state: RootState) => state.entries,
+    (state: RootState) => state.entries
   );
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
@@ -61,7 +61,6 @@ const JournalEntryScreen: React.FC = () => {
 
   useEffect(() => {
     if (editMode && mostRecentEntry) {
-      console.log("Most Recent Entry:", mostRecentEntry);
       setTitle(mostRecentEntry.title || "");
       setSelectedCategory(mostRecentEntry.category || "");
       setInputText(mostRecentEntry.content_text || "");
@@ -79,7 +78,7 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
-          if (uri && editEntryId && mostRecentEntry) {
+          if (uri) {
             setImageUri(uri);
             const updatedEntry = {
               ...mostRecentEntry,
@@ -88,7 +87,11 @@ const JournalEntryScreen: React.FC = () => {
                 name: response.assets[0]?.fileName || "image.png",
               },
             };
-            dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+            if (mostRecentEntry.id) {
+              dispatch(
+                updateJournalEntry({ id: mostRecentEntry.id, ...updatedEntry })
+              );
+            }
           }
         }
       }
@@ -105,7 +108,7 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
-          if (uri && editEntryId && mostRecentEntry) {
+          if (uri && editEntryId) {
             setImageUri(uri);
             const updatedEntry = {
               ...mostRecentEntry,
@@ -126,7 +129,7 @@ const JournalEntryScreen: React.FC = () => {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content_text: inputText || "",
-        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null, // Updated
+        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
         title: title || (mostRecentEntry ? mostRecentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
@@ -145,7 +148,7 @@ const JournalEntryScreen: React.FC = () => {
     } else {
       Alert.alert(
         "Input Text is empty",
-        "Please add some text or image before saving.",
+        "Please add some text or image before saving."
       );
     }
   };
@@ -173,7 +176,7 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleDeleteAll = () => {
     const deletePromises = journalEntries.map((entry) =>
-      dispatch(deleteJournalEntry(entry.id)).unwrap(),
+      dispatch(deleteJournalEntry(entry.id)).unwrap()
     );
 
     Promise.all(deletePromises)
@@ -189,7 +192,7 @@ const JournalEntryScreen: React.FC = () => {
     if (editEntryId && mostRecentEntry) {
       const updatedEntry = {
         ...mostRecentEntry,
-        content_image: null, // Updated
+        content_image: null,
       };
 
       dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
@@ -255,10 +258,11 @@ const JournalEntryScreen: React.FC = () => {
                     {mostRecentEntry.content_text}
                   </Text>
                 )}
-                {mostRecentEntry.content_image && (
+                {mostRecentEntry.content_image?.uri && (
                   <Image
                     source={{ uri: mostRecentEntry.content_image.uri }}
                     style={styles.entryImage}
+                    onError={() => console.log("Error loading image")}
                   />
                 )}
               </Pressable>
@@ -342,10 +346,10 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   entryImage: {
-    height: 60,
+    height: 100,
     marginBottom: 10,
-    width: 60,
     resizeMode: "contain",
+    width: 100,
   },
   entryInput: {
     backgroundColor: "#fff",

@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import JournalEntry, Category,User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 # Create your tests here.
 class JournalEntryTests(APITestCase):
@@ -12,7 +13,17 @@ class JournalEntryTests(APITestCase):
         self.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpassword')
         self.category = Category.objects.create(name='Test Category', user=self.user)
         self.client.force_authenticate(user=self.user)
-        self.entry = JournalEntry.objects.create(title='Original Title', content='Original Content', user=self.user, category=self.category)
+        self.entry = JournalEntry.objects.create(
+            title='Original Title',
+            content_text='Original Content',
+            user=self.user,
+            category=self.category
+        )
+        self.mock_image = SimpleUploadedFile(
+            "test_image.jpg",
+            b"file_content",
+            content_type="image/jpeg"
+        )
 
     def test_create_journal_entry(self):
         url = reverse('journalentry-list-create')
@@ -22,6 +33,12 @@ class JournalEntryTests(APITestCase):
             'category': self.category.name, 
             'user': self.user.id,
         }
+        entry = JournalEntry.objects.create(
+            title='New Entry',
+            content_text='Some content',
+            user=self.user,
+            category=self.category
+        )
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(JournalEntry.objects.count(), 2)
