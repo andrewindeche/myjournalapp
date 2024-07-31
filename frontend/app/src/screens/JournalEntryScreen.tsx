@@ -41,12 +41,10 @@ interface JournalEntry {
 
 const JournalEntryScreen: React.FC = () => {
   const route = useRoute();
-  const { entryId } = route.params as { entryId: string };
+  const entryId = route.params?.entryId || null;
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const { journalEntries } = useSelector(
-    (state: RootState) => state.entries,
-  );
+  const { journalEntries } = useSelector((state: RootState) => state.entries);
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
