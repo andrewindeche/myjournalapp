@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
   FlatList,
+  TextInput,
   ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,7 +20,9 @@ const colorPalette = [
 ];
 
 const SummaryScreen: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = React.useState("All");
+  const [dateFilter, setDateFilter] = useState(0);
+  const [titleSearch, setTitleSearch] = useState("");
+  const [contentSearch, setContentSearch] = useState("");
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -50,11 +53,13 @@ const SummaryScreen: React.FC = () => {
     </View>
   );
 
-  const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
+  const filteredEntries = entries.filter((entry) => {
+    const matchesDate = dateFilter === 0 || (new Date().getTime() - new Date(entry.created_at).getTime()) / (1000 * 60 * 60 * 24) <= dateFilter;
+    const matchesTitle = titleSearch ? entry.title.toLowerCase().includes(titleSearch.toLowerCase()) : true;
+    const matchesContent = contentSearch ? (entry.content_text || "").toLowerCase().includes(contentSearch.toLowerCase()) : true;
 
-  const filteredEntries = entries.filter((entry) =>
-    selectedCategory === "All" || entry.category === selectedCategory
-  );
+    return matchesDate && matchesTitle && matchesContent;
+  });
 
   return (
     <>
@@ -69,29 +74,39 @@ const SummaryScreen: React.FC = () => {
           </View>
         </View>
         <Text style={styles.title}>My Journals</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+        <View style={styles.filterContainer}>
           <Pressable
             style={[
               styles.categoryButton,
-              selectedCategory === "All" && styles.selectedCategoryButton,
+              styles.selectedCategoryButton,
             ]}
-            onPress={() => setSelectedCategory("All")}
+            onPress={() => setDateFilter(prev => (prev === 0 ? 1 : 0))}
           >
             <Text style={styles.categoryText}>All</Text>
           </Pressable>
-          {sortedCategories.map((category) => (
-            <Pressable
-              key={category.id}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category.name && styles.selectedCategoryButton,
-              ]}
-              onPress={() => setSelectedCategory(category.name)}
-            >
-              <Text style={styles.categoryText}>{category.name}</Text>
+          <Pressable
+            style={styles.dateFilterButton}
+            onPress={() => setDateFilter(prev => (prev === 0 ? 1 : 0))}
+          >
+            <Text style={styles.categoryText}>Date Filter: {dateFilter === 0 ? "All" : `Last ${dateFilter} day(s)`}</Text>
+          </Pressable>
+        </View>
+        <TextInput
+          placeholder="Search title..."
+          value={titleSearch}
+          onChangeText={setTitleSearch}
+          style={styles.searchInput}
+        />
+        {dateFilter > 0 && (
+          <View style={styles.dateFilterContainer}>
+            <Pressable onPress={() => setDateFilter(prev => Math.max(prev - 1, 0))}>
+              <Text style={styles.dateFilterButtonText}>- Day</Text>
             </Pressable>
-          ))}
-        </ScrollView>
+            <Pressable onPress={() => setDateFilter(prev => prev + 1)}>
+              <Text style={styles.dateFilterButtonText}>+ Day</Text>
+            </Pressable>
+          </View>
+        )}
         {status === "loading" ? (
           <Text style={styles.loadingText}>Loading...</Text>
         ) : (
@@ -141,9 +156,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  categoryScroll: {
+  filterContainer: {
     flexDirection: "row",
-    marginBottom: 20,
+    alignItems: "center",
+    marginBottom: 10,
   },
   categoryButton: {
     paddingVertical: 10,
@@ -158,6 +174,33 @@ const styles = StyleSheet.create({
   categoryText: {
     color: "#cb7723",
     fontSize: 16,
+  },
+  searchInput: {
+    height: 70,
+    borderColor: "#888",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    backgroundColor: "#222",
+    color: "#e3e6f5",
+  },
+  dateFilterButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: "#333",
+    marginLeft: 10,
+  },
+  dateFilterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  dateFilterButtonText: {
+    color: "#cb7723",
+    fontSize: 16,
+    marginHorizontal: 10,
   },
   notesContainer: {
     paddingBottom: 20,
