@@ -27,6 +27,7 @@ const SummaryScreen: React.FC = () => {
   const dispatch = useDispatch();
 
   const entries = useSelector((state: RootState) => state.entries.journalEntries);
+  const categories = useSelector((state: RootState) => state.entries.categories);
   const status = useSelector((state: RootState) => state.entries.status);
   const username = useSelector((state: RootState) => state.profile.username);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
@@ -54,9 +55,7 @@ const SummaryScreen: React.FC = () => {
 
   const filteredEntries = entries.filter((entry) => {
     const matchesCategory = !selectedCategory || entry.category === selectedCategory;
-    const matchesDate = dateFilter === 0 || (
-      new Date().getTime() - new Date(entry.created_at).getTime() <= (dateFilter * 24 * 60 * 60 * 1000)
-    );
+    const matchesDate = dateFilter === 0 || (new Date().getTime() - new Date(entry.created_at).getTime()) / (1000 * 60 * 60 * 24) <= dateFilter;
     const matchesTitle = searchType === "title" ? entry.title.toLowerCase().includes(searchTerm.toLowerCase()) : true;
     const matchesContent = searchType === "keywords" ? (entry.content_text || "").toLowerCase().includes(searchTerm.toLowerCase()) : true;
 
@@ -131,6 +130,11 @@ const SummaryScreen: React.FC = () => {
         )}
         {status === "loading" ? (
           <Text style={styles.loadingText}>Loading...</Text>
+        ) : filteredEntries.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No journals found.</Text>
+            <Text style={styles.emptyInstruction}>Click on the note icon at the bottom of the screen to add a new journal.</Text>
+          </View>
         ) : (
           <FlatList
             data={filteredEntries}
@@ -265,12 +269,29 @@ const styles = StyleSheet.create({
   noteCategory: {
     fontSize: 16,
     fontStyle: "italic",
-    color: "#cb7723",
+    color: "#ffffff", // Update color if needed
   },
   loadingText: {
     color: "#cb7723",
     textAlign: "center",
     marginTop: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  emptyText: {
+    color: "#e3e6f5",
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  emptyInstruction: {
+    color: "#e3e6f5",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 
