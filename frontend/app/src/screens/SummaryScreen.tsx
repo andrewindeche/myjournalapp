@@ -6,7 +6,6 @@ import {
   Pressable,
   FlatList,
   TextInput,
-  ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -20,14 +19,14 @@ const colorPalette = [
 ];
 
 const SummaryScreen: React.FC = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState(0);
-  const [titleSearch, setTitleSearch] = useState("");
-  const [contentSearch, setContentSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState<"title" | "keywords">("title");
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const entries = useSelector((state: RootState) => state.entries.journalEntries);
-  const categories = useSelector((state: RootState) => state.entries.categories);
   const status = useSelector((state: RootState) => state.entries.status);
   const username = useSelector((state: RootState) => state.profile.username);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
@@ -48,17 +47,20 @@ const SummaryScreen: React.FC = () => {
       ]}
     >
       <Text style={styles.noteTitle}>{item.title}</Text>
-      <Text style={styles.noteDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
       <Text style={styles.noteCategory}>{item.category}</Text>
+      <Text style={styles.noteDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
     </View>
   );
 
   const filteredEntries = entries.filter((entry) => {
-    const matchesDate = dateFilter === 0 || (new Date().getTime() - new Date(entry.created_at).getTime()) / (1000 * 60 * 60 * 24) <= dateFilter;
-    const matchesTitle = titleSearch ? entry.title.toLowerCase().includes(titleSearch.toLowerCase()) : true;
-    const matchesContent = contentSearch ? (entry.content_text || "").toLowerCase().includes(contentSearch.toLowerCase()) : true;
+    const matchesCategory = !selectedCategory || entry.category === selectedCategory;
+    const matchesDate = dateFilter === 0 || (
+      new Date().getTime() - new Date(entry.created_at).getTime() <= (dateFilter * 24 * 60 * 60 * 1000)
+    );
+    const matchesTitle = searchType === "title" ? entry.title.toLowerCase().includes(searchTerm.toLowerCase()) : true;
+    const matchesContent = searchType === "keywords" ? (entry.content_text || "").toLowerCase().includes(searchTerm.toLowerCase()) : true;
 
-    return matchesDate && matchesTitle && matchesContent;
+    return matchesCategory && matchesDate && (searchType === "title" ? matchesTitle : matchesContent);
   });
 
   return (
@@ -74,37 +76,57 @@ const SummaryScreen: React.FC = () => {
           </View>
         </View>
         <Text style={styles.title}>My Journals</Text>
-        <View style={styles.filterContainer}>
+        <View style={styles.filtersContainer}>
           <Pressable
             style={[
               styles.categoryButton,
-              styles.selectedCategoryButton,
+              selectedCategory === null && styles.selectedCategoryButton,
             ]}
-            onPress={() => setDateFilter(prev => (prev === 0 ? 1 : 0))}
+            onPress={() => {
+              setSelectedCategory(null);
+              setDateFilter(0); 
+            }}
           >
             <Text style={styles.categoryText}>All</Text>
           </Pressable>
           <Pressable
-            style={styles.dateFilterButton}
-            onPress={() => setDateFilter(prev => (prev === 0 ? 1 : 0))}
+            style={[
+              styles.categoryButton,
+              selectedCategory === 'date' && styles.selectedCategoryButton,
+            ]}
+            onPress={() => {
+              setSelectedCategory(selectedCategory === 'date' ? null : 'date');
+            }}
           >
             <Text style={styles.categoryText}>Date Filter: {dateFilter === 0 ? "All" : `Last ${dateFilter} day(s)`}</Text>
           </Pressable>
         </View>
-        <TextInput
-          placeholder="Search title..."
-          value={titleSearch}
-          onChangeText={setTitleSearch}
-          style={styles.searchInput}
-        />
-        {dateFilter > 0 && (
+        {selectedCategory === 'date' && (
           <View style={styles.dateFilterContainer}>
-            <Pressable onPress={() => setDateFilter(prev => Math.max(prev - 1, 0))}>
+            <Pressable onPress={() => setDateFilter(prev => Math.max(prev - 1, 0))} style={styles.dateFilterButton}>
               <Text style={styles.dateFilterButtonText}>- Day</Text>
             </Pressable>
-            <Pressable onPress={() => setDateFilter(prev => prev + 1)}>
+            <Pressable onPress={() => setDateFilter(prev => prev + 1)} style={styles.dateFilterButton}>
               <Text style={styles.dateFilterButtonText}>+ Day</Text>
             </Pressable>
+          </View>
+        )}
+        {selectedCategory === null && !dateFilter && (
+          <View style={styles.searchContainer}>
+            <TextInput
+              placeholder={`Search by ${searchType}...`}
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+              style={styles.searchInput}
+            />
+            <View style={styles.searchTypeContainer}>
+              <Pressable onPress={() => setSearchType("title")} style={styles.searchTypeButtonWrapper}>
+                <Text style={[styles.searchTypeButton, searchType === "title" && styles.selectedSearchType]}>Title</Text>
+              </Pressable>
+              <Pressable onPress={() => setSearchType("keywords")} style={styles.searchTypeButtonWrapper}>
+                <Text style={[styles.searchTypeButton, searchType === "keywords" && styles.selectedSearchType]}>Keywords</Text>
+              </Pressable>
+            </View>
           </View>
         )}
         {status === "loading" ? (
@@ -156,10 +178,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  filterContainer: {
+  filtersContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   categoryButton: {
     paddingVertical: 10,
@@ -169,38 +190,59 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   selectedCategoryButton: {
-    backgroundColor: "#666",
+    color: "#000000"
   },
   categoryText: {
     color: "#cb7723",
     fontSize: 16,
   },
+  searchContainer: {
+    marginBottom: 20,
+  },
   searchInput: {
-    height: 70,
+    height: 30,
     borderColor: "#888",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: 10,
     backgroundColor: "#222",
     color: "#e3e6f5",
   },
-  dateFilterButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+  searchTypeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  searchTypeButtonWrapper: {
+    flex: 1,
+  },
+  searchTypeButton: {
+    color: "#cb7723",
+    fontSize: 16,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
     backgroundColor: "#333",
-    marginLeft: 10,
+    textAlign: "center",
+  },
+  selectedSearchType: {
+    backgroundColor: "#666",
   },
   dateFilterContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
   },
+  dateFilterButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: "#333",
+    marginRight: 10,
+  },
   dateFilterButtonText: {
     color: "#cb7723",
     fontSize: 16,
-    marginHorizontal: 10,
   },
   notesContainer: {
     paddingBottom: 20,
@@ -217,13 +259,13 @@ const styles = StyleSheet.create({
   },
   noteDate: {
     fontSize: 14,
-    color: "#e3e6f5",
+    color: "rgb(25,121,169)",
     marginBottom: 5,
   },
   noteCategory: {
     fontSize: 16,
     fontStyle: "italic",
-    color: "#fff",
+    color: "#cb7723",
   },
   loadingText: {
     color: "#cb7723",

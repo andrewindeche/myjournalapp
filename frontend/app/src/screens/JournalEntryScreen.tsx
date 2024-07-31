@@ -273,17 +273,17 @@ const JournalEntryScreen: React.FC = () => {
         )}
       </View>
       <View style={styles.footer}>
-        <Pressable onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" />
-        </Pressable>
         <Pressable onPress={() => setEditMode(!editMode)}>
           <Icon name="pencil" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={handleDeleteAll}>
-          <Icon name="trash-bin" size={28} color="black" />
-        </Pressable>
         <Pressable onPress={handleImageUpload}>
           <Icon name="image" size={28} color="black" />
+        </Pressable>
+        <Pressable onPress={handleTakePhoto}>
+          <Icon name="camera" size={28} color="black" />
+        </Pressable>
+        <Pressable onPress={handleDeleteAll}>
+          <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>
           {showMenu && (
