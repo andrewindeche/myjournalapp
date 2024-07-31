@@ -10,7 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class JournalEntrySerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name', allow_blank=True, required=False)
     content_text = serializers.CharField(required=False, allow_blank=True)
-    content_image = serializers.ImageField(required=False, allow_null=True)
+    content_image = serializers.ImageField(max_length=None, use_url=True)
 
     class Meta:
         model = JournalEntry

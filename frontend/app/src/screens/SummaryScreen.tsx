@@ -66,7 +66,7 @@ const SummaryScreen: React.FC = () => {
               )}
           </View>
         </View>
-        <Text style={styles.title}>My Notes</Text>
+        <Text style={styles.title}>My Journals</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
           {categories.map((category) => (
             <Pressable

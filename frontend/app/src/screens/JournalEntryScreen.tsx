@@ -80,16 +80,16 @@ const JournalEntryScreen: React.FC = () => {
           const uri = response.assets[0]?.uri;
           if (uri) {
             setImageUri(uri);
-            const updatedEntry = {
-              ...mostRecentEntry,
-              content_image: {
-                uri,
-                name: response.assets[0]?.fileName || "image.png",
-              },
-            };
-            if (mostRecentEntry.id) {
+            if (mostRecentEntry) {
+              const updatedEntry = {
+                ...mostRecentEntry,
+                content_image: {
+                  uri,
+                  name: response.assets[0]?.fileName || "image.png",
+                },
+              };
               dispatch(
-                updateJournalEntry({ id: mostRecentEntry.id, ...updatedEntry })
+                updateJournalEntry({ id: mostRecentEntry.id, ...updatedEntry }),
               );
             }
           }
