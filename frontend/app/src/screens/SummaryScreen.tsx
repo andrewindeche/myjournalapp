@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Pressable,
   FlatList,
-  Image,
   ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,6 +17,7 @@ import { fetchProfileInfo } from "../redux/ProfileSlice";
 const colorPalette = [
   "#FFDEE9", "#BDE0FE", "#FFEDCC", "#E4E5E6", "#C6F6D5", "#FED7D7"
 ];
+
 const SummaryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = React.useState("All");
   const navigation = useNavigation();
@@ -50,6 +50,8 @@ const SummaryScreen: React.FC = () => {
     </View>
   );
 
+  const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
+
   const filteredEntries = entries.filter((entry) =>
     selectedCategory === "All" || entry.category === selectedCategory
   );
@@ -60,15 +62,24 @@ const SummaryScreen: React.FC = () => {
         <View style={styles.header}>
           <View style={styles.profileContainer}>
             {profileStatus === 'loading' ? (
-                <Text style={styles.greetingText}>Loading...</Text>
-              ) : (
-                <Text style={styles.greetingText}>Hi, {username}</Text>
-              )}
+              <Text style={styles.greetingText}>Loading...</Text>
+            ) : (
+              <Text style={styles.greetingText}>Hi, {username}</Text>
+            )}
           </View>
         </View>
         <Text style={styles.title}>My Journals</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-          {categories.map((category) => (
+          <Pressable
+            style={[
+              styles.categoryButton,
+              selectedCategory === "All" && styles.selectedCategoryButton,
+            ]}
+            onPress={() => setSelectedCategory("All")}
+          >
+            <Text style={styles.categoryText}>All</Text>
+          </Pressable>
+          {sortedCategories.map((category) => (
             <Pressable
               key={category.id}
               style={[
@@ -139,7 +150,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     backgroundColor: "#333",
-    marginRight: 10, 
+    marginRight: 10,
   },
   selectedCategoryButton: {
     backgroundColor: "#666",
