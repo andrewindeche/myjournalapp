@@ -20,7 +20,7 @@ import {
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import SubMenu from "../components/JournalEntryMenu";
-import { useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import {
   launchCamera,
   launchImageLibrary,
@@ -40,11 +40,11 @@ interface JournalEntry {
 }
 
 const JournalEntryScreen: React.FC = () => {
+  const route = useRoute();
+  const entryId = route.params?.entryId || null;
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const { journalEntries, mostRecentEntry } = useSelector(
-    (state: RootState) => state.entries
-  );
+  const { journalEntries } = useSelector((state: RootState) => state.entries);
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -53,6 +53,7 @@ const JournalEntryScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -60,13 +61,20 @@ const JournalEntryScreen: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (editMode && mostRecentEntry) {
-      setTitle(mostRecentEntry.title || "");
-      setSelectedCategory(mostRecentEntry.category || "");
-      setInputText(mostRecentEntry.content_text || "");
-      setImageUri(mostRecentEntry.content_image?.uri || null);
+    const entry = journalEntries.find((e) => e.id === entryId);
+    if (entry) {
+      setCurrentEntry(entry);
     }
-  }, [editMode, mostRecentEntry]);
+  }, [entryId, journalEntries]);
+
+  useEffect(() => {
+    if (editMode && currentEntry) {
+      setTitle(currentEntry.title || "");
+      setSelectedCategory(currentEntry.category || "");
+      setInputText(currentEntry.content_text || "");
+      setImageUri(currentEntry.content_image?.uri || null);
+    }
+  }, [editMode, currentEntry]);
 
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
@@ -80,16 +88,16 @@ const JournalEntryScreen: React.FC = () => {
           const uri = response.assets[0]?.uri;
           if (uri) {
             setImageUri(uri);
-            const updatedEntry = {
-              ...mostRecentEntry,
-              content_image: {
-                uri,
-                name: response.assets[0]?.fileName || "image.png",
-              },
-            };
-            if (mostRecentEntry.id) {
+            if (currentEntry) {
+              const updatedEntry = {
+                ...currentEntry,
+                content_image: {
+                  uri,
+                  name: response.assets[0]?.fileName || "image.png",
+                },
+              };
               dispatch(
-                updateJournalEntry({ id: mostRecentEntry.id, ...updatedEntry })
+                updateJournalEntry({ id: currentEntry.id, ...updatedEntry }),
               );
             }
           }
@@ -111,7 +119,7 @@ const JournalEntryScreen: React.FC = () => {
           if (uri && editEntryId) {
             setImageUri(uri);
             const updatedEntry = {
-              ...mostRecentEntry,
+              ...currentEntry,
               content_image: {
                 uri,
                 name: response.assets[0]?.fileName || "image.png",
@@ -130,7 +138,7 @@ const JournalEntryScreen: React.FC = () => {
         type: "text",
         content_text: inputText || "",
         content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
-        title: title || (mostRecentEntry ? mostRecentEntry.title : ""),
+        title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
       if (editEntryId) {
@@ -148,7 +156,7 @@ const JournalEntryScreen: React.FC = () => {
     } else {
       Alert.alert(
         "Input Text is empty",
-        "Please add some text or image before saving."
+        "Please add some text or image before saving.",
       );
     }
   };
@@ -174,24 +182,27 @@ const JournalEntryScreen: React.FC = () => {
     };
   }, [showMenu]);
 
-  const handleDeleteAll = () => {
-    const deletePromises = journalEntries.map((entry) =>
-      dispatch(deleteJournalEntry(entry.id)).unwrap()
-    );
+  const handleDeleteEntry = (entryId: number) => {
+    if (!entryId) {
+      console.error("No entry ID provided.");
+      return;
+    }
 
-    Promise.all(deletePromises)
+    console.log("Deleting entry with ID:", entryId); // Debugging
+    dispatch(deleteJournalEntry(entryId))
+      .unwrap()
       .then(() => {
-        console.log("All entries deleted successfully");
+        console.log(`Entry ${entryId} deleted successfully`);
       })
       .catch((error) => {
-        console.error("Failed to delete some entries:", error);
+        console.error(`Failed to delete entry ${entryId}:`, error);
       });
   };
 
   const handleDeleteImage = () => {
-    if (editEntryId && mostRecentEntry) {
+    if (editEntryId && currentEntry) {
       const updatedEntry = {
-        ...mostRecentEntry,
+        ...currentEntry,
         content_image: null,
       };
 
@@ -241,26 +252,26 @@ const JournalEntryScreen: React.FC = () => {
           </>
         ) : (
           <ScrollView>
-            {mostRecentEntry ? (
+            {currentEntry ? (
               <Pressable
                 style={styles.entryContainer}
-                onPress={() => handleEditEntry(mostRecentEntry)}
+                onPress={() => handleEditEntry(currentEntry)}
               >
                 <Text style={styles.date}>
-                  {new Date(mostRecentEntry.created_at).toDateString()}
+                  {new Date(currentEntry.created_at).toDateString()}
                 </Text>
-                <Text style={styles.title}>{mostRecentEntry.title}</Text>
+                <Text style={styles.title}>{currentEntry.title}</Text>
                 <Text style={styles.category}>
-                  Category: {mostRecentEntry.category}
+                  Category: {currentEntry.category}
                 </Text>
-                {mostRecentEntry.content_text && (
+                {currentEntry.content_text && (
                   <Text style={styles.content}>
-                    {mostRecentEntry.content_text}
+                    {currentEntry.content_text}
                   </Text>
                 )}
-                {mostRecentEntry.content_image?.uri && (
+                {currentEntry.content_image?.uri && (
                   <Image
-                    source={{ uri: mostRecentEntry.content_image.uri }}
+                    source={{ uri: currentEntry.content_image.uri }}
                     style={styles.entryImage}
                     onError={() => console.log("Error loading image")}
                   />
@@ -273,17 +284,17 @@ const JournalEntryScreen: React.FC = () => {
         )}
       </View>
       <View style={styles.footer}>
-        <Pressable onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" />
-        </Pressable>
         <Pressable onPress={() => setEditMode(!editMode)}>
           <Icon name="pencil" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={handleDeleteAll}>
-          <Icon name="trash-bin" size={28} color="black" />
-        </Pressable>
         <Pressable onPress={handleImageUpload}>
           <Icon name="image" size={28} color="black" />
+        </Pressable>
+        <Pressable onPress={handleTakePhoto}>
+          <Icon name="camera" size={28} color="black" />
+        </Pressable>
+        <Pressable onPress={handleDeleteEntry}>
+          <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>
           {showMenu && (

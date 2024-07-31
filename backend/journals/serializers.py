@@ -32,8 +32,16 @@ class JournalEntrySerializer(serializers.ModelSerializer):
         if category_name:
             category, created = Category.objects.get_or_create(name=category_name, user=self.context['request'].user)
             validated_data['category'] = category
-
-        return super().update(instance, validated_data)
+            
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+        
+    def to_internal_value(self, data):
+        if 'content_image' in data and data['content_image'] is None:
+            data['content_image'] = ''
+        return super().to_internal_value(data)
     
 class Journals(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(

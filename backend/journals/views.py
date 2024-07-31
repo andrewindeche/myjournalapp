@@ -37,7 +37,6 @@ class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
 
-
 # Journal Entry Views
 class JournalEntryListCreateView(generics.ListCreateAPIView):
     queryset = JournalEntry.objects.all()

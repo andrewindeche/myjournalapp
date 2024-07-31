@@ -21,7 +21,7 @@ const LoginScreen: React.FC = () => {
       .unwrap()
       .then(() => {
         dispatch(reset());
-        navigation.navigate('JournalEntry'); 
+        navigation.navigate('Summary'); 
       })
       .catch(() => {
         dispatch(reset());
@@ -30,7 +30,7 @@ const LoginScreen: React.FC = () => {
 
   useEffect(() => {
     if (status === 'succeeded') {
-      navigation.navigate('JournalEntry');
+      navigation.navigate('Summary');
     }
   }, [status, navigation]);
 
