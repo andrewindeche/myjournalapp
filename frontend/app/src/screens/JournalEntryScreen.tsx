@@ -182,17 +182,20 @@ const JournalEntryScreen: React.FC = () => {
     };
   }, [showMenu]);
 
-  const handleDeleteAll = () => {
-    const deletePromises = journalEntries.map((entry) =>
-      dispatch(deleteJournalEntry(entry.id)).unwrap(),
-    );
+  const handleDeleteEntry = (entryId: number) => {
+    if (!entryId) {
+      console.error("No entry ID provided.");
+      return;
+    }
 
-    Promise.all(deletePromises)
+    console.log("Deleting entry with ID:", entryId); // Debugging
+    dispatch(deleteJournalEntry(entryId))
+      .unwrap()
       .then(() => {
-        console.log("All entries deleted successfully");
+        console.log(`Entry ${entryId} deleted successfully`);
       })
       .catch((error) => {
-        console.error("Failed to delete some entries:", error);
+        console.error(`Failed to delete entry ${entryId}:`, error);
       });
   };
 
@@ -290,7 +293,7 @@ const JournalEntryScreen: React.FC = () => {
         <Pressable onPress={handleTakePhoto}>
           <Icon name="camera" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={handleDeleteAll}>
+        <Pressable onPress={handleDeleteEntry}>
           <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>

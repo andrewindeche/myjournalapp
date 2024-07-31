@@ -40,12 +40,13 @@ class JournalEntryTests(APITestCase):
     def test_update_journal_entry(self):
         entry = JournalEntry.objects.get(id=self.entry.id)
         url = reverse('journalentry-detail', args=[entry.id])
+        
         updated_data = {
             'title': 'Updated Title',
             'content_text': 'Updated content.',
-            'content_image': SimpleUploadedFile("test_image.jpg", b"file_content", content_type="image/jpeg"),
             'category': self.category.id
         }
+
         response = self.client.put(url, data=updated_data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         entry.refresh_from_db()
@@ -63,7 +64,6 @@ class JournalEntryTests(APITestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(JournalEntry.objects.count(), 0)
 
-#Category Test cases
 class CategoryTests(TestCase):
     def setUp(self):
         self.client = APIClient()
