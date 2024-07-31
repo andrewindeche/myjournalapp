@@ -13,6 +13,7 @@ import HomeMenu from "../components/HomeMenu";
 import { fetchJournalEntries, fetchCategories } from "../redux/JournalEntrySlice";
 import { RootState } from "../redux/store";
 import { fetchProfileInfo } from "../redux/ProfileSlice";
+import { JournalEntry } from "../types"; // Ensure this import matches your actual file location
 
 const colorPalette = [
   "#FFDEE9", "#BDE0FE", "#FFEDCC", "#E4E5E6", "#C6F6D5", "#FED7D7"
@@ -25,9 +26,11 @@ const SummaryScreen: React.FC = () => {
   const [searchType, setSearchType] = useState<"title" | "keywords">("title");
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const handleEntryPress = (entry: JournalEntry) => {
+    navigation.navigate('JournalEntry', { entryId: entry.id });
+  };
 
   const entries = useSelector((state: RootState) => state.entries.journalEntries);
-  const categories = useSelector((state: RootState) => state.entries.categories);
   const status = useSelector((state: RootState) => state.entries.status);
   const username = useSelector((state: RootState) => state.profile.username);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
@@ -41,16 +44,18 @@ const SummaryScreen: React.FC = () => {
   const getColorForIndex = (index: number) => colorPalette[index % colorPalette.length];
 
   const renderEntry = ({ item, index }: { item: JournalEntry, index: number }) => (
-    <View
-      style={[
-        styles.noteCard,
-        { backgroundColor: getColorForIndex(index) },
-      ]}
-    >
-      <Text style={styles.noteTitle}>{item.title}</Text>
-      <Text style={styles.noteCategory}>{item.category}</Text>
-      <Text style={styles.noteDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
-    </View>
+    <Pressable key={item.id} onPress={() => handleEntryPress(item)}>
+      <View
+        style={[
+          styles.noteCard,
+          { backgroundColor: getColorForIndex(index) },
+        ]}
+      >
+        <Text style={styles.noteTitle}>{item.title}</Text>
+        <Text style={styles.noteCategory}>{item.category}</Text>
+        <Text style={styles.noteDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
+      </View>
+    </Pressable>
   );
 
   const filteredEntries = entries.filter((entry) => {
@@ -132,8 +137,18 @@ const SummaryScreen: React.FC = () => {
           <Text style={styles.loadingText}>Loading...</Text>
         ) : filteredEntries.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No journals found.</Text>
-            <Text style={styles.emptyInstruction}>Click on the note icon at the bottom of the screen to add a new journal.</Text>
+            {selectedCategory === 'date' ? (
+              <View style={styles.emptyDateFilterContainer}>
+                <Text style={styles.emptyText}>No journals found for the selected date range.</Text>
+                <Text style={styles.emptyInstruction}>Use the "- Day" and "+ Day" buttons to adjust the date range.</Text>
+                <Text style={styles.emptyInstruction}>Click on the Date filter button again to view the entries</Text>
+              </View>
+            ) : (
+              <View style={styles.emptyTextContainer}>
+                <Text style={styles.emptyText}>No journals found.</Text>
+                <Text style={styles.emptyInstruction}>Click on the note icon at the bottom of the screen to add a new journal.</Text>
+              </View>
+            )}
           </View>
         ) : (
           <FlatList
@@ -269,7 +284,7 @@ const styles = StyleSheet.create({
   noteCategory: {
     fontSize: 16,
     fontStyle: "italic",
-    color: "#ffffff", // Update color if needed
+    color: "#964B00", 
   },
   loadingText: {
     color: "#cb7723",
@@ -293,6 +308,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
+  emptyClickInstruction: {
+    color: "#000000",
+    fontSize: 8,
+  }
 });
 
 export default SummaryScreen;
