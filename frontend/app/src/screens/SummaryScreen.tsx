@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchInput: {
-    height: 30,
+    height: 50,
     borderColor: "#888",
     borderWidth: 1,
     borderRadius: 5,
