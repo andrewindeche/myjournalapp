@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, Modal } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
@@ -10,6 +10,9 @@ const LoginScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   
   const { username, password, status, error } = useSelector((state: RootState) => state.login);
+
+  const [attempts, setAttempts] = useState<number>(0);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const handleSignUpPress = () => {
     navigation.navigate('Register');
@@ -25,6 +28,10 @@ const LoginScreen: React.FC = () => {
       })
       .catch(() => {
         dispatch(reset());
+        setAttempts(attempts + 1);
+        if (attempts + 1 >= 3) {
+          setModalVisible(true);
+        }
       });
   };
 
@@ -72,6 +79,22 @@ const LoginScreen: React.FC = () => {
       </View>
     </View>
     {error && <Text style={styles.errorText}>{error}</Text>}
+    <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Password Tip</Text>
+            <Text style={styles.modalText}>Make sure your password is at least 8 characters long and contains a mix of letters, numbers, and special characters.</Text>
+            <Pressable style={styles.okButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.okButtonText}>OK</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -163,6 +186,39 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     alignItems: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  okButton: {
+    backgroundColor: '#020035',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  okButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   subtitle: {
     fontSize: 10,
