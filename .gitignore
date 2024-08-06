@@ -58,3 +58,8 @@ node_modules/
 /frontend/*.orig.*
 /frontend/web-build/
 
+# Ignore all 'zone identifiers' folders in 'frontend' directory
+frontend/**/zone identifiers/
+
+# Ignore all 'zone identifiers' folders in 'backend' directory
+backend/**/zone identifiers/
