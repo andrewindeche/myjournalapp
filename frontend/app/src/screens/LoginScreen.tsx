@@ -1,21 +1,35 @@
-import React, { useState,useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Modal,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
-import { setUsername, setPassword, loginUser, reset } from '../redux/LoginSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
+import {
+  setUsername,
+  setPassword,
+  loginUser,
+  reset,
+} from "../redux/LoginSlice";
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  
-  const { username, password, status, error } = useSelector((state: RootState) => state.login);
+
+  const { username, password, status, error } = useSelector(
+    (state: RootState) => state.login,
+  );
 
   const [attempts, setAttempts] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const handleSignUpPress = () => {
-    navigation.navigate('Register');
+    navigation.navigate("Register");
     dispatch(reset());
   };
 
@@ -24,7 +38,7 @@ const LoginScreen: React.FC = () => {
       .unwrap()
       .then(() => {
         dispatch(reset());
-        navigation.navigate('Summary'); 
+        navigation.navigate("Summary");
       })
       .catch(() => {
         dispatch(reset());
@@ -36,50 +50,56 @@ const LoginScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    if (status === 'succeeded') {
-      navigation.navigate('Summary');
+    if (status === "succeeded") {
+      navigation.navigate("Summary");
     }
   }, [status, navigation]);
 
   return (
     <>
-    <View style={styles.outerContainer}>
-      <View style={styles.header}>
-      <Text style={styles.title}>Welcome to your journal</Text>
-      <Text style={styles.subtitle}>Sign Into Your Account</Text>
+      <View style={styles.outerContainer}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome to your journal</Text>
+          <Text style={styles.subtitle}>Sign Into Your Account</Text>
+        </View>
       </View>
-    </View>
-    <View style={styles.innerContainer}>
-      <View style={styles.inputContainer}>
-    <Text style={[styles.title, styles.inputText]}>Sign In</Text>
-    <Text style={styles.label}>Your UserName</Text>
-    <TextInput
-        style={styles.input}
-        placeholder="Your Username"
-        onChangeText={(text) => dispatch(setUsername(text))}
-        value={username}
-      />
-    <Text style={styles.label}>Password</Text>
-    <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={(text) => dispatch(setPassword(text))}
-        value={password}
-      />
+      <View style={styles.innerContainer}>
+        <View style={styles.inputContainer}>
+          <Text style={[styles.title, styles.inputText]}>Sign In</Text>
+          <Text style={styles.label}>Your UserName</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Username"
+            onChangeText={(text) => dispatch(setUsername(text))}
+            value={username}
+          />
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            onChangeText={(text) => dispatch(setPassword(text))}
+            value={password}
+          />
+        </View>
+        <View style={styles.footer}>
+          <Pressable style={styles.signInButton}>
+            <Text
+              style={styles.signInButtonText}
+              onPress={handleSignInPress}
+              disabled={status === "loading"}
+            >
+              Sign In
+            </Text>
+          </Pressable>
+          <Pressable style={styles.newUser} onPress={handleSignUpPress}>
+            <Text>I'm a new user</Text>
+            <Text style={styles.signUpText}>Sign up</Text>
+          </Pressable>
+        </View>
       </View>
-      <View style={styles.footer}>
-      <Pressable style={styles.signInButton}>
-        <Text style={styles.signInButtonText} onPress={handleSignInPress} disabled={status === 'loading'}>Sign In</Text>
-      </Pressable>
-      <Pressable style={styles.newUser} onPress={handleSignUpPress}>
-        <Text>I'm a new user</Text>
-        <Text style={styles.signUpText}>Sign up</Text>
-      </Pressable>
-      </View>
-    </View>
-    {error && <Text style={styles.errorText}>{error}</Text>}
-    <Modal
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      <Modal
         transparent={true}
         visible={modalVisible}
         animationType="slide"
@@ -88,8 +108,14 @@ const LoginScreen: React.FC = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Password Tip</Text>
-            <Text style={styles.modalText}>Make sure your password is at least 8 characters long and contains a mix of letters, numbers, and special characters.</Text>
-            <Pressable style={styles.okButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalText}>
+              Make sure your password is at least 8 characters long and contains
+              a mix of letters, numbers, and special characters.
+            </Text>
+            <Pressable
+              style={styles.okButton}
+              onPress={() => setModalVisible(false)}
+            >
               <Text style={styles.okButtonText}>OK</Text>
             </Pressable>
           </View>
@@ -100,133 +126,133 @@ const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  checkboxContainer: {
+    alignItems: "center",
+    flexDirection: "row",
   },
-  outerContainer: {
-    backgroundColor: '#020035',
-    height: 10,
-    width: '100%',
+  container: {
+    alignItems: "center",
     flex: 1,
-    alignItems: 'center',
+    justifyContent: "center",
+  },
+  errorText: {
+    color: "red",
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  footer: {
+    alignItems: "center",
+    display: "flex",
+    gap: 10,
+  },
+  header: {
+    alignItems: "center",
+    color: "white",
+    display: "flex",
+    gap: 10,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  innerContainer: {
+    backgroundColor: "white",
+    height: "80%",
+    marginBottom: 10,
+  },
+  input: {
+    backgroundColor: "rgba(0, 0, 255, 0.1)",
+    borderColor: "#ccc",
+    borderRadius: 8,
+    borderWidth: 1,
+    height: 40,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    width: "95%",
+  },
+  inputContainer: {
+    padding: 17,
+  },
+  inputText: {
+    color: "#020035",
+    fontWeight: "bold",
+    padding: 5,
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  modalContainer: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    flex: 1,
+    justifyContent: "center",
   },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginVertical: 10,
+  modalContent: {
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
   },
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
   },
-  innerContainer: {
-    backgroundColor: 'white',
-    height: '80%',
-    marginBottom: 10,
-  },
-  inputText: {
-    color: '#020035',
-    padding: 5,
-    fontWeight: 'bold',
-  },
-  inputContainer: {
-    padding: 17,
-  },
-  header: {
-    display: 'flex',
-    gap:10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    color: 'white',
-  },
-  input: {
-    width: '95%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: 'rgba(0, 0, 255, 0.1)',
-  },
-  signInButton: {
-    backgroundColor: '#020035',
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    width: '90%',
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  signUpText: {
+  modalTitle: {
     fontSize: 20,
-    color: '#CB7723'
-  },
-  signInButtonText: {
-    color: 'white',
-    textAlign: 'center',
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   newUser: {
     marginTop: 10,
   },
-  title: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: 'white',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
   okButton: {
-    backgroundColor: '#020035',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: "#020035",
     borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   okButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
+  outerContainer: {
+    alignItems: "center",
+    backgroundColor: "#020035",
+    flex: 1,
+    height: 10,
+    width: "100%",
+  },
+  signInButton: {
+    backgroundColor: "#020035",
+    borderRadius: 8,
+    marginBottom: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    width: "90%",
+  },
+  signInButtonText: {
+    color: "white",
+    textAlign: "center",
+  },
+  signUpText: {
+    color: "#CB7723",
+    fontSize: 20,
+  },
   subtitle: {
-    fontSize: 10,
-    color: 'white',
+    color: "white",
+    fontSize: 14,
   },
   text: {
+    color: "white",
     fontSize: 10,
-    color: 'white',
+  },
+  title: {
+    alignItems: "center",
+    color: "white",
+    fontSize: 25,
+    fontWeight: "bold",
   },
 });
 

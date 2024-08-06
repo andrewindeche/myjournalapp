@@ -34,7 +34,9 @@ const HomeMenu: React.FC<MenuProps> = ({ navigation }) => {
       <View style={styles.menu}>
         <Pressable
           style={styles.menuItem}
-          onPress={() => navigation.navigate("JournalEntry")}
+          onPress={() =>
+            navigation.navigate("JournalEntry", { entryId: yourEntryId })
+          }
         >
           <Icon name="document-text-outline" size={24} color="black" />
         </Pressable>

@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   Modal,
+  ScrollView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -138,18 +139,18 @@ const ProfileScreen: React.FC = () => {
   };
 
   if (status === "loading") {
-    return <Text>Loading...</Text>;
+    return <Text style={styles.loadingText}>Loading...</Text>;
   }
 
   if (!username || !email) {
-    return <Text>Loading...</Text>;
+    return <Text style={styles.loadingText}>Loading...</Text>;
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.outerContainer}>
         <Text style={styles.title}>Profile Information</Text>
-        <View style={{ alignItems: "center", padding: 20 }}>
+        <View style={styles.infoContainer}>
           <Text style={styles.label}>Name: {username}</Text>
           <Text style={styles.label}>Email: {email}</Text>
           {successMessage ? (
@@ -227,11 +228,11 @@ const ProfileScreen: React.FC = () => {
         value={newUsername}
       />
       <Pressable
-        style={styles.outerbutton}
+        style={styles.outerButton}
         onPress={openUsernameChangeModal}
         disabled={status === "loading"}
       >
-        <Text style={styles.OuterButtonText}>Update Username</Text>
+        <Text style={styles.outerButtonText}>Update Username</Text>
       </Pressable>
       <TextInput
         style={[
@@ -279,105 +280,100 @@ const ProfileScreen: React.FC = () => {
         <Text style={styles.buttonText}>Update Password</Text>
       </Pressable>
       <Menu navigation={navigation} onDeleteAccount={handleDeleteAccount} />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
-    justifyContent: "center",
+    backgroundColor: "#f5f5f5",
   },
   outerContainer: {
     alignItems: "center",
     backgroundColor: "#020035",
-    flex: 1,
-    height: 10,
-    marginBottom: 16,
-    width: "100%",
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
   },
-  errorInput: {
-    borderColor: "red",
-    color: "red",
+  infoContainer: {
+    alignItems: "center",
+    padding: 20,
   },
-  innerContainer: {
-    backgroundColor: "white",
-    height: "80%",
-    marginBottom: 10,
-    width: "100%",
-    padding: 40,
-  },
-  input: {
-    height: 40,
-    borderColor: "#020035",
-    borderWidth: 1,
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    backgroundColor: "rgba(0, 0, 255, 0.1)",
-  },
-  errorText: {
-    color: "red",
+  label: {
+    color: "white",
     fontSize: 18,
-    marginTop: 20,
+    marginVertical: 4,
+  },
+  title: {
+    color: "#FFFFFF",
+    fontSize: 30,
     fontWeight: "bold",
+    marginBottom: 10,
   },
   successText: {
     color: "green",
-    fontSize: 18,
-    marginTop: 20,
-    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 10,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    marginTop: 10,
+  },
+  input: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 5,
+    borderColor: "#CCCCCC",
+    borderWidth: 1,
+    fontSize: 16,
+    marginBottom: 10,
+    padding: 10,
+  },
+  errorInput: {
+    borderColor: "red",
   },
   button: {
+    backgroundColor: "#0033cc",
+    borderRadius: 5,
+    padding: 15,
     alignItems: "center",
-    backgroundColor: "#020035",
-    borderRadius: 4,
-    marginBottom: 16,
-    paddingVertical: 12,
-  },
-  outerbutton: {
-    alignItems: "center",
-    backgroundColor: "#020035",
-    borderColor: "white",
-    borderRadius: 4,
-    borderWidth: 1,
-    marginBottom: 16,
-    paddingVertical: 12,
-  },
-  footer: {
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderTopWidth: 1,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 10,
+    marginVertical: 10,
   },
   buttonText: {
-    color: "white",
+    color: "#FFFFFF",
+    fontSize: 18,
     fontWeight: "bold",
   },
-  OuterButtonText: {
-    color: "white",
+  outerButton: {
+    backgroundColor: "#004d99",
+    borderRadius: 5,
+    padding: 15,
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  outerButtonText: {
+    color: "#FFFFFF",
+    fontSize: 18,
     fontWeight: "bold",
   },
   modalBackground: {
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContainer: {
-    alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 20,
     width: "80%",
+    alignItems: "center",
   },
   modalText: {
     fontSize: 18,
     marginBottom: 20,
-    textAlign: "center",
   },
   modalButtonsContainer: {
     flexDirection: "row",
@@ -385,22 +381,20 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalButton: {
-    alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: "#0033cc",
     borderRadius: 5,
-    flex: 1,
+    padding: 10,
     marginHorizontal: 10,
-    paddingVertical: 10,
+    alignItems: "center",
+    flex: 1,
+  },
+  loadingText: {
+    color: "gray",
+    fontSize: 18,
+    textAlign: "center",
   },
   label: {
-    color: "white",
-    fontSize: 18,
-    margin: 2,
-  },
-  title: {
-    color: "#FFFFFF",
-    fontSize: 30,
-    fontWeight: "bold",
+    fontSize:10,
   },
 });
 
