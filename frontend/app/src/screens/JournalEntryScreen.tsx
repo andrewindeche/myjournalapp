@@ -141,12 +141,22 @@ const JournalEntryScreen: React.FC = () => {
         title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
+
       if (editEntryId) {
-        dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
-        setEditEntryId(null);
+        dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }))
+          .unwrap()
+          .then(() => {
+            dispatch(fetchJournalEntries());
+            setEditEntryId(null);
+          });
       } else {
-        dispatch(createJournalEntry(newEntry));
+        dispatch(createJournalEntry(newEntry))
+          .unwrap()
+          .then(() => {
+            dispatch(fetchJournalEntries());
+          });
       }
+
       setInputText("");
       setTitle("");
       setSelectedCategory(null);
