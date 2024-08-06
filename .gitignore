@@ -62,4 +62,8 @@ node_modules/
 frontend/**/zone identifiers/
 
 # Ignore all 'zone identifiers' folders in 'backend' directory
+<<<<<<< HEAD
 backend/**/zone identifiers/
+=======
+backend/**/zone identifiers/
+>>>>>>> ad69e1c (update changes)
