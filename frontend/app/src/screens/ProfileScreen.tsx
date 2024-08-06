@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Modal,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -147,170 +148,176 @@ const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.outerContainer}>
-        <Text style={styles.title}>Profile Information</Text>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Name: {username}</Text>
-          <Text style={styles.label}>Email: {email}</Text>
-          {successMessage ? (
-            <Text style={styles.successText}>{successMessage}</Text>
-          ) : null}
-          {errorMessage ? (
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          ) : null}
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.outerContainer}>
+          <Text style={styles.title}>Profile Information</Text>
+          <View style={styles.infoContainer}>
+            <Text style={styles.label}>Name: {username}</Text>
+            <Text style={styles.label}>Email: {email}</Text>
+            {successMessage ? (
+              <Text style={styles.successText}>{successMessage}</Text>
+            ) : null}
+            {errorMessage ? (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            ) : null}
+          </View>
         </View>
+        <Modal
+          transparent={true}
+          visible={modalVisible}
+          animationType="slide"
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalText}>
+                Are you sure you want to change your password?
+              </Text>
+              <View style={styles.modalButtonsContainer}>
+                <Pressable
+                  style={styles.modalButton}
+                  onPress={handlePasswordChangeConfirmation}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </Pressable>
+                <Pressable style={styles.modalButton} onPress={closeModal}>
+                  <Text style={styles.buttonText}>No</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={usernameModalVisible}
+          animationType="slide"
+          onRequestClose={closeUsernameModal}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalText}>
+                Are you sure you want to change your username?
+              </Text>
+              <View style={styles.modalButtonsContainer}>
+                <Pressable
+                  style={styles.modalButton}
+                  onPress={handleUsernameChangeConfirmation}
+                >
+                  <Text style={styles.buttonText}>Yes</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.modalButton}
+                  onPress={closeUsernameModal}
+                >
+                  <Text style={styles.buttonText}>No</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <TextInput
+          style={[
+            styles.input,
+            errorMessage.includes("Username") && styles.errorInput,
+          ]}
+          placeholder={
+            errorMessage.includes("Username")
+              ? errorMessage
+              : "Enter New Username"
+          }
+          onChangeText={(text) => setNewUsername(text)}
+          value={newUsername}
+        />
+        <Pressable
+          style={styles.outerButton}
+          onPress={openUsernameChangeModal}
+          disabled={status === "loading"}
+        >
+          <Text style={styles.outerButtonText}>Update Username</Text>
+        </Pressable>
+        <TextInput
+          style={[
+            styles.input,
+            errorMessage.includes("Password") && styles.errorInput,
+          ]}
+          placeholder={
+            errorMessage.includes("Password") ? errorMessage : "Current Password"
+          }
+          value={oldPassword}
+          onChangeText={setOldPassword}
+          secureTextEntry
+        />
+        <TextInput
+          style={[
+            styles.input,
+            errorMessage.includes("Password") && styles.errorInput,
+          ]}
+          placeholder={
+            errorMessage.includes("Password") ? errorMessage : "New Password"
+          }
+          value={newPassword}
+          onChangeText={setNewPassword}
+          secureTextEntry
+        />
+        <TextInput
+          style={[
+            styles.input,
+            errorMessage.includes("Password") && styles.errorInput,
+          ]}
+          placeholder={
+            errorMessage.includes("Password")
+              ? errorMessage
+              : "Confirm New Password"
+          }
+          value={confirmNewPassword}
+          onChangeText={setConfirmNewPassword}
+          secureTextEntry
+        />
+        <Pressable
+          style={styles.button}
+          onPress={openPasswordChangeModal}
+          disabled={status === "loading"}
+        >
+          <Text style={styles.buttonText}>Update Password</Text>
+        </Pressable>
+      </ScrollView>
+      <View style={styles.menuContainer}>
+        <Menu navigation={navigation} onDeleteAccount={handleDeleteAccount} />
       </View>
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>
-              Are you sure you want to change your password?
-            </Text>
-            <View style={styles.modalButtonsContainer}>
-              <Pressable
-                style={styles.modalButton}
-                onPress={handlePasswordChangeConfirmation}
-              >
-                <Text style={styles.buttonText}>Yes</Text>
-              </Pressable>
-              <Pressable style={styles.modalButton} onPress={closeModal}>
-                <Text style={styles.buttonText}>No</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        transparent={true}
-        visible={usernameModalVisible}
-        animationType="slide"
-        onRequestClose={closeUsernameModal}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>
-              Are you sure you want to change your username?
-            </Text>
-            <View style={styles.modalButtonsContainer}>
-              <Pressable
-                style={styles.modalButton}
-                onPress={handleUsernameChangeConfirmation}
-              >
-                <Text style={styles.buttonText}>Yes</Text>
-              </Pressable>
-              <Pressable
-                style={styles.modalButton}
-                onPress={closeUsernameModal}
-              >
-                <Text style={styles.buttonText}>No</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      <TextInput
-        style={[
-          styles.input,
-          errorMessage.includes("Username") && styles.errorInput,
-        ]}
-        placeholder={
-          errorMessage.includes("Username")
-            ? errorMessage
-            : "Enter New Username"
-        }
-        onChangeText={(text) => setNewUsername(text)}
-        value={newUsername}
-      />
-      <Pressable
-        style={styles.outerButton}
-        onPress={openUsernameChangeModal}
-        disabled={status === "loading"}
-      >
-        <Text style={styles.outerButtonText}>Update Username</Text>
-      </Pressable>
-      <TextInput
-        style={[
-          styles.input,
-          errorMessage.includes("Password") && styles.errorInput,
-        ]}
-        placeholder={
-          errorMessage.includes("Password") ? errorMessage : "Current Password"
-        }
-        value={oldPassword}
-        onChangeText={setOldPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={[
-          styles.input,
-          errorMessage.includes("Password") && styles.errorInput,
-        ]}
-        placeholder={
-          errorMessage.includes("Password") ? errorMessage : "New Password"
-        }
-        value={newPassword}
-        onChangeText={setNewPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={[
-          styles.input,
-          errorMessage.includes("Password") && styles.errorInput,
-        ]}
-        placeholder={
-          errorMessage.includes("Password")
-            ? errorMessage
-            : "Confirm New Password"
-        }
-        value={confirmNewPassword}
-        onChangeText={setConfirmNewPassword}
-        secureTextEntry
-      />
-      <Pressable
-        style={styles.button}
-        onPress={openPasswordChangeModal}
-        disabled={status === "loading"}
-      >
-        <Text style={styles.buttonText}>Update Password</Text>
-      </Pressable>
-      <Menu navigation={navigation} onDeleteAccount={handleDeleteAccount} />
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 20,
+    flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  scrollViewContent: {
+    padding: 20,
+    paddingBottom: 10,
   },
   outerContainer: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: "#000000",
     borderRadius: 10,
     padding: 20,
-    marginBottom: 20,
-  },
-  infoContainer: {
-    alignItems: "center",
-    padding: 20,
-  },
-  label: {
-    color: "white",
-    fontSize: 18,
-    marginVertical: 4,
+    marginBottom: 10,
   },
   title: {
-    color: "#FFFFFF",
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#020035",
+  },
+  infoContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 5,
+    color: "#ffffff",
   },
   successText: {
     color: "green",
@@ -393,8 +400,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
   },
-  label: {
-    fontSize:10,
+  menuContainer: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    backgroundColor: "#ffffff",
+    borderTopWidth: 1,
+    borderTopColor: "#CCCCCC",
   },
 });
 
