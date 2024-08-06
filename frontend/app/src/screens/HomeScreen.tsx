@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 8,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "bold",
     justifyContent: "center",
     padding: 10,
@@ -107,11 +107,11 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: "white",
-    fontSize: 10,
+    fontSize: 12,
   },
   text: {
     color: "black",
-    fontSize: 10,
+    fontSize: 14,
   },
   title: {
     color: "white",
