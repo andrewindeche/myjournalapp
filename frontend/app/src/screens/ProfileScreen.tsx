@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalButton: {
-    backgroundColor: "#0033cc",
+    backgroundColor: "#020035",
     borderRadius: 5,
     padding: 10,
     marginHorizontal: 10,
