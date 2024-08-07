@@ -238,7 +238,7 @@ const SummaryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#002240",
     paddingHorizontal: 20,
     paddingTop: 40,
   },

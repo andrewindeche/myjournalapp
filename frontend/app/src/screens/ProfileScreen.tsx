@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     alignItems: "center",
-    backgroundColor: "#000000",
+    backgroundColor: "#002240",
     borderRadius: 10,
     padding: 20,
     marginBottom: 10,
