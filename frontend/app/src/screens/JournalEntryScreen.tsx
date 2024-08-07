@@ -153,7 +153,7 @@ const JournalEntryScreen: React.FC = () => {
         dispatch(createJournalEntry(newEntry))
           .unwrap()
           .then(() => {
-            dispatch(fetchJournalEntries()); 
+            dispatch(fetchJournalEntries());
           });
       }
       setInputText("");
@@ -192,12 +192,11 @@ const JournalEntryScreen: React.FC = () => {
   }, [showMenu]);
 
   const handleDeleteEntry = (entryId: number) => {
-    if (!entryId) {
-      console.error("No entry ID provided.");
+    if (typeof entryId !== "number") {
+      console.error("Invalid entry ID:", entryId);
       return;
     }
-
-    console.log("Deleting entry with ID:", entryId); // Debugging
+    console.log("Deleting entry with ID:", entryId);
     dispatch(deleteJournalEntry(entryId))
       .unwrap()
       .then(() => {
@@ -302,7 +301,7 @@ const JournalEntryScreen: React.FC = () => {
         <Pressable onPress={handleTakePhoto}>
           <Icon name="camera" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={handleDeleteEntry}>
+        <Pressable onPress={() => handleDeleteEntry(entryId)}>
           <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>
