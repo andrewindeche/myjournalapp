@@ -10,7 +10,7 @@ interface JournalEntry {
   content: (string | { uri: string; type: "text" | "image"; value: string })[];
   created_at: string;
   category: string;
-  content_text?: string;  
+  content_text?: string;
   content_image?: { uri: string; name: string } | null;
 }
 
@@ -60,7 +60,10 @@ export const fetchJournalEntries = createAsyncThunk(
 
 export const updateJournalEntry = createAsyncThunk(
   "journal/updateJournalEntry",
-  async (updatedEntry: Omit<JournalEntry, "created_at">, { getState, rejectWithValue }) => {
+  async (
+    updatedEntry: Omit<JournalEntry, "created_at">,
+    { getState, rejectWithValue },
+  ) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
@@ -75,7 +78,7 @@ export const updateJournalEntry = createAsyncThunk(
 
     if (updatedEntry.content_image) {
       const { uri, name } = updatedEntry.content_image;
-      const fileType = `image/${name.split('.').pop()}`;
+      const fileType = `image/${name.split(".").pop()}`;
 
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -91,7 +94,7 @@ export const updateJournalEntry = createAsyncThunk(
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       return response.data;
     } catch (error: any) {
@@ -100,7 +103,7 @@ export const updateJournalEntry = createAsyncThunk(
       }
       return rejectWithValue("Error updating entry.");
     }
-  }
+  },
 );
 
 export const fetchCategories = createAsyncThunk(
@@ -127,7 +130,6 @@ export const deleteJournalEntry = createAsyncThunk(
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
-
     try {
       await instance.delete(`entries-update/${entryId}/`);
       return entryId;
@@ -137,12 +139,15 @@ export const deleteJournalEntry = createAsyncThunk(
       }
       return rejectWithValue("Error deleting entry.");
     }
-  }
+  },
 );
 
 export const createJournalEntry = createAsyncThunk(
   "journal/createJournalEntry",
-  async (newEntry: Omit<JournalEntry, "id" | "created_at">, { getState, rejectWithValue }) => {
+  async (
+    newEntry: Omit<JournalEntry, "id" | "created_at">,
+    { getState, rejectWithValue },
+  ) => {
     const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
@@ -175,7 +180,7 @@ export const createJournalEntry = createAsyncThunk(
       }
       return rejectWithValue("Error creating new entry.");
     }
-  }
+  },
 );
 
 const journalEntriesSlice = createSlice({
