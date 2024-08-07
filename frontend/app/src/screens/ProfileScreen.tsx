@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#020035",
+    color: "#ffffff",
   },
   infoContainer: {
     marginBottom: 20,
