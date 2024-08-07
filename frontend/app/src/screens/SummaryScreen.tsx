@@ -89,8 +89,8 @@ const SummaryScreen: React.FC = () => {
     const matchesContent =
       searchType === "keywords"
         ? (entry.content_text || "")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
         : true;
 
     return (
@@ -238,7 +238,7 @@ const SummaryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#002240",
     paddingHorizontal: 20,
     paddingTop: 40,
   },

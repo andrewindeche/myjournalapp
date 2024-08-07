@@ -27,7 +27,7 @@ const ProfileScreen: React.FC = () => {
     username = "",
     email = "",
     status,
-    error,
+    error = "",
   } = useSelector((state: RootState) => state.profile || {});
   const [newUsername, setNewUsername] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -52,8 +52,12 @@ const ProfileScreen: React.FC = () => {
         setNewPassword("");
         setConfirmNewPassword("");
       }
-    } else if (status === "failed" && error) {
-      setErrorMessage(error);
+    } else if (status === "failed") {
+      setErrorMessage(
+        typeof error === "string"
+          ? error
+          : "error.Please check your password values",
+      );
       setModalVisible(false);
       setUsernameModalVisible(false);
       setTimeout(() => {
@@ -102,6 +106,9 @@ const ProfileScreen: React.FC = () => {
     if (newPassword !== confirmNewPassword) {
       setModalVisible(false);
       setErrorMessage("Passwords do not match");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
       setTimeout(() => {
         setErrorMessage("");
       }, 2000);
@@ -122,7 +129,11 @@ const ProfileScreen: React.FC = () => {
         setNewPassword("");
         setConfirmNewPassword("");
       } else if (updatePassword.rejected.match(result)) {
-        setErrorMessage(result.payload as string);
+        setErrorMessage(
+          typeof result.payload === "string"
+            ? result.payload
+            : "error updating, check password values",
+        );
       }
     });
   };
@@ -239,10 +250,15 @@ const ProfileScreen: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            errorMessage.includes("Password") && styles.errorInput,
+            typeof errorMessage === "string" &&
+              errorMessage.includes("Password") &&
+              styles.errorInput,
           ]}
           placeholder={
-            errorMessage.includes("Password") ? errorMessage : "Current Password"
+            typeof errorMessage === "string" &&
+            errorMessage.includes("Password")
+              ? errorMessage
+              : "Current Password"
           }
           value={oldPassword}
           onChangeText={setOldPassword}
@@ -251,10 +267,15 @@ const ProfileScreen: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            errorMessage.includes("Password") && styles.errorInput,
+            typeof errorMessage === "string" &&
+              errorMessage.includes("Password") &&
+              styles.errorInput,
           ]}
           placeholder={
-            errorMessage.includes("Password") ? errorMessage : "New Password"
+            typeof errorMessage === "string" &&
+            errorMessage.includes("Password")
+              ? errorMessage
+              : "Confirm New Password"
           }
           value={newPassword}
           onChangeText={setNewPassword}
@@ -300,7 +321,7 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     alignItems: "center",
-    backgroundColor: "#000000",
+    backgroundColor: "#002240",
     borderRadius: 10,
     padding: 20,
     marginBottom: 10,
@@ -309,7 +330,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#020035",
+    color: "#ffffff",
   },
   infoContainer: {
     marginBottom: 20,

@@ -153,10 +153,9 @@ const JournalEntryScreen: React.FC = () => {
         dispatch(createJournalEntry(newEntry))
           .unwrap()
           .then(() => {
-            dispatch(fetchJournalEntries());
+            dispatch(fetchJournalEntries()); 
           });
       }
-
       setInputText("");
       setTitle("");
       setSelectedCategory(null);
