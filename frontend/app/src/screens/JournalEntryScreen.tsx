@@ -277,12 +277,15 @@ const JournalEntryScreen: React.FC = () => {
                     {currentEntry.content_text}
                   </Text>
                 )}
-                {currentEntry.content_image?.uri && (
+                {currentEntry.content_image?.uri ? (
                   <Image
                     source={{ uri: currentEntry.content_image.uri }}
                     style={styles.entryImage}
                     onError={() => console.log("Error loading image")}
+                    onLoad={() => console.log("Image loaded successfully")}
                   />
+                ) : (
+                  <Text>No image available</Text>
                 )}
               </Pressable>
             ) : (
