@@ -150,7 +150,7 @@ const JournalEntryScreen: React.FC = () => {
     });
   };
 
-  const handleAddEntry = () => {
+  const handleAddEntry = async () => {
     if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
@@ -160,29 +160,22 @@ const JournalEntryScreen: React.FC = () => {
         category: selectedCategory || newCategory,
       };
 
-      if (editEntryId) {
-        dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }))
-          .unwrap()
-          .then(() => {
-            dispatch(fetchJournalEntries());
-            const updatedEntry = journalEntries.find(e => e.id === editEntryId);
-            setCurrentEntry(updatedEntry || null);
-            resetForm();
-          })
-          .catch((error) => {
-            console.error("Failed to update entry:", error);
-          });
-      } else {
-        dispatch(createJournalEntry(newEntry))
-          .unwrap()
-          .then((result) => {
-            dispatch(fetchJournalEntries());
-            setCurrentEntry(result); 
-            resetForm();
-          })
-          .catch((error) => {
-            console.error("Failed to create entry:", error);
-          });
+      try {
+        if (editEntryId) {
+          await dispatch(
+            updateJournalEntry({ id: editEntryId, ...newEntry }),
+          ).unwrap();
+          dispatch(fetchJournalEntries()); // Ensure to fetch entries to get the latest state
+          const updatedEntry = journalEntries.find((e) => e.id === editEntryId);
+          setCurrentEntry(updatedEntry || null);
+        } else {
+          const result = await dispatch(createJournalEntry(newEntry)).unwrap();
+          dispatch(fetchJournalEntries());
+          setCurrentEntry(result);
+        }
+        resetForm();
+      } catch (error) {
+        console.error("Failed to save entry:", error);
       }
     } else {
       Alert.alert(
