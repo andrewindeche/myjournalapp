@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Modal,
   ScrollView,
-  Dimensions,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";

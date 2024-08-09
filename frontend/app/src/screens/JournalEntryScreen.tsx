@@ -87,6 +87,13 @@ const JournalEntryScreen: React.FC = () => {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
+            const isBase64 = uri.startsWith("data:image");
+            if (isBase64) {
+              console.log("Picked base64 image URI:", uri);
+            } else {
+              console.log("Picked image URI:", uri);
+            }
+
             setImageUri(uri);
             if (currentEntry) {
               const updatedEntry = {
@@ -116,16 +123,27 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
-          if (uri && editEntryId) {
+          if (uri) {
+            const isBase64 = uri.startsWith("data:image");
+            if (isBase64) {
+              console.log("Picked base64 image URI:", uri);
+            } else {
+              console.log("Picked image URI:", uri);
+            }
+
             setImageUri(uri);
-            const updatedEntry = {
-              ...currentEntry,
-              content_image: {
-                uri,
-                name: response.assets[0]?.fileName || "image.png",
-              },
-            };
-            dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+            if (editEntryId) {
+              const updatedEntry = {
+                ...currentEntry,
+                content_image: {
+                  uri,
+                  name: response.assets[0]?.fileName || "image.png",
+                },
+              };
+              dispatch(
+                updateJournalEntry({ id: editEntryId, ...updatedEntry }),
+              );
+            }
           }
         }
       }
@@ -147,21 +165,25 @@ const JournalEntryScreen: React.FC = () => {
           .unwrap()
           .then(() => {
             dispatch(fetchJournalEntries());
-            setEditEntryId(null);
+            const updatedEntry = journalEntries.find(e => e.id === editEntryId);
+            setCurrentEntry(updatedEntry || null);
+            resetForm();
+          })
+          .catch((error) => {
+            console.error("Failed to update entry:", error);
           });
       } else {
         dispatch(createJournalEntry(newEntry))
           .unwrap()
-          .then(() => {
+          .then((result) => {
             dispatch(fetchJournalEntries());
+            setCurrentEntry(result); 
+            resetForm();
+          })
+          .catch((error) => {
+            console.error("Failed to create entry:", error);
           });
       }
-      setInputText("");
-      setTitle("");
-      setSelectedCategory(null);
-      setNewCategory("");
-      setEditMode(false);
-      setImageUri(null);
     } else {
       Alert.alert(
         "Input Text is empty",
@@ -170,9 +192,19 @@ const JournalEntryScreen: React.FC = () => {
     }
   };
 
+  const resetForm = () => {
+    setEditEntryId(null);
+    setEditMode(false);
+    setImageUri(null);
+    setInputText("");
+    setTitle("");
+    setSelectedCategory(null);
+  };
+
   const handleEditEntry = (entry: JournalEntry) => {
     setEditEntryId(entry.id);
     setEditMode(true);
+    setCurrentEntry(entry);
   };
 
   const handleToggleMenu = () => {
@@ -192,18 +224,19 @@ const JournalEntryScreen: React.FC = () => {
   }, [showMenu]);
 
   const handleDeleteEntry = (entryId: number) => {
-    if (typeof entryId !== "number") {
-      console.error("Invalid entry ID:", entryId);
-      return;
-    }
-    console.log("Deleting entry with ID:", entryId);
     dispatch(deleteJournalEntry(entryId))
       .unwrap()
       .then(() => {
-        console.log(`Entry ${entryId} deleted successfully`);
+        dispatch(fetchJournalEntries());
+        setCurrentEntry(null);
+        setEditMode(false);
+        setInputText("");
+        setTitle("");
+        setSelectedCategory(null);
+        setImageUri(null);
       })
       .catch((error) => {
-        console.error(`Failed to delete entry ${entryId}:`, error);
+        console.error("Failed to delete entry:", error);
       });
   };
 
@@ -277,12 +310,13 @@ const JournalEntryScreen: React.FC = () => {
                     {currentEntry.content_text}
                   </Text>
                 )}
-                {currentEntry.content_image?.uri && (
+                {currentEntry.content_image?.uri ? (
                   <Image
                     source={{ uri: currentEntry.content_image.uri }}
                     style={styles.entryImage}
-                    onError={() => console.log("Error loading image")}
                   />
+                ) : (
+                  <Text>No image available</Text>
                 )}
               </Pressable>
             ) : (
