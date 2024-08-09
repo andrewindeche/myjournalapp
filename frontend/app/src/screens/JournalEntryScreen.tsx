@@ -76,11 +76,6 @@ const JournalEntryScreen: React.FC = () => {
     }
   }, [editMode, currentEntry]);
 
-  useEffect(() => {
-    console.log('Current Entry:', currentEntry);
-    console.log('Image URI:', currentEntry?.content_image?.uri);
-  }, [currentEntry]);
-
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
@@ -238,24 +233,15 @@ const JournalEntryScreen: React.FC = () => {
       });
   };
 
-  const handleDeleteImage = async () => {
-    console.log("handleDeleteImage called");
+  const handleDeleteImage = () => {
     if (editEntryId && currentEntry) {
       const updatedEntry = {
         ...currentEntry,
         content_image: null,
       };
 
-      try {
-        await dispatch(
-          updateJournalEntry({ id: editEntryId, ...updatedEntry }),
-        ).unwrap();
-        setImageUri(null);
-      } catch (error) {
-        console.error("Failed to update journal entry:", error);
-      }
-    } else {
-      console.log("No entry to update or invalid editEntryId");
+      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
+      setImageUri(null);
     }
   };
 
@@ -317,7 +303,7 @@ const JournalEntryScreen: React.FC = () => {
                     {currentEntry.content_text}
                   </Text>
                 )}
-                {currentEntry?.content_image?.uri ? (
+                {currentEntry.content_image?.uri ? (
                   <Image
                     source={{ uri: currentEntry.content_image.uri }}
                     style={styles.entryImage}
