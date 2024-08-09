@@ -162,6 +162,8 @@ export const createJournalEntry = createAsyncThunk(
 
     if (newEntry.content_image) {
       const { uri, name } = newEntry.content_image;
+      const fileType = `image/${name.split(".").pop()}`;
+      console.log("File type:", fileType);
       const response = await fetch(uri);
       const blob = await response.blob();
       formData.append("content_image", blob, name);
