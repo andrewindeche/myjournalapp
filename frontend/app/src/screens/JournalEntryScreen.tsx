@@ -165,12 +165,9 @@ const JournalEntryScreen: React.FC = () => {
           .unwrap()
           .then(() => {
             dispatch(fetchJournalEntries());
-            setEditEntryId(null);
-            setEditMode(false);
-            setImageUri(null);
-            setInputText("");
-            setTitle("");
-            setSelectedCategory(null);
+            const updatedEntry = journalEntries.find(e => e.id === editEntryId);
+            setCurrentEntry(updatedEntry || null);
+            resetForm();
           })
           .catch((error) => {
             console.error("Failed to update entry:", error);
@@ -178,13 +175,10 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         dispatch(createJournalEntry(newEntry))
           .unwrap()
-          .then(() => {
+          .then((result) => {
             dispatch(fetchJournalEntries());
-            setEditMode(false);
-            setImageUri(null);
-            setInputText("");
-            setTitle("");
-            setSelectedCategory(null);
+            setCurrentEntry(result); 
+            resetForm();
           })
           .catch((error) => {
             console.error("Failed to create entry:", error);
@@ -196,6 +190,15 @@ const JournalEntryScreen: React.FC = () => {
         "Please add some text or image before saving.",
       );
     }
+  };
+
+  const resetForm = () => {
+    setEditEntryId(null);
+    setEditMode(false);
+    setImageUri(null);
+    setInputText("");
+    setTitle("");
+    setSelectedCategory(null);
   };
 
   const handleEditEntry = (entry: JournalEntry) => {
