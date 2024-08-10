@@ -17,6 +17,7 @@ import {
 import { RootState } from "../redux/store";
 import { fetchProfileInfo } from "../redux/ProfileSlice";
 import { JournalEntry } from "../types"; // Ensure this import matches your actual file location
+import { Colors } from "../colors";
 
 const colorPalette = [
   "#FFDEE9",
@@ -358,7 +359,7 @@ const styles = StyleSheet.create({
     color: "#964B00",
   },
   loadingText: {
-    color: "#cb7723",
+    color: Colors.color,
     textAlign: "center",
     marginTop: 20,
   },
@@ -369,13 +370,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   emptyText: {
-    color: "#e3e6f5",
+    color: Colors.background,
     fontSize: 18,
     textAlign: "center",
     marginBottom: 10,
   },
   emptyInstruction: {
-    color: "#e3e6f5",
+    color: Colors.background,
     fontSize: 16,
     textAlign: "center",
   },

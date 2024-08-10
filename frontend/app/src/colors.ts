@@ -9,4 +9,10 @@ export const Colors = {
   red: "red",
   loginBackgroundColor: "#020035",
   inputBackgroundcolors: "rgba(0, 0, 255, 0.1)",
+  profileContainerBackgroundColor: "#f5f5f5",
+  profileOuterContainerBackgroundColor: "#002240",
+  profilebuttonText: "#FFFFFF",
+  profileBorderColors: "#CCCCCC",
+  green: "green",
+  gray: "gray",
 } as const;

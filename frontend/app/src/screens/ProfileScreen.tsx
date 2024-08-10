@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { Colors, Colors } from "../colors";
 import { AppDispatch, RootState } from "../redux/store";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -310,57 +311,6 @@ const ProfileScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  scrollViewContent: {
-    padding: 20,
-    paddingBottom: 10,
-  },
-  outerContainer: {
-    alignItems: "center",
-    backgroundColor: "#002240",
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#ffffff",
-  },
-  infoContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-    color: "#ffffff",
-  },
-  successText: {
-    color: "green",
-    fontSize: 16,
-    marginTop: 10,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 16,
-    marginTop: 10,
-  },
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 5,
-    borderColor: "#CCCCCC",
-    borderWidth: 1,
-    fontSize: 16,
-    marginBottom: 10,
-    padding: 10,
-  },
-  errorInput: {
-    borderColor: "red",
-  },
   button: {
     backgroundColor: "#0033cc",
     borderRadius: 5,
@@ -369,64 +319,115 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: Colors.profilebuttonText,
     fontSize: 18,
     fontWeight: "bold",
   },
-  outerButton: {
-    backgroundColor: "#004d99",
+  container: {
+    backgroundColor: Colors.profileContainerBackgroundColor,
+    flex: 1,
+  },
+  errorInput: {
+    borderColor: Colors.red,
+  },
+  errorText: {
+    color: Colors.red,
+    fontSize: 16,
+    marginTop: 10,
+  },
+  infoContainer: {
+    marginBottom: 20,
+  },
+  input: {
+    backgroundColor: Colors.profilebuttonText,
+    borderColor: Colors.profileBorderColors,
     borderRadius: 5,
-    padding: 15,
-    alignItems: "center",
-    marginVertical: 10,
+    borderWidth: 1,
+    fontSize: 16,
+    marginBottom: 10,
+    padding: 10,
   },
-  outerButtonText: {
-    color: "#FFFFFF",
+  label: {
+    color: Colors.profilebuttonText,
     fontSize: 18,
-    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  loadingText: {
+    color: Colors.gray,
+    fontSize: 18,
+    textAlign: "center",
+  },
+  menuContainer: {
+    backgroundColor: Colors.profilebuttonText,
+    borderTopColor: Colors.profileBorderColors,
+    borderTopWidth: 1,
+    bottom: 0,
+    position: "absolute",
+    width: "100%",
   },
   modalBackground: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
+    flex: 1,
+    justifyContent: "center",
   },
-  modalContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 20,
-    width: "80%",
+  modalButton: {
     alignItems: "center",
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
+    backgroundColor: Colors.loginBackgroundColor,
+    borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 10,
+    padding: 10,
   },
   modalButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
-  modalButton: {
-    backgroundColor: "#020035",
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 10,
+  modalContainer: {
     alignItems: "center",
-    flex: 1,
+    backgroundColor: Colors.profilebuttonText,
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
   },
-  loadingText: {
-    color: "gray",
+  modalText: {
     fontSize: 18,
-    textAlign: "center",
+    marginBottom: 20,
   },
-  menuContainer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    backgroundColor: "#ffffff",
-    borderTopWidth: 1,
-    borderTopColor: "#CCCCCC",
+  outerButton: {
+    alignItems: "center",
+    backgroundColor: "#004d99",
+    borderRadius: 5,
+    marginVertical: 10,
+    padding: 15,
+  },
+  outerButtonText: {
+    color: Colors.profilebuttonText,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  outerContainer: {
+    alignItems: "center",
+    backgroundColor: Colors.profileOuterContainerBackgroundColor,
+    borderRadius: 10,
+    marginBottom: 10,
+    padding: 20,
+  },
+  scrollViewContent: {
+    padding: 20,
+    paddingBottom: 10,
+  },
+  successText: {
+    color: Colors.green,
+    fontSize: 16,
+    marginTop: 10,
+  },
+  title: {
+    color: Colors.profilebuttonText,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 });
 
