@@ -1,20 +1,20 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { setToken as setTokenInManager } from './tokenManager';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { setToken as setTokenInManager } from "./tokenManager";
 
 interface AuthState {
   token: string | null;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: AuthState = {
   token: null,
-  status: 'idle',
+  status: "idle",
   error: null,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setToken: (state, action: PayloadAction<string>) => {
@@ -23,13 +23,13 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.token = null;
-      state.status = 'idle';
+      state.status = "idle";
       state.error = null;
       setTokenInManager(null);
     },
   },
 });
 
-export const { setToken,logout } = authSlice.actions;
+export const { setToken, logout } = authSlice.actions;
 
 export default authSlice.reducer;

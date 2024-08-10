@@ -17,6 +17,7 @@ import {
 import { RootState } from "../redux/store";
 import { fetchProfileInfo } from "../redux/ProfileSlice";
 import { JournalEntry } from "../types"; // Ensure this import matches your actual file location
+import { Colors } from "../colors";
 
 const colorPalette = [
   "#FFDEE9",
@@ -236,152 +237,142 @@ const SummaryScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  categoryButton: {
+    backgroundColor: Colors.darkCharcoal,
+    borderRadius: 20,
+    marginRight: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  categoryText: {
+    color: Colors.color,
+    fontSize: 16,
+  },
   container: {
+    backgroundColor: Colors.tangaroa,
     flex: 1,
-    backgroundColor: "#002240",
     paddingHorizontal: 20,
     paddingTop: 40,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
+  dateFilterButton: {
+    backgroundColor: Colors.darkCharcoal,
     borderRadius: 20,
     marginRight: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  greetingText: {
-    color: "#e3e6f5",
+  dateFilterButtonText: {
+    color: Colors.color,
     fontSize: 16,
   },
-  title: {
-    color: "#e3e6f5",
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 20,
+  dateFilterContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginVertical: 10,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  emptyInstruction: {
+    color: Colors.background,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  emptyText: {
+    color: Colors.background,
+    fontSize: 18,
+    marginBottom: 10,
+    textAlign: "center",
   },
   filtersContainer: {
     flexDirection: "row",
     marginBottom: 20,
   },
-  categoryButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: "#333",
-    marginRight: 10,
-  },
-  selectedCategoryButton: {
-    color: "#000000",
-  },
-  categoryText: {
-    color: "#cb7723",
+  greetingText: {
+    color: Colors.background,
     fontSize: 16,
   },
-  searchContainer: {
-    marginBottom: 20,
-  },
-  searchInput: {
-    height: 50,
-    borderColor: "#888",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: "#222",
-    color: "#e3e6f5",
-  },
-  searchTypeContainer: {
+  header: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 20,
   },
-  searchTypeButtonWrapper: {
-    flex: 1,
-  },
-  searchTypeButton: {
-    color: "#cb7723",
-    fontSize: 16,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: "#333",
+  loadingText: {
+    color: Colors.color,
+    marginTop: 20,
     textAlign: "center",
-  },
-  selectedSearchType: {
-    backgroundColor: "#666",
-  },
-  dateFilterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  dateFilterButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: "#333",
-    marginRight: 10,
-  },
-  dateFilterButtonText: {
-    color: "#cb7723",
-    fontSize: 16,
-  },
-  notesContainer: {
-    paddingBottom: 20,
   },
   noteCard: {
     borderRadius: 10,
-    padding: 20,
     marginBottom: 20,
+    padding: 20,
+  },
+  noteCategory: {
+    color: Colors.darkOrange,
+    fontSize: 16,
+    fontStyle: "italic",
+  },
+  noteDate: {
+    color: Colors.LarimarBlue,
+    fontSize: 14,
+    marginBottom: 5,
   },
   noteTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 5,
   },
-  noteDate: {
-    fontSize: 14,
-    color: "rgb(25,121,169)",
-    marginBottom: 5,
+  notesContainer: {
+    paddingBottom: 20,
   },
-  noteCategory: {
-    fontSize: 16,
-    fontStyle: "italic",
-    color: "#964B00",
-  },
-  loadingText: {
-    color: "#cb7723",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
+  profileContainer: {
     alignItems: "center",
-    marginTop: 20,
+    flexDirection: "row",
   },
-  emptyText: {
-    color: "#e3e6f5",
-    fontSize: 18,
-    textAlign: "center",
+  searchContainer: {
+    marginBottom: 20,
+  },
+  searchInput: {
+    backgroundColor: Colors.charcoal,
+    borderColor: Colors.mediumGray,
+    borderRadius: 5,
+    borderWidth: 1,
+    color: Colors.background,
+    height: 50,
     marginBottom: 10,
+    paddingHorizontal: 10,
   },
-  emptyInstruction: {
-    color: "#e3e6f5",
+  searchTypeButton: {
+    backgroundColor: Colors.darkCharcoal,
+    borderRadius: 5,
+    color: Colors.color,
     fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     textAlign: "center",
   },
-  emptyClickInstruction: {
-    color: "#000000",
-    fontSize: 8,
+  searchTypeButtonWrapper: {
+    flex: 1,
+  },
+  searchTypeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  selectedCategoryButton: {
+    color: Colors.black,
+  },
+  selectedSearchType: {
+    backgroundColor: Colors.darkGray,
+  },
+  title: {
+    color: Colors.background,
+    fontSize: 32,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
 });
 
