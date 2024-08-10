@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
+import { Colors } from "../colors";
 
 const FallbackComponent: React.FC = ({ navigation }: any) => {
   return (
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   message: {
-    color: "red",
+    color: Colors.red,
     fontSize: 18,
   },
 });

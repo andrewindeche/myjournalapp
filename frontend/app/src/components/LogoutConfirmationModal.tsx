@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
+import { Colors } from "../colors";
 
 interface LogoutConfirmationModalProps {
   visible: boolean;
@@ -39,39 +40,39 @@ const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
 };
 
 const styles = StyleSheet.create({
+  buttonText: {
+    color: Colors.white,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   modalBackground: {
+    alignItems: "center",
+    backgroundColor: Colors.modalBackdroundColor,
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
-  modalText: {
-    marginBottom: 20,
-    fontSize: 18,
-    textAlign: "center",
+  modalButton: {
+    backgroundColor: Colors.loginBackgroundColor,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    padding: 10,
+    width: 100,
   },
   modalButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
-  modalButton: {
-    padding: 10,
-    width:100,
-    backgroundColor: "#020035",
-    borderRadius: 5,
-    marginHorizontal: 10,
+  modalContainer: {
+    alignItems: "center",
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
   },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
     textAlign: "center",
   },
 });

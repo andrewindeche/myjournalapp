@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationProp } from "@react-navigation/native";
+import { Colors } from "../colors";
 import LogoutConfirmationModal from "./LogoutConfirmationModal";
 
 interface MenuProps {
@@ -60,7 +61,7 @@ const HomeMenu: React.FC<MenuProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   menu: {
     borderRadius: 5,
-    color: "#CB7723",
+    color: Colors.color,
     elevation: 3,
     flexDirection: "row",
     justifyContent: "space-around",
@@ -69,8 +70,8 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     alignItems: "center",
-    backgroundColor: "white",
-    borderColor: "#ccc",
+    backgroundColor: Colors.white,
+    borderColor: Colors.borderColor,
     borderTopWidth: 1,
     display: "flex",
     justifyContent: "space-around",

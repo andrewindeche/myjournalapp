@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
+import { Colors } from "../colors";
 
 interface DeleteConfirmationModalProps {
   visible: boolean;
@@ -40,40 +41,40 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 };
 
 const styles = StyleSheet.create({
+  buttonText: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
   modalBackground: {
+    alignItems: "center",
+    backgroundColor: Colors.modalBackdroundColor,
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
+  modalButton: {
     alignItems: "center",
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
+    backgroundColor: Colors.loginBackgroundColor,
+    borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 10,
+    paddingVertical: 10,
   },
   modalButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
-  modalButton: {
-    flex: 1,
-    marginHorizontal: 10,
-    backgroundColor: "#020035",
-    paddingVertical: 10,
+  modalContainer: {
     alignItems: "center",
-    borderRadius: 5,
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
   },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
   },
 });
 
