@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Colors } from "../colors";
 import {
   View,
   Text,
@@ -285,7 +286,7 @@ const JournalEntryScreen: React.FC = () => {
             </Pressable>
           </>
         ) : (
-          <ScrollView>
+          <ScrollView contentContainerStyle={styles.scrollView}>
             {currentEntry ? (
               <Pressable
                 style={styles.entryContainer}
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   categoryInput: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.categoryInput,
     borderColor: "#ccc",
     borderRadius: 5,
     borderWidth: 1,
@@ -367,7 +368,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
-    backgroundColor: "#e3e6f5",
+    backgroundColor: Colors.background,
     flex: 1,
     padding: 20,
   },
@@ -377,15 +378,15 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   date: {
-    color: "#cb7723",
+    color: Colors.color,
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 10,
     padding: 20,
   },
   entryContainer: {
-    backgroundColor: "#e3e6f5",
-    borderColor: "#ccc",
+    backgroundColor: Colors.background,
+    borderColor: Colors.borderColor,
     borderRadius: 5,
     borderWidth: 1,
     marginBottom: 10,
@@ -398,8 +399,8 @@ const styles = StyleSheet.create({
     width: 100,
   },
   entryInput: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
+    backgroundColor: Colors.categoryInput,
+    borderColor: Colors.borderColor,
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
@@ -409,8 +410,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
+    backgroundColor: Colors.footer,
+    borderColor: Colors.borderColor,
     borderTopWidth: 1,
     flexDirection: "row",
     height: 60,
@@ -427,14 +428,14 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   popup: {
-    right: 10,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.categoryInput,
     marginBottom: 500,
     marginVertical: 45,
     position: "absolute",
+    right: 10,
   },
   title: {
-    borderColor: "#ccc",
+    borderColor: Colors.borderColor,
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 24,
@@ -443,8 +444,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   titleInput: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
+    backgroundColor: Colors.footer,
+    borderColor: Colors.borderColor,
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 24,
@@ -460,8 +461,8 @@ const styles = StyleSheet.create({
   deleteImageButton: {
     backgroundColor: "red",
     borderRadius: 5,
-    padding: 10,
     marginTop: 10,
+    padding: 10,
   },
   deleteImageButtonText: {
     color: "white",
