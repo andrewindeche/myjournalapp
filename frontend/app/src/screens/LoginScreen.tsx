@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Colors } from "../colors";
 import {
   View,
   Text,
@@ -126,17 +127,8 @@ const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  checkboxContainer: {
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
   errorText: {
-    color: "red",
+    color: Colors.red,
     marginVertical: 10,
     textAlign: "center",
   },
@@ -147,7 +139,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    color: "white",
+    color: Colors.white,
     display: "flex",
     gap: 10,
     justifyContent: "center",
@@ -155,13 +147,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   innerContainer: {
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
     height: "80%",
     marginBottom: 10,
   },
   input: {
-    backgroundColor: "rgba(0, 0, 255, 0.1)",
-    borderColor: "#ccc",
+    backgroundColor: Colors.inputBackgroundcolors,
+    borderColor: Colors.borderColor,
     borderRadius: 8,
     borderWidth: 1,
     height: 40,
@@ -173,7 +165,7 @@ const styles = StyleSheet.create({
     padding: 17,
   },
   inputText: {
-    color: "#020035",
+    color: Colors.loginBackgroundColor,
     fontWeight: "bold",
     padding: 5,
   },
@@ -183,13 +175,13 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: Colors.inputBackgroundcolors,
     flex: 1,
     justifyContent: "center",
   },
   modalContent: {
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
     borderRadius: 10,
     padding: 20,
     width: "80%",
@@ -208,24 +200,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   okButton: {
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
   okButtonText: {
-    color: "#fff",
+    color: Colors.color,
     fontSize: 16,
   },
   outerContainer: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     flex: 1,
     height: 10,
     width: "100%",
   },
   signInButton: {
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     borderRadius: 8,
     marginBottom: 10,
     paddingHorizontal: 8,
@@ -233,24 +225,20 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   signInButtonText: {
-    color: "white",
+    color: Colors.white,
     textAlign: "center",
   },
   signUpText: {
-    color: "#CB7723",
+    color: Colors.color,
     fontSize: 20,
   },
   subtitle: {
-    color: "white",
+    color: Colors.white,
     fontSize: 14,
-  },
-  text: {
-    color: "white",
-    fontSize: 10,
   },
   title: {
     alignItems: "center",
-    color: "white",
+    color: Colors.white,
     fontSize: 25,
     fontWeight: "bold",
   },

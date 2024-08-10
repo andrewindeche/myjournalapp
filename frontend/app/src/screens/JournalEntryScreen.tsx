@@ -348,18 +348,23 @@ const JournalEntryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   addButton: {
     alignItems: "center",
-    backgroundColor: "#02003d",
+    backgroundColor: Colors.blue,
     borderRadius: 5,
     marginTop: 10,
     padding: 10,
   },
   addButtonText: {
-    color: "white",
+    color: Colors.white,
     fontWeight: "bold",
+  },
+  category: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   categoryInput: {
     backgroundColor: Colors.categoryInput,
-    borderColor: "#ccc",
+    borderColor: Colors.borderColor,
     borderRadius: 5,
     borderWidth: 1,
     fontSize: 16,
@@ -383,6 +388,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     padding: 20,
+  },
+  deleteImageButton: {
+    backgroundColor: Colors.red,
+    borderRadius: 5,
+    marginTop: 10,
+    padding: 10,
+  },
+  deleteImageButtonText: {
+    color: Colors.white,
+    fontWeight: "bold",
   },
   entryContainer: {
     backgroundColor: Colors.background,
@@ -418,15 +433,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 10,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginBottom: 20,
-  },
-  listItem: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
   popup: {
     backgroundColor: Colors.categoryInput,
     marginBottom: 500,
@@ -452,21 +458,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     padding: 10,
-  },
-  category: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  deleteImageButton: {
-    backgroundColor: "red",
-    borderRadius: 5,
-    marginTop: 10,
-    padding: 10,
-  },
-  deleteImageButtonText: {
-    color: "white",
-    fontWeight: "bold",
   },
 });
 
