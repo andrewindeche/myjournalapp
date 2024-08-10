@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Colors } from "../colors";
 import {
   registerUser,
   setEmail,
@@ -119,103 +120,95 @@ const RegistrationScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  errorText: {
+    color: Colors.red,
+    marginTop: 30,
+    marginVertical: 10,
+    textAlign: "center",
   },
-  outerContainer: {
-    backgroundColor: "#020035",
-    height: 10,
-    width: "100%",
-    flex: 1,
+  footer: {
+    margin: 12,
+  },
+  header: {
     alignItems: "center",
+    color: Colors.white,
+    display: "flex",
+    gap: 10,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+  },
+  innerContainer: {
+    backgroundColor: Colors.white,
+    height: "80%",
+    marginBottom: 10,
+  },
+  input: {
+    backgroundColor: Colors.inputBackgroundcolors,
+    borderColor: Colors.borderColor,
+    borderRadius: 8,
+    borderWidth: 1,
+    height: 40,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    width: "95%",
+  },
+  inputContainer: {
+    padding: 20,
+  },
+  inputText: {
+    color: Colors.loginBackgroundColor,
+    padding: 5,
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
   },
-  errorText: {
-    color: "red",
-    textAlign: "center",
-    marginVertical: 10,
-    marginTop: 30,
-  },
-  innerContainer: {
-    backgroundColor: "white",
-    height: "80%",
-    marginBottom: 10,
-  },
-  footer: {
-    margin: 12,
+  outerContainer: {
+    alignItems: "center",
+    backgroundColor: Colors.loginBackgroundColor,
+    flex: 1,
+    height: 10,
+    width: "100%",
   },
   registeredUser: {
-    marginTop: 10,
-    display: "flex",
     alignItems: "center",
-    gap: 10,
+    display: "flex",
     flexDirection: "row",
-  },
-  signUpButton: {
-    backgroundColor: "#020035",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    width: "90%",
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  signUpButtonText: {
-    color: "white",
-    textAlign: "center",
+    gap: 10,
+    marginTop: 10,
   },
   signInText: {
+    color: Colors.color,
     fontSize: 20,
-    color: "#CB7723",
   },
-  inputText: {
-    color: "#020035",
-    padding: 5,
-  },
-  inputContainer: {
-    padding: 20,
-  },
-  header: {
-    display: "flex",
-    gap: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    color: "white",
-  },
-  input: {
-    width: "95%",
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#ccc",
+  signUpButton: {
+    backgroundColor: Colors.loginBackgroundColor,
     borderRadius: 8,
     marginBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "rgba(0, 0, 255, 0.1)",
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    width: "90%",
   },
-  forgotPassword: {
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 25,
-    fontWeight: "bold",
-    color: "white",
-    alignItems: "center",
-  },
-  successText: {
-    color: "green",
+  signUpButtonText: {
+    color: Colors.white,
     textAlign: "center",
-    marginVertical: 10,
-    marginTop: 30,
   },
   subtitle: {
+    color: Colors.white,
     fontSize: 14,
-    color: "white",
+  },
+  successText: {
+    color: Colors.green,
+    marginTop: 30,
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  title: {
+    alignItems: "center",
+    color: Colors.white,
+    fontSize: 25,
+    fontWeight: "bold",
   },
 });
 

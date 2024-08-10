@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Colors, Colors } from "../colors";
+import { Colors } from "../colors";
 import { AppDispatch, RootState } from "../redux/store";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -312,11 +312,11 @@ const ProfileScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#0033cc",
-    borderRadius: 5,
-    padding: 15,
     alignItems: "center",
+    backgroundColor: Colors.kleinBlue,
+    borderRadius: 5,
     marginVertical: 10,
+    padding: 15,
   },
   buttonText: {
     color: Colors.profilebuttonText,
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: Colors.modalBackdroundColor,
     flex: 1,
     justifyContent: "center",
   },
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   },
   outerButton: {
     alignItems: "center",
-    backgroundColor: "#004d99",
+    backgroundColor: Colors.cobalt,
     borderRadius: 5,
     marginVertical: 10,
     padding: 15,

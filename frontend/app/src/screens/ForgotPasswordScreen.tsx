@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { Colors } from "../colors";
 
 const ForgotPasswordScreen: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -40,25 +41,14 @@ const ForgotPasswordScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors.whiteSmoke,
     flex: 1,
     justifyContent: "center",
     padding: 20,
   },
-  title: {
-    color: "#020035",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subtitle: {
-    color: "#555",
-    fontSize: 16,
-    marginBottom: 20,
-  },
   input: {
-    backgroundColor: "#F9F9F9",
-    borderColor: "#ddd",
+    backgroundColor: Colors.snow,
+    borderColor: Colors.lightGray,
     borderRadius: 8,
     borderWidth: 1,
     height: 45,
@@ -67,13 +57,24 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     borderRadius: 8,
     paddingVertical: 15,
   },
   resetButtonText: {
-    color: "#fff",
+    color: Colors.footer,
     fontSize: 18,
+  },
+  subtitle: {
+    color: Colors.dimGray,
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  title: {
+    color: Colors.loginBackgroundColor,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 });
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View, StyleSheet, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Colors } from "../colors";
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation();
 
@@ -42,12 +43,12 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     flex: 1,
     justifyContent: "center",
   },
   footer: {
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     flexDirection: "column",
     gap: 20,
     height: "100%",
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    color: "white",
+    color: Colors.white,
     display: "flex",
     gap: 10,
     justifyContent: "center",
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     alignItems: "center",
-    backgroundColor: "#020035",
+    backgroundColor: Colors.loginBackgroundColor,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     flex: 1,
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
     borderBottomLeftRadius: 50,
     flex: 1,
     justifyContent: "flex-end",
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   },
   pressable: {
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
     borderRadius: 8,
     fontSize: 10,
     fontWeight: "bold",
@@ -97,24 +98,24 @@ const styles = StyleSheet.create({
     width: "95%",
   },
   register: {
-    backgroundColor: "#020035",
-    borderColor: "white",
+    backgroundColor: Colors.loginBackgroundColor,
+    borderColor: Colors.white,
     borderWidth: 2,
     justifyContent: "space-around",
   },
   registerText: {
-    color: "white",
+    color: Colors.white,
   },
   subtitle: {
-    color: "white",
+    color: Colors.white,
     fontSize: 12,
   },
   text: {
-    color: "black",
+    color: Colors.black,
     fontSize: 14,
   },
   title: {
-    color: "white",
+    color: Colors.white,
     fontSize: 16,
     fontWeight: "bold",
   },
