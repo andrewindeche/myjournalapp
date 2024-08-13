@@ -3,17 +3,18 @@
   "main": "app/index.tsx",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --dev-client",
+    "start": "expo start --tunnel --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "eslint . --ext .ts,.tsx",
-    "test:e2e": "detox test",
-    "build:e2e": "detox build"
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "moduleNameMapper": {
+      "\\.(css|less)$": "identity-obj-proxy"
+    }
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
@@ -22,7 +23,6 @@
     "@react-native-picker/picker": "^2.7.5",
     "@react-navigation/stack": "^6.4.1",
     "@reduxjs/toolkit": "^2.2.6",
-    "axios": "^1.7.2",
     "expo": "^51.0.24",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.7",
@@ -48,12 +48,23 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@testing-library/react-native": "^12.5.3",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.2.45",
     "@types/react-native": "^0.73.0",
     "@types/react-test-renderer": "^18.0.7",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
+    "@wdio/appium-service": "^8.40.2",
+    "@wdio/cli": "^8.40.2",
+    "@wdio/mocha-framework": "^8.40.2",
+    "appium": "^2.11.3",
+    "appium-chromium-driver": "^1.3.29",
+    "appium-espresso-driver": "^3.3.1",
+    "appium-geckodriver": "^1.3.9",
+    "appium-uiautomator2-driver": "^3.7.6",
+    "appium-windows-driver": "^2.12.30",
+    "appium-xcuitest-driver": "^7.24.15",
     "detox": "^20.25.2",
     "detox-cli": "^20.0.0",
     "eslint": "^8.57.0",
