@@ -238,11 +238,17 @@ const JournalEntryScreen: React.FC = () => {
     if (editEntryId && currentEntry) {
       const updatedEntry = {
         ...currentEntry,
-        content_image: null,
+        content_image: null, 
       };
-
-      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
-      setImageUri(null);
+      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }))
+        .unwrap()
+        .then(() => {
+          setCurrentEntry(updatedEntry);
+          setImageUri(null);
+        })
+        .catch((error) => {
+          console.error("Failed to delete image:", error);
+        });
     }
   };
 
@@ -408,10 +414,10 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   entryImage: {
-    height: 100,
+    height: 130,
     marginBottom: 10,
     resizeMode: "contain",
-    width: 100,
+    width: 130,
   },
   entryInput: {
     backgroundColor: Colors.categoryInput,
