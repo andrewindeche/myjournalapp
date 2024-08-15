@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { Colors } from "../colors";
 
 const ConfirmDeleteModal = ({ isOpen, onConfirm, onCancel }) =>
   isOpen ? (
@@ -19,9 +20,27 @@ const ConfirmDeleteModal = ({ isOpen, onConfirm, onCancel }) =>
   ) : null;
 
 const styles = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    backgroundColor: Colors.loginBackgroundColor,
+    borderRadius: 5,
+    marginVertical: 5,
+    padding: 10,
+    width: "100%",
+  },
+  buttonText: {
+    color: Colors.white,
+  },
+  modal: {
+    alignItems: "center",
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+  },
   overlay: {
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: Colors.modalBackdroundColor,
     bottom: 0,
     justifyContent: "center",
     left: 0,
@@ -30,27 +49,9 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: 1000,
   },
-  modal: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    width: "80%",
-  },
   title: {
     fontSize: 18,
     marginBottom: 15,
-  },
-  button: {
-    backgroundColor: "#020035",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    width: "100%",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
   },
 });
 

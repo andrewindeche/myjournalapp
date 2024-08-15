@@ -30,4 +30,5 @@ export const Colors = {
   snow: "#F9F9F9",
   mediumGray: "#888",
   charcoal: "#222",
+  semiBlack: "rgba(0,0,0,0.5)",
 } as const;

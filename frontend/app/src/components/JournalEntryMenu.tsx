@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Colors } from "../colors";
 import { NavigationProp } from "@react-navigation/native";
 import LogoutConfirmationModal from "./LogoutConfirmationModal";
 
@@ -63,7 +64,7 @@ const SubMenu: React.FC<MenuProps> = ({ onClose, navigation }) => {
 
 const styles = StyleSheet.create({
   menu: {
-    backgroundColor: "#CB7723",
+    backgroundColor: Colors.color,
     borderRadius: 5,
     elevation: 75,
     padding: 10,
@@ -72,8 +73,8 @@ const styles = StyleSheet.create({
     top: 30,
   },
   menuContainer: {
+    color: Colors.white,
     position: "relative",
-    color: "white",
   },
   menuItem: {
     alignItems: "center",
@@ -81,9 +82,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   menuText: {
-    color: "white",
-    marginLeft: 10,
+    color: Colors.white,
     fontWeight: "bold",
+    marginLeft: 10,
   },
 });
 

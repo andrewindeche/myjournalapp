@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import instance, { setAuthToken } from "../redux/axiosInstance";
 import { RootState } from "./store";
 import { logout } from "../redux/authSlice";
-import { getFileExtension } from "../../fileUtils";
 
 interface JournalEntry {
   id: number;

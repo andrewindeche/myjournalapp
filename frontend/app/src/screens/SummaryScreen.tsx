@@ -16,7 +16,6 @@ import {
 } from "../redux/JournalEntrySlice";
 import { RootState } from "../redux/store";
 import { fetchProfileInfo } from "../redux/ProfileSlice";
-import { JournalEntry } from "../types"; // Ensure this import matches your actual file location
 import { Colors } from "../colors";
 
 const colorPalette = [
@@ -26,6 +25,10 @@ const colorPalette = [
   "#E4E5E6",
   "#C6F6D5",
   "#FED7D7",
+  "#DBDAF8",
+  "#E9DAF8",
+  "#D1CDD1",
+  "#FFFFFF",
 ];
 
 const SummaryScreen: React.FC = () => {

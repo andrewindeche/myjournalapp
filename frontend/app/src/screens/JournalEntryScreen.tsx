@@ -166,7 +166,7 @@ const JournalEntryScreen: React.FC = () => {
           await dispatch(
             updateJournalEntry({ id: editEntryId, ...newEntry }),
           ).unwrap();
-          dispatch(fetchJournalEntries()); 
+          dispatch(fetchJournalEntries());
           const updatedEntry = journalEntries.find((e) => e.id === editEntryId);
           setCurrentEntry(updatedEntry || null);
         } else {
@@ -240,9 +240,15 @@ const JournalEntryScreen: React.FC = () => {
         ...currentEntry,
         content_image: null,
       };
-
-      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }));
-      setImageUri(null);
+      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }))
+        .unwrap()
+        .then(() => {
+          setCurrentEntry(updatedEntry);
+          setImageUri(null);
+        })
+        .catch((error) => {
+          console.error("Failed to delete image:", error);
+        });
     }
   };
 
@@ -296,9 +302,7 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(currentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{currentEntry.title}</Text>
-                <Text style={styles.category}>
-                  Category: {currentEntry.category}
-                </Text>
+                <Text style={styles.category}>{currentEntry.category}</Text>
                 {currentEntry.content_text && (
                   <Text style={styles.content}>
                     {currentEntry.content_text}
@@ -408,10 +412,10 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   entryImage: {
-    height: 100,
+    height: 130,
     marginBottom: 10,
     resizeMode: "contain",
-    width: 100,
+    width: 130,
   },
   entryInput: {
     backgroundColor: Colors.categoryInput,

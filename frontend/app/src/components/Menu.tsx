@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Pressable, StyleSheet, Alert } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
+import { Colors } from "../colors";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationProp } from "@react-navigation/native";
 import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
@@ -89,7 +90,7 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 const styles = StyleSheet.create({
   menu: {
     borderRadius: 5,
-    color: "#CB7723",
+    color: Colors.color,
     elevation: 3,
     flexDirection: "row",
     justifyContent: "space-around",
@@ -98,8 +99,8 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     alignItems: "center",
-    backgroundColor: "white",
-    borderColor: "#ccc",
+    backgroundColor: Colors.white,
+    borderColor: Colors.borderColor,
     borderTopWidth: 1,
     display: "flex",
     justifyContent: "space-around",

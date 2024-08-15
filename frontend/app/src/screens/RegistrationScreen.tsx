@@ -29,11 +29,24 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
+    dispatch(reset());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (status === "succeeded") {
       navigation.navigate("Login");
       dispatch(reset());
     }
   }, [status, navigation, dispatch]);
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        dispatch(reset());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, dispatch]);
 
   const handleSignUpPress = () => {
     dispatch(registerUser({ username, email, password, confirm_password }))

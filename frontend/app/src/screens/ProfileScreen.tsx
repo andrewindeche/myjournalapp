@@ -275,7 +275,7 @@ const ProfileScreen: React.FC = () => {
             typeof errorMessage === "string" &&
             errorMessage.includes("Password")
               ? errorMessage
-              : "Confirm New Password"
+              : "New Password"
           }
           value={newPassword}
           onChangeText={setNewPassword}
