@@ -238,7 +238,7 @@ const JournalEntryScreen: React.FC = () => {
     if (editEntryId && currentEntry) {
       const updatedEntry = {
         ...currentEntry,
-        content_image: null, 
+        content_image: null,
       };
       dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }))
         .unwrap()
@@ -302,9 +302,7 @@ const JournalEntryScreen: React.FC = () => {
                   {new Date(currentEntry.created_at).toDateString()}
                 </Text>
                 <Text style={styles.title}>{currentEntry.title}</Text>
-                <Text style={styles.category}>
-                  Category: {currentEntry.category}
-                </Text>
+                <Text style={styles.category}>{currentEntry.category}</Text>
                 {currentEntry.content_text && (
                   <Text style={styles.content}>
                     {currentEntry.content_text}
