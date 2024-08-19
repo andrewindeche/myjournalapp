@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: dockerjournal
+      POSTGRES_USER: postgres
+      DB_HOST: db
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./dumps:/dumps
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  create_table:
+    build: ./backend
+    command: python manage.py createcachetable
+    depends_on:
+      db:
+        condition: service_healthy
+
+  migrate:
+    build: ./backend
+    command: python manage.py migrate
+    depends_on:
+      - create_table
+
+  django:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+    depends_on:
+      - db
+      - migrate
+      
+  expo:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    volumes:
+      - ./frontend:/app/frontend
+    environment:
+      - REACT_NATIVE_PACKAGER_HOSTNAME=host.docker.internal
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+

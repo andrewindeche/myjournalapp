@@ -1,0 +1,25 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-native",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "@react-native-async-storage.d.ts",
+    "src/**/*", "frontend/app/src/screens/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+     "babel.config.js", 
+     "metro.config.js", 
+     "jest.config.js"]
+}
