@@ -4,19 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-<<<<<<< HEAD
-django = "==5.0.8"
-python-dotenv = "==1.0.1"
-psycopg = "==3.2.1"
-djangorestframework = "==3.15.2"
-djangorestframework-simplejwt = "==5.3.1"
-pillow = "==10.3.0"
-django-cors-headers = "==4.4.0"
-asgiref = "==3.8.1"
-pyjwt = "==2.8.0"
-sqlparse = "==0.5.0"
-typing-extensions = "==4.12.2"
-=======
 django = "*"
 python-dotenv = "*"
 psycopg = "*"
@@ -24,7 +11,6 @@ djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 pillow = "*"
 django-cors-headers = "*"
->>>>>>> 38104ba513c08e1750c413c7e1201cce0f3268f5
 
 [dev-packages]
 
