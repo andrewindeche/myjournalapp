@@ -28,6 +28,7 @@ const LoginScreen: React.FC = () => {
 
   const [attempts, setAttempts] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleSignUpPress = () => {
     navigation.navigate("Register");
@@ -60,6 +61,19 @@ const LoginScreen: React.FC = () => {
     }
   }, [status, error, navigation, dispatch]);
 
+  useEffect(() => {
+    const { successMessage } =
+      navigation.getState().routes.find((route) => route.name === "Login")
+        ?.params || {};
+    if (successMessage) {
+      setSuccessMessage(successMessage);
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [navigation]);
+
   return (
     <>
       <View style={styles.outerContainer}>
@@ -68,6 +82,9 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.subtitle}>Sign Into Your Account</Text>
         </View>
       </View>
+      {successMessage && (
+        <Text style={styles.successText}>{successMessage}</Text>
+      )}
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
           <Text style={[styles.title, styles.inputText]}>Sign In</Text>
@@ -239,6 +256,12 @@ const styles = StyleSheet.create({
   subtitle: {
     color: Colors.white,
     fontSize: 14,
+  },
+  successText: {
+    color: Colors.green,
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: "center",
   },
   title: {
     alignItems: "center",

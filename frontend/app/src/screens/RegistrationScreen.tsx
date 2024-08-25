@@ -34,7 +34,9 @@ const RegistrationScreen: React.FC = () => {
 
   useEffect(() => {
     if (status === "succeeded") {
-      navigation.navigate("Login");
+      navigation.navigate("Login", {
+        successMessage: "Account created successfully!",
+      });
     } else if (error) {
       const timer = setTimeout(() => {
         dispatch(reset());
@@ -128,9 +130,6 @@ const RegistrationScreen: React.FC = () => {
         </View>
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
-      {successMessage && (
-        <Text style={styles.successText}>{successMessage}</Text>
-      )}
     </>
   );
 };
