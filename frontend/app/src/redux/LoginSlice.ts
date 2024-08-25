@@ -62,6 +62,7 @@ const loginSlice = createSlice({
       state.username = "";
       state.password = "";
       state.status = "idle";
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
