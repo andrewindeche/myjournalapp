@@ -73,6 +73,7 @@ const registrationSlice = createSlice({
       state.password = "";
       state.confirm_password = "";
       state.status = "idle";
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
