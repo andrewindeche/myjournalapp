@@ -1,5 +1,9 @@
 asgiref==3.8.1
+<<<<<<< HEAD
 Django==5.0.8
+=======
+Django==5.0.7
+>>>>>>> 38104ba513c08e1750c413c7e1201cce0f3268f5
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 psycopg==3.2.1
