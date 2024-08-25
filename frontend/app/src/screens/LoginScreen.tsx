@@ -38,11 +38,9 @@ const LoginScreen: React.FC = () => {
     dispatch(loginUser({ username, password }))
       .unwrap()
       .then(() => {
-        dispatch(reset());
         navigation.navigate("Summary");
       })
       .catch(() => {
-        dispatch(reset());
         setAttempts(attempts + 1);
         if (attempts + 1 >= 3) {
           setModalVisible(true);
@@ -53,8 +51,14 @@ const LoginScreen: React.FC = () => {
   useEffect(() => {
     if (status === "succeeded") {
       navigation.navigate("Summary");
+    } else if (error) {
+      const timer = setTimeout(() => {
+        dispatch(reset());
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
-  }, [status, navigation]);
+  }, [status, error, navigation, dispatch]);
 
   return (
     <>
