@@ -9,7 +9,14 @@ import {
   setPassword,
   reset,
 } from "../redux/RegistrationSlice";
-import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Modal,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { AppDispatch, RootState } from "../redux/store";
 import { useNavigation } from "@react-navigation/native";
@@ -27,6 +34,8 @@ const RegistrationScreen: React.FC = () => {
     error,
   } = useSelector((state: RootState) => state.registration);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [attempts, setAttempts] = useState<number>(0);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(reset());
@@ -56,9 +65,14 @@ const RegistrationScreen: React.FC = () => {
   }, [successMessage, dispatch]);
 
   const handleSignUpPress = () => {
-    dispatch(
-      registerUser({ username, email, password, confirm_password }),
-    ).unwrap();
+    dispatch(registerUser({ username, email, password, confirm_password }))
+      .unwrap()
+      .catch(() => {
+        setAttempts(attempts + 1);
+        if (attempts + 1 >= 3) {
+          setModalVisible(true);
+        }
+      });
   };
 
   return (
@@ -130,6 +144,34 @@ const RegistrationScreen: React.FC = () => {
         </View>
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>User Registration Tip</Text>
+            <Text style={styles.modalText}>
+              <ul>
+                <li>Ensure password and confirmed passwords match</li>
+                <li>Enter correct details in Username and Password Fields</li>
+                <li>
+                  Ensure password is at least 8 characters long and contains a
+                  mix of letters, numbers, and special characters.
+                </li>
+              </ul>
+            </Text>
+            <Pressable
+              style={styles.okButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.okButtonText}>OK</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -178,6 +220,39 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+  },
+  modalContainer: {
+    alignItems: "center",
+    backgroundColor: Colors.inputBackgroundcolors,
+    flex: 1,
+    justifyContent: "center",
+  },
+  modalContent: {
+    alignItems: "center",
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  okButton: {
+    backgroundColor: Colors.loginBackgroundColor,
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  okButtonText: {
+    color: Colors.color,
+    fontSize: 16,
   },
   outerContainer: {
     alignItems: "center",

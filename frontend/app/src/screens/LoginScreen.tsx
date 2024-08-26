@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Colors } from "../colors";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  Modal,
-} from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -26,8 +19,6 @@ const LoginScreen: React.FC = () => {
     (state: RootState) => state.login,
   );
 
-  const [attempts, setAttempts] = useState<number>(0);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleSignUpPress = () => {
@@ -36,17 +27,8 @@ const LoginScreen: React.FC = () => {
   };
 
   const handleSignInPress = () => {
-    dispatch(loginUser({ username, password }))
-      .unwrap()
-      .then(() => {
-        navigation.navigate("Summary");
-      })
-      .catch(() => {
-        setAttempts(attempts + 1);
-        if (attempts + 1 >= 3) {
-          setModalVisible(true);
-        }
-      });
+    dispatch(loginUser({ username, password })).unwrap();
+    navigation.navigate("Summary");
   };
 
   useEffect(() => {
@@ -121,28 +103,6 @@ const LoginScreen: React.FC = () => {
         </View>
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Password Tip</Text>
-            <Text style={styles.modalText}>
-              Make sure your password is at least 8 characters long and contains
-              a mix of letters, numbers, and special characters.
-            </Text>
-            <Pressable
-              style={styles.okButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.okButtonText}>OK</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
     </>
   );
 };
