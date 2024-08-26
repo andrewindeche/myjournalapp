@@ -19,7 +19,10 @@ const LoginScreen: React.FC = () => {
     (state: RootState) => state.login,
   );
 
+  const [attempts, setAttempts] = useState<number>(0);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(0);
 
   const handleSignUpPress = () => {
     navigation.navigate("Register");
@@ -27,9 +30,36 @@ const LoginScreen: React.FC = () => {
   };
 
   const handleSignInPress = () => {
-    dispatch(loginUser({ username, password })).unwrap();
-    navigation.navigate("Summary");
+    if (!isDisabled) {
+      dispatch(loginUser({ username, password }))
+        .unwrap()
+        .then(() => {
+          navigation.navigate("Summary");
+        })
+        .catch(() => {
+          setAttempts(attempts + 1);
+          if (attempts + 1 >= 3) {
+            const newTimer = timer > 0 ? timer + 120 : 120;
+            setTimer(newTimer);
+            setIsDisabled(true);
+          }
+        });
+    }
   };
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer(timer - 1);
+      }, 1000);
+
+      if (timer === 1) {
+        setIsDisabled(false);
+      }
+
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
 
   useEffect(() => {
     if (status === "succeeded") {
@@ -72,22 +102,28 @@ const LoginScreen: React.FC = () => {
           <Text style={[styles.title, styles.inputText]}>Sign In</Text>
           <Text style={styles.label}>Your UserName</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, isDisabled && styles.disabledInput]}
             placeholder="Your Username"
             onChangeText={(text) => dispatch(setUsername(text))}
             value={username}
+            editable={!isDisabled}
           />
           <Text style={styles.label}>Password</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, isDisabled && styles.disabledInput]}
             placeholder="Password"
             secureTextEntry
             onChangeText={(text) => dispatch(setPassword(text))}
             value={password}
+            editable={!isDisabled}
           />
         </View>
         <View style={styles.footer}>
-          <Pressable style={styles.signInButton}>
+          <Pressable
+            style={[styles.signInButton, isDisabled && styles.disabledButton]}
+            onPress={handleSignInPress}
+            disabled={isDisabled || status === "loading"}
+          >
             <Text
               style={styles.signInButtonText}
               onPress={handleSignInPress}
@@ -103,11 +139,24 @@ const LoginScreen: React.FC = () => {
         </View>
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
+      {isDisabled && (
+        <Text style={styles.timerText}>
+          Please wait {Math.floor(timer / 60)}:{("0" + (timer % 60)).slice(-2)}{" "}
+          before trying again.
+        </Text>
+      )}
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  disabledButton: {
+    backgroundColor: Colors.lightGray,
+  },
+  disabledInput: {
+    backgroundColor: Colors.gray,
+    borderColor: Colors.lightGray,
+  },
   errorText: {
     color: Colors.red,
     marginVertical: 10,
@@ -154,41 +203,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
-  modalContainer: {
-    alignItems: "center",
-    backgroundColor: Colors.inputBackgroundcolors,
-    flex: 1,
-    justifyContent: "center",
-  },
-  modalContent: {
-    alignItems: "center",
-    backgroundColor: Colors.white,
-    borderRadius: 10,
-    padding: 20,
-    width: "80%",
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
   newUser: {
     marginTop: 10,
-  },
-  okButton: {
-    backgroundColor: Colors.loginBackgroundColor,
-    borderRadius: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  okButtonText: {
-    color: Colors.color,
-    fontSize: 16,
   },
   outerContainer: {
     alignItems: "center",
@@ -220,6 +236,11 @@ const styles = StyleSheet.create({
   successText: {
     color: Colors.green,
     marginBottom: 10,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  timerText: {
+    color: Colors.red,
     marginTop: 10,
     textAlign: "center",
   },
