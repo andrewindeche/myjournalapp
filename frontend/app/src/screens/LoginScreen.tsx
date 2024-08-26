@@ -34,6 +34,8 @@ const LoginScreen: React.FC = () => {
       dispatch(loginUser({ username, password }))
         .unwrap()
         .then(() => {
+          dispatch(setUsername(""));
+          dispatch(setPassword(""));
           navigation.navigate("Summary");
         })
         .catch(() => {
@@ -67,7 +69,7 @@ const LoginScreen: React.FC = () => {
     } else if (error) {
       const timer = setTimeout(() => {
         dispatch(reset());
-      }, 3000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }
