@@ -37,15 +37,13 @@ const LoginScreen: React.FC = () => {
           dispatch(setUsername(""));
           dispatch(setPassword(""));
           navigation.navigate("Summary");
-        })
-        .catch(() => {
-          setAttempts(attempts + 1);
-          if (attempts + 1 >= 3) {
-            const newTimer = timer > 0 ? timer + 120 : 120;
-            setTimer(newTimer);
-            setIsDisabled(true);
-          }
         });
+      setAttempts(attempts + 1);
+      if (attempts + 1 >= 3) {
+        const newTimer = timer > 0 ? timer + 120 : 120;
+        setTimer(newTimer);
+        setIsDisabled(true);
+      }
     }
   };
 
