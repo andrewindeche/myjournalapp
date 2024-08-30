@@ -43,7 +43,7 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
       dispatch(logout());
       onDeleteAccount();
       Alert.alert("Success", "Account deleted successfully.");
-      navigation.navigate("Home");
+      navigation.navigate("Login");
     } catch (error) {
       Alert.alert("Error", "Failed to delete account.");
     } finally {
