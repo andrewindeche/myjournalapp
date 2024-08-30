@@ -37,6 +37,9 @@ const LoginScreen: React.FC = () => {
           dispatch(setUsername(""));
           dispatch(setPassword(""));
           navigation.navigate("Summary");
+        })
+        .catch((error) => {
+          console.error("Login failed: ", error);
         });
       setAttempts(attempts + 1);
       if (attempts + 1 >= 3) {
