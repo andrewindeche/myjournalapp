@@ -25,7 +25,7 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 
   const confirmLogout = () => {
     dispatch(logout());
-    navigation.navigate("Home");
+    navigation.navigate("Login");
     setLogoutModalVisible(false);
   };
 

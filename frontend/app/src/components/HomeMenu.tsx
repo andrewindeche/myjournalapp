@@ -22,7 +22,7 @@ const HomeMenu: React.FC<MenuProps> = ({ navigation }) => {
 
   const confirmLogout = () => {
     dispatch(logout());
-    navigation.navigate("Home");
+    navigation.navigate("Login");
     setLogoutModalVisible(false);
   };
 

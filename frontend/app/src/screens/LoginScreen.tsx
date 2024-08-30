@@ -34,16 +34,19 @@ const LoginScreen: React.FC = () => {
       dispatch(loginUser({ username, password }))
         .unwrap()
         .then(() => {
+          dispatch(setUsername(""));
+          dispatch(setPassword(""));
           navigation.navigate("Summary");
         })
-        .catch(() => {
-          setAttempts(attempts + 1);
-          if (attempts + 1 >= 3) {
-            const newTimer = timer > 0 ? timer + 120 : 120;
-            setTimer(newTimer);
-            setIsDisabled(true);
-          }
+        .catch((error) => {
+          console.error("Login failed: ", error);
         });
+      setAttempts(attempts + 1);
+      if (attempts + 1 >= 3) {
+        const newTimer = timer > 0 ? timer + 120 : 120;
+        setTimer(newTimer);
+        setIsDisabled(true);
+      }
     }
   };
 
@@ -67,7 +70,7 @@ const LoginScreen: React.FC = () => {
     } else if (error) {
       const timer = setTimeout(() => {
         dispatch(reset());
-      }, 3000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }
