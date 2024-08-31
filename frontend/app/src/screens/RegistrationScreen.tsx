@@ -143,7 +143,19 @@ const RegistrationScreen: React.FC = () => {
           </View>
         </View>
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <View style={styles.errorContainer}>
+          {typeof error === "string" ? (
+            <Text style={styles.errorText}>{error}</Text>
+          ) : (
+            Object.keys(error).map((key) => (
+              <Text key={key} style={styles.errorText}>
+                {error[key]}
+              </Text>
+            ))
+          )}
+        </View>
+      )}
       <Modal
         transparent={true}
         visible={modalVisible}

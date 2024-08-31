@@ -42,7 +42,7 @@ export const registerUser = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       if (error.response.status === 400) {
-        return rejectWithValue("Please enter valid credentials");
+        return rejectWithValue(error.response.data);
       }
       return rejectWithValue(
         error.response.data.errors || "An unknown error occurred.",
@@ -74,6 +74,7 @@ const registrationSlice = createSlice({
       state.confirm_password = "";
       state.status = "idle";
       state.error = null;
+      state.successMessage = null;
     },
   },
   extraReducers: (builder) => {

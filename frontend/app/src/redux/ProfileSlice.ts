@@ -37,7 +37,6 @@ export const fetchProfileInfo = createAsyncThunk<
 
 export const deleteUserAccount = createAsyncThunk<
   void,
-  void,
   { rejectValue: string }
 >("profile/deleteUserAccount", async (_, { rejectWithValue, getState }) => {
   const state: RootState = getState() as RootState;
