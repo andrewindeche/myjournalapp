@@ -300,12 +300,6 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 14,
   },
-  successText: {
-    color: Colors.green,
-    marginTop: 30,
-    marginVertical: 10,
-    textAlign: "center",
-  },
   title: {
     alignItems: "center",
     color: Colors.white,

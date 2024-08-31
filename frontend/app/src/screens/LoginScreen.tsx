@@ -4,6 +4,7 @@ import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
+import { clearSuccessMessage } from "../redux/authSlice";
 import {
   setUsername,
   setPassword,
