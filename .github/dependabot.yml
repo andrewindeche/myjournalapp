@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "npm", "pip
+    directory: ~/journalapp/frontend, ~/journalapp/backend
+    schedule:
+      interval: "daily"
+
+    labels:
+      - "dependencies"

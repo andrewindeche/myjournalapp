@@ -297,7 +297,7 @@ const JournalEntryScreen: React.FC = () => {
             </Pressable>
           </>
         ) : (
-          <ScrollView contentContainerStyle={styles.scrollView}>
+          <ScrollView>
             {currentEntry ? (
               <Pressable
                 style={styles.entryContainer}
