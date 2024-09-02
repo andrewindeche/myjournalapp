@@ -173,6 +173,7 @@ const JournalEntryScreen: React.FC = () => {
           const result = await dispatch(createJournalEntry(newEntry)).unwrap();
           dispatch(fetchJournalEntries());
           setCurrentEntry(result);
+          setEditEntryId(result.id); // Ensure editEntryId is set
         }
         resetForm();
       } catch (error) {
@@ -217,7 +218,11 @@ const JournalEntryScreen: React.FC = () => {
     };
   }, [showMenu]);
 
-  const handleDeleteEntry = (entryId: number) => {
+  const handleDeleteEntry = (entryId: number | null) => {
+    if (entryId === null || entryId === undefined) {
+      console.error("Invalid entryId:", entryId);
+      return;
+    }
     dispatch(deleteJournalEntry(entryId))
       .unwrap()
       .then(() => {
@@ -333,7 +338,7 @@ const JournalEntryScreen: React.FC = () => {
         <Pressable onPress={handleTakePhoto}>
           <Icon name="camera" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={() => handleDeleteEntry(entryId)}>
+        <Pressable onPress={() => handleDeleteEntry(currentEntry?.id || null)}>
           <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>
