@@ -143,7 +143,19 @@ const ProfileScreen: React.FC = () => {
   };
 
   const handleDeleteAccount = () => {
-    dispatch(deleteUserAccount());
+    dispatch(deleteUserAccount()).then((result) => {
+      if (deleteUserAccount.fulfilled.match(result)) {
+        dispatch(setSuccessMessage("Account deleted successfully."));
+        dispatch(logout()); 
+        navigation.navigate("Login"); 
+      } else if (deleteUserAccount.rejected.match(result)) {
+        setErrorMessage(
+          typeof result.payload === "string"
+            ? result.payload
+            : "Failed to delete account. Please try again.",
+        );
+      }
+    });
   };
 
   const closeUsernameModal = () => {
