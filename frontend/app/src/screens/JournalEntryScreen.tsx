@@ -173,7 +173,7 @@ const JournalEntryScreen: React.FC = () => {
           const result = await dispatch(createJournalEntry(newEntry)).unwrap();
           dispatch(fetchJournalEntries());
           setCurrentEntry(result);
-          setEditEntryId(result.id); // Ensure editEntryId is set
+          setEditEntryId(result.id);
         }
         resetForm();
       } catch (error) {
@@ -338,7 +338,9 @@ const JournalEntryScreen: React.FC = () => {
         <Pressable onPress={handleTakePhoto}>
           <Icon name="camera" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={() => handleDeleteEntry(currentEntry?.id || null)}>
+        <Pressable
+          onPress={() => handleDeleteEntry(Number(currentEntry?.id) || null)}
+        >
           <Icon name="trash-bin" size={28} color="black" />
         </Pressable>
         <View style={styles.popup}>
