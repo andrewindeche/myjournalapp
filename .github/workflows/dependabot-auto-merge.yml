@@ -26,14 +26,14 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Approve PR
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
+
       - name: Merge PR
         uses: actions-ecosystem/action-merge@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          merge_method: squash 
-
-- name: Approve PR
-  uses: hmarr/auto-approve-action@v3
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-  if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
+          merge_method: squash
