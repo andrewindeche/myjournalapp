@@ -77,22 +77,29 @@ const JournalEntryScreen: React.FC = () => {
     }
   }, [editMode, currentEntry]);
 
+  const logger = (message: string, ...optionalParams: unknown[]) => {
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.log(message, ...optionalParams);
+    }
+  };
+
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log("User cancelled image picker");
+        logger("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log("ImagePicker Error: ", response.errorMessage);
+        logger("ImagePicker Error: ", response.errorMessage);
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
             const isBase64 = uri.startsWith("data:image");
             if (isBase64) {
-              console.log("Picked base64 image URI:", uri);
+              logger("Picked base64 image URI:", uri);
             } else {
-              console.log("Picked image URI:", uri);
+              logger("Picked image URI:", uri);
             }
 
             setImageUri(uri);
@@ -118,18 +125,18 @@ const JournalEntryScreen: React.FC = () => {
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
       if (response.didCancel) {
-        console.log("User cancelled image picker");
+        logger("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log("ImagePicker Error: ", response.errorMessage);
+        logger("ImagePicker Error: ", response.errorMessage);
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
             const isBase64 = uri.startsWith("data:image");
             if (isBase64) {
-              console.log("Picked base64 image URI:", uri);
+              logger("Picked base64 image URI:", uri);
             } else {
-              console.log("Picked image URI:", uri);
+              logger("Picked image URI:", uri);
             }
 
             setImageUri(uri);
