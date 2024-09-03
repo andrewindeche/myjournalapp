@@ -81,6 +81,8 @@ const JournalEntryScreen: React.FC = () => {
     if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.log(message, ...optionalParams);
+      // eslint-disable-next-line no-console
+      console.error(message, ...optionalParams);
     }
   };
 
@@ -184,7 +186,7 @@ const JournalEntryScreen: React.FC = () => {
         }
         resetForm();
       } catch (error) {
-        console.error("Failed to save entry:", error);
+        logger("Failed to save entry:", error);
       }
     } else {
       Alert.alert(
@@ -227,7 +229,7 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleDeleteEntry = (entryId: number | null) => {
     if (entryId === null || entryId === undefined) {
-      console.error("Invalid entryId:", entryId);
+      logger("Invalid entryId:", entryId);
       return;
     }
     dispatch(deleteJournalEntry(entryId))
@@ -242,7 +244,7 @@ const JournalEntryScreen: React.FC = () => {
         setImageUri(null);
       })
       .catch((error) => {
-        console.error("Failed to delete entry:", error);
+        logger("Failed to delete entry:", error);
       });
   };
 
@@ -259,7 +261,7 @@ const JournalEntryScreen: React.FC = () => {
           setImageUri(null);
         })
         .catch((error) => {
-          console.error("Failed to delete image:", error);
+          logger("Failed to delete image:", error);
         });
     }
   };
