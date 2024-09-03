@@ -55,6 +55,7 @@ const JournalEntryScreen: React.FC = () => {
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -77,22 +78,36 @@ const JournalEntryScreen: React.FC = () => {
     }
   }, [editMode, currentEntry]);
 
+  useEffect(() => {
+    const isDisabled = !(title && inputText && selectedCategory);
+    setIsSaveDisabled(isDisabled);
+  }, [title, inputText, selectedCategory, imageUri]);
+
+  const logger = (message: string, ...optionalParams: unknown[]) => {
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.log(message, ...optionalParams);
+      // eslint-disable-next-line no-console
+      console.error(message, ...optionalParams);
+    }
+  };
+
   const handleImageUpload = () => {
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log("User cancelled image picker");
+        logger("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log("ImagePicker Error: ", response.errorMessage);
+        logger("ImagePicker Error: ", response.errorMessage);
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
             const isBase64 = uri.startsWith("data:image");
             if (isBase64) {
-              console.log("Picked base64 image URI:", uri);
+              logger("Picked base64 image URI:", uri);
             } else {
-              console.log("Picked image URI:", uri);
+              logger("Picked image URI:", uri);
             }
 
             setImageUri(uri);
@@ -118,18 +133,18 @@ const JournalEntryScreen: React.FC = () => {
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
       if (response.didCancel) {
-        console.log("User cancelled image picker");
+        logger("User cancelled image picker");
       } else if (response.errorCode) {
-        console.log("ImagePicker Error: ", response.errorMessage);
+        logger("ImagePicker Error: ", response.errorMessage);
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
             const isBase64 = uri.startsWith("data:image");
             if (isBase64) {
-              console.log("Picked base64 image URI:", uri);
+              logger("Picked base64 image URI:", uri);
             } else {
-              console.log("Picked image URI:", uri);
+              logger("Picked image URI:", uri);
             }
 
             setImageUri(uri);
@@ -177,7 +192,7 @@ const JournalEntryScreen: React.FC = () => {
         }
         resetForm();
       } catch (error) {
-        console.error("Failed to save entry:", error);
+        logger("Failed to save entry:", error);
       }
     } else {
       Alert.alert(
@@ -220,7 +235,7 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleDeleteEntry = (entryId: number | null) => {
     if (entryId === null || entryId === undefined) {
-      console.error("Invalid entryId:", entryId);
+      logger("Invalid entryId:", entryId);
       return;
     }
     dispatch(deleteJournalEntry(entryId))
@@ -235,7 +250,7 @@ const JournalEntryScreen: React.FC = () => {
         setImageUri(null);
       })
       .catch((error) => {
-        console.error("Failed to delete entry:", error);
+        logger("Failed to delete entry:", error);
       });
   };
 
@@ -252,7 +267,7 @@ const JournalEntryScreen: React.FC = () => {
           setImageUri(null);
         })
         .catch((error) => {
-          console.error("Failed to delete image:", error);
+          logger("Failed to delete image:", error);
         });
     }
   };
@@ -292,7 +307,14 @@ const JournalEntryScreen: React.FC = () => {
               placeholder="Enter category"
               onChangeText={(text) => setSelectedCategory(text)}
             />
-            <Pressable onPress={handleAddEntry} style={styles.addButton}>
+            <Pressable
+              onPress={handleAddEntry}
+              style={[
+                styles.addButton,
+                isSaveDisabled && { backgroundColor: Colors.gray },
+              ]}
+              disabled={isSaveDisabled}
+            >
               <Text style={styles.addButtonText}>Save Changes</Text>
             </Pressable>
           </>
