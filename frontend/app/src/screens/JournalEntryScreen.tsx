@@ -55,6 +55,7 @@ const JournalEntryScreen: React.FC = () => {
   const [editEntryId, setEditEntryId] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -76,6 +77,11 @@ const JournalEntryScreen: React.FC = () => {
       setImageUri(currentEntry.content_image?.uri || null);
     }
   }, [editMode, currentEntry]);
+
+  useEffect(() => {
+    const isDisabled = !(title && inputText && selectedCategory);
+    setIsSaveDisabled(isDisabled);
+  }, [title, inputText, selectedCategory, imageUri]);
 
   const logger = (message: string, ...optionalParams: unknown[]) => {
     if (process.env.NODE_ENV !== "production") {
@@ -301,7 +307,14 @@ const JournalEntryScreen: React.FC = () => {
               placeholder="Enter category"
               onChangeText={(text) => setSelectedCategory(text)}
             />
-            <Pressable onPress={handleAddEntry} style={styles.addButton}>
+            <Pressable
+              onPress={handleAddEntry}
+              style={[
+                styles.addButton,
+                isSaveDisabled && { backgroundColor: Colors.gray },
+              ]}
+              disabled={isSaveDisabled}
+            >
               <Text style={styles.addButtonText}>Save Changes</Text>
             </Pressable>
           </>
