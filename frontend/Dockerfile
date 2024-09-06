@@ -4,8 +4,7 @@ WORKDIR /app/frontend
 
 COPY package*.json ./
 
-RUN npm install --global expo-cli
-RUN npm install
+RUN npm install --global expo-cli && npm install
 
 COPY . .
 

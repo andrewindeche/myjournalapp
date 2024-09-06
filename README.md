@@ -35,6 +35,15 @@ Use <b>backend\env.example</b> as a guide for environment variables.
 
 ```bash
 docker-compose up -d 
+            or
+docker exec -it <container_id> psql -U postgres
+
+CREATE DATABASE database;
+
+CREATE USER newuser WITH PASSWORD 'newpassword';
+
+GRANT ALL PRIVILEGES ON DATABASE database TO myuser;
+
 ```
 3. To verify postgres and db existance :
 

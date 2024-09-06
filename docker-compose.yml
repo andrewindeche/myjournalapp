@@ -19,20 +19,20 @@ services:
 
   create_table:
     build: ./backend
-    command: python manage.py createcachetable
+    command: pipenv run python manage.py createcachetable
     depends_on:
       db:
         condition: service_healthy
 
   migrate:
     build: ./backend
-    command: python manage.py migrate
+    command: pipenv run python manage.py migrate
     depends_on:
       - create_table
 
   django:
     build: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
+    command: pipenv run python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     volumes:
@@ -40,7 +40,7 @@ services:
     depends_on:
       - db
       - migrate
-      
+
   expo:
     build:
       context: ./frontend
@@ -58,4 +58,3 @@ services:
 
 volumes:
   postgres_data:
-
