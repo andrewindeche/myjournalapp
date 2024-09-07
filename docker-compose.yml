@@ -49,8 +49,16 @@ services:
       - "19000:19000"
       - "19001:19001"
       - "19002:19002"
+      - "8081:8081"
     volumes:
       - ./frontend:/app/frontend
+
+    command: >
+      sh -c "
+        npm install &&
+        npm start
+      "
+
     environment:
       - REACT_NATIVE_PACKAGER_HOSTNAME=host.docker.internal
     stdin_open: true

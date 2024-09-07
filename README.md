@@ -45,6 +45,15 @@ CREATE USER newuser WITH PASSWORD 'newpassword';
 GRANT ALL PRIVILEGES ON DATABASE database TO myuser;
 
 ```
+b. To create a new superuser in docker
+
+```bash
+
+docker exec -it myjournalapp-django-1 bash
+
+```
+
+
 3. To verify postgres and db existance :
 
 ```bash
