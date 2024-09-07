@@ -6,19 +6,21 @@ RUN pip install pipenv
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PATH="/root/.local/bin:${PATH}"
 
 # Set working directory
 WORKDIR /app/backend
 
-# Copy Pipfiles for dependency installation
+# Copy Pipfile and Pipfile.lock first to leverage Docker cache
 COPY Pipfile Pipfile.lock /app/backend/
 
 # Install dependencies using pipenv
-RUN pipenv install --deploy --system
+RUN pipenv install
 
-# Copy the rest of the application code
-COPY . /app/backend
+# Verify that Django is installed
+RUN pipenv run pip list
+
+# Copy the rest of the project files
+COPY . /app/backend/
 
 # Expose port
 EXPOSE 8000

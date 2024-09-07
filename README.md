@@ -35,7 +35,25 @@ Use <b>backend\env.example</b> as a guide for environment variables.
 
 ```bash
 docker-compose up -d 
+            or
+docker exec -it <container_id> psql -U postgres
+
+CREATE DATABASE database;
+
+CREATE USER newuser WITH PASSWORD 'newpassword';
+
+GRANT ALL PRIVILEGES ON DATABASE database TO myuser;
+
 ```
+b. To create a new superuser in docker
+
+```bash
+
+docker exec -it myjournalapp-django-1 bash
+
+```
+
+
 3. To verify postgres and db existance :
 
 ```bash
