@@ -8,8 +8,8 @@ RUN npm install --global expo-cli && npm install
 
 COPY . .
 
-EXPOSE 19000
-EXPOSE 19001
-EXPOSE 19002
+EXPOSE 19000 19001 19002
 
 CMD ["npm", "start"]
+
+
