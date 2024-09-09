@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY','a8*9eb-8_1zic&uefps(rhl_9osxe-%&gl_t5)^*7&=4cruww3')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 #FIREBASE SETTINGS
 cred = credentials.Certificate('journalapplication/settings/myjournalapp-d25c7-firebase-adminsdk-ggayn-cf45b4e804.json')
@@ -118,11 +118,11 @@ WSGI_APPLICATION = 'journalapplication.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME','journal'),
-        'USER': os.getenv('DB_USER','circleci'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
