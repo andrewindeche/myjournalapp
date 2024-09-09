@@ -1,6 +1,7 @@
 #backend
 /backend/.env
-/backend/db.sqlite
+/backend/db.sqlite3
+/backend/journalapplication/settings/myjournalapp-d25c7-firebase-adminsdk-ggayn-cf45b4e804.json
 /frontend/node_modules
 /frontend/dist/
 
@@ -9,6 +10,7 @@
 /frontend/coverage/
 /frontend/node_modules
 /frontend/*.log
+/frontend/firebaseConfig.ts
 
 # Expo directories
 /frontend/.expo
