@@ -31,4 +31,5 @@ export const Colors = {
   mediumGray: "#888",
   charcoal: "#222",
   semiBlack: "rgba(0,0,0,0.5)",
+  googleButtonBackground: "#020035",
 } as const;

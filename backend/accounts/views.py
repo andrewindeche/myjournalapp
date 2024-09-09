@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from firebase_admin import auth
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User
@@ -73,3 +75,25 @@ class DeleteUserView(generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         self.perform_destroy(self.get_object())
         return Response({'message': 'Account deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+    
+class FirebaseGoogleLoginView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            firebase_token = request.data.get('firebase_auth_token')
+            decoded_token = auth.verify_id_token(firebase_token)
+            firebase_uid = decoded_token['uid']
+
+            user, created = User.objects.get_or_create(username=firebase_uid)
+
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                'message': 'Login successful.',
+                'refresh': str(refresh),
+                'access': str(refresh.access_token)
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

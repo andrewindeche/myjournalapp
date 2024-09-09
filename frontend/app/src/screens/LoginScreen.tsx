@@ -4,7 +4,10 @@ import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
-import { clearSuccessMessage } from "../redux/authSlice";
+import * as Google from "expo-auth-session/providers/google";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import firebase from "firebase/app";
+import "firebase/auth";
 import {
   setUsername,
   setPassword,
@@ -15,6 +18,9 @@ import {
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId: "109367517835465899853",
+  });
 
   const { username, password, status, error } = useSelector(
     (state: RootState) => state.login,
@@ -90,6 +96,14 @@ const LoginScreen: React.FC = () => {
     }
   }, [navigation]);
 
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+      firebase.auth().signInWithCredential(credential);
+    }
+  }, [response]);
+
   return (
     <>
       <View style={styles.outerContainer}>
@@ -136,6 +150,18 @@ const LoginScreen: React.FC = () => {
               Sign In
             </Text>
           </Pressable>
+          <Pressable
+            style={styles.googleButton}
+            onPress={() => promptAsync()}
+            disabled={!request}
+          >
+            <MaterialCommunityIcons
+              name="google"
+              size={24}
+              color={Colors.white}
+            />
+            <Text style={styles.googleButtonText}>Google Sign In</Text>
+          </Pressable>
           <Pressable style={styles.newUser} onPress={handleSignUpPress}>
             <Text>I'm a new user</Text>
             <Text style={styles.signUpText}>Sign up</Text>
@@ -170,6 +196,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     gap: 10,
+  },
+  googleButton: {
+    alignItems: "center",
+    backgroundColor: Colors.googleButtonBackground,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    width: "90%",
+  },
+  googleButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+    marginLeft: 10,
   },
   header: {
     alignItems: "center",
