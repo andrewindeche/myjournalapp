@@ -100,9 +100,18 @@ const LoginScreen: React.FC = () => {
     if (response?.type === "success") {
       const { id_token } = response.params;
       const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
-      firebase.auth().signInWithCredential(credential);
+
+      firebase
+        .auth()
+        .signInWithCredential(credential)
+        .then(() => {
+          dispatch(loginUser({ username: "", password: "" }));
+        })
+        .catch((error) => {
+          console.error("Google sign-in error: ", error);
+        });
     }
-  }, [response]);
+  }, [response, dispatch]);
 
   return (
     <>
