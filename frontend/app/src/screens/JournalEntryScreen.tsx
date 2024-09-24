@@ -345,13 +345,23 @@ const JournalEntryScreen: React.FC = () => {
                 )}
               </Pressable>
             ) : (
-              <Text>Click on the Pencil icon to Add an Entry</Text>
+              <Text>
+                Click on the Pencil icon to Add an Entry. Click twice on pencil
+                to start a new entry from the current.
+              </Text>
             )}
           </ScrollView>
         )}
       </View>
       <View style={styles.footer}>
-        <Pressable onPress={() => setEditMode(!editMode)}>
+        <Pressable
+          onPress={() => {
+            if (inputText || imageUri || title || selectedCategory) {
+              resetForm();
+            }
+            setEditMode(true);
+          }}
+        >
           <Icon name="pencil" size={28} color="black" />
         </Pressable>
         <Pressable onPress={handleImageUpload}>

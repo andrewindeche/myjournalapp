@@ -14,7 +14,7 @@ import LoadingScreen from "./app/src/components/LoadingScreen";
 export { ErrorBoundary } from "expo-router";
 import FallbackComponent from "./app/src/components/FallbackComponent";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
