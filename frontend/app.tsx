@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
@@ -13,6 +13,8 @@ import SummaryScreen from "./app/src/screens/SummaryScreen";
 import LoadingScreen from "./app/src/components/LoadingScreen";
 export { ErrorBoundary } from "expo-router";
 import FallbackComponent from "./app/src/components/FallbackComponent";
+import { useFonts } from "expo-font";
+import { StyleSheet, Text, View } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,9 @@ SplashScreen.preventAutoHideAsync();
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [fontsLoaded] = useFonts({
+    "Mulish-Black": require("./assets/fonts/Mulish-Black.ttf"),
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,6 +40,16 @@ const App: React.FC = () => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded || loading) {
+    return null;
+  }
 
   return (
     <Provider store={store}>
@@ -57,5 +72,20 @@ const App: React.FC = () => {
     </Provider>
   );
 };
+
+interface CustomTextProps {
+  style?: object;
+  children: ReactNode;
+}
+
+const CustomText: React.FC<CustomTextProps> = ({ style, children }) => {
+  return <Text style={[styles.defaultFont, style]}>{children}</Text>;
+};
+
+const styles = StyleSheet.create({
+  defaultFont: {
+    fontFamily: "Mulish-Black",
+  },
+});
 
 export default App;
