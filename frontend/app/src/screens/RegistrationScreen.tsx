@@ -202,7 +202,7 @@ const RegistrationScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   errorContainer: {
-    height: 40,
+    height: 80,
     justifyContent: "center",
   },
   errorText: {
