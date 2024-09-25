@@ -182,21 +182,20 @@ const LoginScreen: React.FC = () => {
 
       <View style={styles.errorContainer}>
         {error && <Text style={styles.errorText}>{error}</Text>}
+        {isDisabled && (
+          <Text style={styles.timerText}>
+            Please wait {Math.floor(timer / 60)}:
+            {("0" + (timer % 60)).slice(-2)} before trying again.
+          </Text>
+        )}
       </View>
-
-      {isDisabled && (
-        <Text style={styles.timerText}>
-          Please wait {Math.floor(timer / 60)}:{("0" + (timer % 60)).slice(-2)}{" "}
-          before trying again.
-        </Text>
-      )}
     </>
   );
 };
 
 const styles = StyleSheet.create({
   errorContainer: {
-    height: 40,
+    height: 80,
     justifyContent: "center",
   },
   errorText: {
