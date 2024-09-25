@@ -83,9 +83,11 @@ const RegistrationScreen: React.FC = () => {
           <Text style={styles.subtitle}>Create an Account</Text>
         </View>
       </View>
+
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
           <Text style={[styles.title, styles.inputText]}>Sign Up</Text>
+
           <Text style={styles.label}>Full Name</Text>
           <TextInput
             style={styles.input}
@@ -98,6 +100,7 @@ const RegistrationScreen: React.FC = () => {
               <FontAwesome name="check" size={20} color="green" />
             )}
           </Text>
+
           <Text style={styles.label}>Email Address</Text>
           <TextInput
             style={styles.input}
@@ -105,6 +108,7 @@ const RegistrationScreen: React.FC = () => {
             onChangeText={(text) => dispatch(setEmail(text))}
             value={email}
           />
+
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
@@ -113,6 +117,7 @@ const RegistrationScreen: React.FC = () => {
             onChangeText={(text) => dispatch(setPassword(text))}
             value={password}
           />
+
           {password && (
             <>
               <Text style={styles.label}>Confirm Password</Text>
@@ -125,6 +130,7 @@ const RegistrationScreen: React.FC = () => {
               />
             </>
           )}
+
           <View style={styles.footer}>
             <Pressable
               style={styles.signUpButton}
@@ -133,6 +139,7 @@ const RegistrationScreen: React.FC = () => {
             >
               <Text style={styles.signUpButtonText}>Create Account</Text>
             </Pressable>
+
             <Pressable
               style={styles.registeredUser}
               onPress={() => navigation.navigate("Login")}
@@ -143,19 +150,23 @@ const RegistrationScreen: React.FC = () => {
           </View>
         </View>
       </View>
-      {error && (
-        <View style={styles.errorContainer}>
-          {typeof error === "string" ? (
-            <Text style={styles.errorText}>{error}</Text>
-          ) : (
-            Object.keys(error).map((key) => (
-              <Text key={key} style={styles.errorText}>
-                {error[key]}
-              </Text>
-            ))
-          )}
-        </View>
-      )}
+
+      <View style={styles.errorContainer}>
+        {error && (
+          <View>
+            {typeof error === "string" ? (
+              <Text style={styles.errorText}>{error}</Text>
+            ) : (
+              Object.keys(error).map((key) => (
+                <Text key={key} style={styles.errorText}>
+                  {error[key]}
+                </Text>
+              ))
+            )}
+          </View>
+        )}
+      </View>
+
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -189,6 +200,10 @@ const RegistrationScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  errorContainer: {
+    height: 40,
+    justifyContent: "center",
+  },
   errorText: {
     color: Colors.red,
     marginTop: 30,
