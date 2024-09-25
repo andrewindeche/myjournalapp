@@ -174,7 +174,7 @@ const LoginScreen: React.FC = () => {
 
           <Pressable style={styles.newUser} onPress={handleSignUpPress}>
             <Text>
-              I'm a new user:<Text style={styles.signUpText}>Sign up</Text>
+              I'm a new user <Text style={styles.signUpText}>Sign up</Text>
             </Text>
           </Pressable>
         </View>
@@ -215,6 +215,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingVertical: 12,
     width: "100%",
+  },
+  googleButtonText: {
+    color: Colors.white,
+    margin: 4,
   },
   header: {
     alignItems: "center",
@@ -269,13 +273,16 @@ const styles = StyleSheet.create({
   signUpText: {
     color: Colors.color,
     fontSize: 17,
-    margin: 4,
+    marginRight: 10,
   },
   subtitle: {
     color: Colors.white,
     fontSize: 18,
     marginTop: 5,
     textAlign: "center",
+  },
+  successText: {
+    color: Colors.green,
   },
   timerText: {
     color: Colors.red,
