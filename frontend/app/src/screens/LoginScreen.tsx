@@ -177,7 +177,9 @@ const LoginScreen: React.FC = () => {
           </Pressable>
         </View>
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      <View style={styles.errorContainer}>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+      </View>
       {isDisabled && (
         <Text style={styles.timerText}>
           Please wait {Math.floor(timer / 60)}:{("0" + (timer % 60)).slice(-2)}{" "}
@@ -195,6 +197,10 @@ const styles = StyleSheet.create({
   disabledInput: {
     backgroundColor: Colors.gray,
     borderColor: Colors.lightGray,
+  },
+  errorContainer: {
+    height: 20,
+    justifyContent: "center",
   },
   errorText: {
     color: Colors.red,
