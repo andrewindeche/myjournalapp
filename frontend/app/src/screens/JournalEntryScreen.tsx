@@ -346,8 +346,10 @@ const JournalEntryScreen: React.FC = () => {
               </Pressable>
             ) : (
               <Text>
-                Click on the Pencil icon to Add an Entry. Click twice on pencil
-                to start a new entry from the current.
+                <ul>
+                  <li>Click on the Pencil icon to Add an Entry.</li>
+                  <li>Click twice on pencil to start another entry.</li>
+                </ul>
               </Text>
             )}
           </ScrollView>
