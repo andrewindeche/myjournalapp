@@ -36,6 +36,7 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [attempts, setAttempts] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(reset());
@@ -64,7 +65,33 @@ const RegistrationScreen: React.FC = () => {
     }
   }, [successMessage, dispatch]);
 
+  const validateFields = () => {
+    const errors = {};
+    if (!username) {
+      errors.username = "Username may not be blank";
+    }
+    if (!email) {
+      errors.email = "Email may not be blank";
+    }
+    if (!password) {
+      errors.password = "Password may not be blank";
+    }
+    if (password !== confirm_password) {
+      errors.confirm_password = "Passwords do not match";
+    }
+    return errors;
+  };
+
   const handleSignUpPress = () => {
+    const validationErrors = validateFields();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setTimeout(() => {
+        setErrors({});
+      }, 4000);
+      return;
+    }
     dispatch(registerUser({ username, email, password, confirm_password }))
       .unwrap()
       .catch(() => {
@@ -151,19 +178,14 @@ const RegistrationScreen: React.FC = () => {
           </View>
         </View>
       </View>
-
       <View style={styles.errorContainer}>
-        {error && (
+        {Object.keys(errors).length > 0 && (
           <View>
-            {typeof error === "string" ? (
-              <Text style={styles.errorText}>{error}</Text>
-            ) : (
-              Object.keys(error).map((key) => (
-                <Text key={key} style={styles.errorText}>
-                  {error[key]}
-                </Text>
-              ))
-            )}
+            {Object.keys(errors).map((key) => (
+              <Text key={key} style={styles.errorText}>
+                {errors[key]}
+              </Text>
+            ))}
           </View>
         )}
       </View>
