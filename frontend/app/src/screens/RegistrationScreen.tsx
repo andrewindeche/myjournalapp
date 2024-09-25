@@ -74,7 +74,6 @@ const RegistrationScreen: React.FC = () => {
         }
       });
   };
-
   return (
     <>
       <View style={styles.outerContainer}>
@@ -144,8 +143,10 @@ const RegistrationScreen: React.FC = () => {
               style={styles.registeredUser}
               onPress={() => navigation.navigate("Login")}
             >
-              <Text>Already have an Account?</Text>
-              <Text style={styles.signInText}>Log In</Text>
+              <Text>
+                Already have an Account?{" "}
+                <Text style={styles.signInText}>Log In</Text>
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -206,47 +207,34 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: Colors.red,
-    marginTop: 30,
-    marginVertical: 10,
     textAlign: "center",
   },
   footer: {
-    margin: 12,
+    alignItems: "center",
+    marginVertical: 30,
   },
   header: {
     alignItems: "center",
-    color: Colors.white,
-    display: "flex",
-    gap: 10,
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 20,
+    marginBottom: 20,
   },
   innerContainer: {
     backgroundColor: Colors.white,
-    height: "80%",
-    marginBottom: 10,
+    borderRadius: 8,
+    padding: 20,
+    width: "100%",
   },
   input: {
     backgroundColor: Colors.inputBackgroundcolors,
     borderColor: Colors.borderColor,
     borderRadius: 8,
     borderWidth: 1,
-    height: 40,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    width: "95%",
+    height: 45,
+    marginVertical: 10,
+    paddingHorizontal: 15,
+    width: "100%",
   },
   inputContainer: {
-    padding: 20,
-  },
-  inputText: {
-    color: Colors.loginBackgroundColor,
-    padding: 5,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
+    marginVertical: 20,
   },
   modalContainer: {
     alignItems: "center",
@@ -261,65 +249,48 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "80%",
   },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  okButton: {
-    backgroundColor: Colors.loginBackgroundColor,
-    borderRadius: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  okButtonText: {
-    color: Colors.color,
-    fontSize: 16,
-  },
   outerContainer: {
     alignItems: "center",
     backgroundColor: Colors.loginBackgroundColor,
     flex: 1,
-    height: 10,
+    justifyContent: "center",
+    padding: 20,
     width: "100%",
   },
   registeredUser: {
     alignItems: "center",
-    display: "flex",
     flexDirection: "row",
-    gap: 10,
-    marginTop: 10,
+    justifyContent: "center",
+    marginTop: 20,
   },
   signInText: {
     color: Colors.color,
-    fontSize: 20,
+    fontSize: 17,
+    margin: 4,
   },
   signUpButton: {
     backgroundColor: Colors.loginBackgroundColor,
     borderRadius: 8,
-    marginBottom: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 10,
-    width: "90%",
+    marginBottom: 15,
+    paddingVertical: 15,
+    width: "100%",
   },
   signUpButtonText: {
     color: Colors.white,
+    fontSize: 18,
     textAlign: "center",
   },
   subtitle: {
     color: Colors.white,
-    fontSize: 14,
+    fontSize: 18,
+    marginTop: 5,
+    textAlign: "center",
   },
   title: {
-    alignItems: "center",
     color: Colors.white,
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

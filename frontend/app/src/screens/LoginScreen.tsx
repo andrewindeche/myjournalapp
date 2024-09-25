@@ -121,23 +121,27 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.subtitle}>Sign Into Your Account</Text>
         </View>
       </View>
+
       {successMessage && (
         <Text style={styles.successText}>{successMessage}</Text>
       )}
+
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
           <Text style={[styles.title, styles.inputText]}>Sign In</Text>
-          <Text style={styles.label}>Your UserName</Text>
+
+          <Text style={styles.label}>Your Username</Text>
           <TextInput
-            style={[styles.input, isDisabled && styles.disabledInput]}
+            style={styles.input}
             placeholder="Your Username"
             onChangeText={(text) => dispatch(setUsername(text))}
             value={username}
             editable={!isDisabled}
           />
+
           <Text style={styles.label}>Password</Text>
           <TextInput
-            style={[styles.input, isDisabled && styles.disabledInput]}
+            style={styles.input}
             placeholder="Password"
             secureTextEntry
             onChangeText={(text) => dispatch(setPassword(text))}
@@ -145,20 +149,16 @@ const LoginScreen: React.FC = () => {
             editable={!isDisabled}
           />
         </View>
+
         <View style={styles.footer}>
           <Pressable
             style={[styles.signInButton, isDisabled && styles.disabledButton]}
             onPress={handleSignInPress}
             disabled={isDisabled || status === "loading"}
           >
-            <Text
-              style={styles.signInButtonText}
-              onPress={handleSignInPress}
-              disabled={status === "loading"}
-            >
-              Sign In
-            </Text>
+            <Text style={styles.signInButtonText}>Sign In</Text>
           </Pressable>
+
           <Pressable
             style={styles.googleButton}
             onPress={() => promptAsync()}
@@ -171,15 +171,19 @@ const LoginScreen: React.FC = () => {
             />
             <Text style={styles.googleButtonText}>Google Sign In</Text>
           </Pressable>
+
           <Pressable style={styles.newUser} onPress={handleSignUpPress}>
-            <Text>I'm a new user</Text>
-            <Text style={styles.signUpText}>Sign up</Text>
+            <Text>
+              I'm a new user:<Text style={styles.signUpText}>Sign up</Text>
+            </Text>
           </Pressable>
         </View>
       </View>
+
       <View style={styles.errorContainer}>
         {error && <Text style={styles.errorText}>{error}</Text>}
       </View>
+
       {isDisabled && (
         <Text style={styles.timerText}>
           Please wait {Math.floor(timer / 60)}:{("0" + (timer % 60)).slice(-2)}{" "}
@@ -191,125 +195,98 @@ const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  disabledButton: {
-    backgroundColor: Colors.lightGray,
-  },
-  disabledInput: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.lightGray,
-  },
   errorContainer: {
-    height: 20,
+    height: 40,
     justifyContent: "center",
   },
   errorText: {
     color: Colors.red,
-    marginVertical: 10,
     textAlign: "center",
   },
   footer: {
     alignItems: "center",
-    display: "flex",
-    gap: 10,
+    marginVertical: 30,
   },
   googleButton: {
-    alignItems: "center",
     backgroundColor: Colors.googleButtonBackground,
     borderRadius: 8,
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    width: "90%",
-  },
-  googleButtonText: {
-    color: Colors.white,
-    fontSize: 16,
-    marginLeft: 10,
+    marginVertical: 10,
+    paddingVertical: 12,
+    width: "100%",
   },
   header: {
     alignItems: "center",
-    color: Colors.white,
-    display: "flex",
-    gap: 10,
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    marginBottom: 20,
   },
   innerContainer: {
     backgroundColor: Colors.white,
-    height: "80%",
-    marginBottom: 10,
+    borderRadius: 8,
+    padding: 20,
+    width: "100%",
   },
   input: {
     backgroundColor: Colors.inputBackgroundcolors,
     borderColor: Colors.borderColor,
     borderRadius: 8,
     borderWidth: 1,
-    height: 40,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    width: "95%",
+    height: 45,
+    marginVertical: 10,
+    paddingHorizontal: 15,
+    width: "100%",
   },
   inputContainer: {
-    padding: 17,
-  },
-  inputText: {
-    color: Colors.loginBackgroundColor,
-    fontWeight: "bold",
-    padding: 5,
+    marginVertical: 20,
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
   },
   newUser: {
-    marginTop: 10,
+    marginTop: 20,
   },
   outerContainer: {
     alignItems: "center",
     backgroundColor: Colors.loginBackgroundColor,
     flex: 1,
-    height: 10,
+    justifyContent: "center",
+    padding: 20,
     width: "100%",
   },
   signInButton: {
     backgroundColor: Colors.loginBackgroundColor,
     borderRadius: 8,
-    marginBottom: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 10,
-    width: "90%",
+    marginBottom: 15,
+    paddingVertical: 15,
+    width: "100%",
   },
   signInButtonText: {
     color: Colors.white,
+    fontSize: 18,
     textAlign: "center",
   },
   signUpText: {
     color: Colors.color,
-    fontSize: 20,
+    fontSize: 17,
+    margin: 4,
   },
   subtitle: {
     color: Colors.white,
-    fontSize: 14,
-  },
-  successText: {
-    color: Colors.green,
-    marginBottom: 10,
-    marginTop: 10,
+    fontSize: 18,
+    marginTop: 5,
     textAlign: "center",
   },
   timerText: {
     color: Colors.red,
-    marginTop: 10,
+    marginVertical: 10,
     textAlign: "center",
   },
   title: {
-    alignItems: "center",
     color: Colors.white,
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
