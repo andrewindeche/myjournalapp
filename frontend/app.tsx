@@ -11,7 +11,6 @@ import store from "./app/src/redux/store";
 import JournalEntryScreen from "./app/src/screens/JournalEntryScreen";
 import SummaryScreen from "./app/src/screens/SummaryScreen";
 import LoadingScreen from "./app/src/components/LoadingScreen";
-export { ErrorBoundary } from "expo-router";
 import FallbackComponent from "./app/src/components/FallbackComponent";
 import { useFonts } from "expo-font";
 import { StyleSheet, Text } from "react-native";
@@ -48,26 +47,27 @@ const App: React.FC = () => {
   }, [fontsLoaded]);
 
   if (!fontsLoaded || loading) {
-    return null;
+    return <LoadingScreen />;
   }
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {loading ? (
-          <LoadingScreen />
-        ) : (
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="Summary" component={SummaryScreen} />
-            <Stack.Screen name="Fallback" component={FallbackComponent} />
-            <Stack.Screen name="JournalEntry" component={JournalEntryScreen} />
-            <Stack.Screen name="Loading" component={LoadingScreen} />
-          </Stack.Navigator>
-        )}
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Summary" component={SummaryScreen} />
+          <Stack.Screen name="JournalEntry" component={JournalEntryScreen} />
+          <Stack.Screen name="Fallback" component={FallbackComponent} />
+          {/* Add a fallback route for unmatched routes */}
+          <Stack.Screen
+            name="NotFound"
+            component={FallbackComponent}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
       </NavigationContainer>
     </Provider>
   );
