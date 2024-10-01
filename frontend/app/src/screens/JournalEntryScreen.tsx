@@ -22,6 +22,7 @@ import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import SubMenu from "../components/JournalEntryMenu";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import {
   launchCamera,
   launchImageLibrary,
@@ -56,6 +57,8 @@ const JournalEntryScreen: React.FC = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -238,20 +241,36 @@ const JournalEntryScreen: React.FC = () => {
       logger("Invalid entryId:", entryId);
       return;
     }
-    dispatch(deleteJournalEntry(entryId))
-      .unwrap()
-      .then(() => {
-        dispatch(fetchJournalEntries());
-        setCurrentEntry(null);
-        setEditMode(false);
-        setInputText("");
-        setTitle("");
-        setSelectedCategory(null);
-        setImageUri(null);
-      })
-      .catch((error) => {
-        logger("Failed to delete entry:", error);
-      });
+    setEntryIdToDelete(entryId);
+    setModalOpen(true);
+  };
+
+  const confirmDeletion = () => {
+    if (entryIdToDelete) {
+      dispatch(deleteJournalEntry(entryIdToDelete))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchJournalEntries());
+          setCurrentEntry(null);
+          setEditMode(false);
+          setInputText("");
+          setTitle("");
+          setSelectedCategory(null);
+          setImageUri(null);
+        })
+        .catch((error) => {
+          logger("Failed to delete entry:", error);
+        })
+        .finally(() => {
+          setModalOpen(false);
+          setEntryIdToDelete(null);
+        });
+    }
+  };
+
+  const cancelDeletion = () => {
+    setModalOpen(false);
+    setEntryIdToDelete(null);
   };
 
   const handleDeleteImage = () => {
@@ -354,6 +373,11 @@ const JournalEntryScreen: React.FC = () => {
             )}
           </ScrollView>
         )}
+        <ConfirmDeleteModal
+          isOpen={isModalOpen}
+          onConfirm={confirmDeletion}
+          onCancel={cancelDeletion}
+        />
       </View>
       <View style={styles.footer}>
         <Pressable
