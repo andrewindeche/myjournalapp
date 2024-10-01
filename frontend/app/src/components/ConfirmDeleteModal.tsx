@@ -6,9 +6,7 @@ const ConfirmDeleteModal = ({ isOpen, onConfirm, onCancel }) =>
   isOpen ? (
     <View style={styles.overlay}>
       <View style={styles.modal}>
-        <Text style={styles.title}>
-          Are you sure you want to delete entries?
-        </Text>
+        <Text style={styles.title}>Are you sure you want to delete entry?</Text>
         <Pressable style={styles.button} onPress={onConfirm}>
           <Text style={styles.buttonText}>Yes</Text>
         </Pressable>
