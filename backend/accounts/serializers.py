@@ -4,6 +4,7 @@ from django.contrib.auth import password_validation
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth import get_user_model
+from firebase_admin import auth
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -82,7 +83,11 @@ class TokenObtainSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if not username or not password:
-            raise serializers.ValidationError("Both username and password are not valid.")
+            raise serializers.ValidationError("Both username and password are not valid.")   
+        if not username:
+            raise serializers.ValidationError({"username": "Username field is required."})      
+        if not password:
+            raise serializers.ValidationError({"password": "Password field is required."})
 
         return attrs
 

@@ -69,14 +69,12 @@ const loginSlice = createSlice({
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;
     },
-
     logout: (state) => {
       state.username = "";
       state.password = "";
       state.status = "idle";
       state.error = null;
     },
-
     reset: (state) => {
       state.username = "";
       state.password = "";
@@ -95,6 +93,18 @@ const loginSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });

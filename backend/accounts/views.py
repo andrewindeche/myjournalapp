@@ -5,7 +5,7 @@ from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User
 from django.contrib.auth import logout
-from rest_framework.permissions import IsAuthenticated
+from .firebase_serializers import FirebaseAuthTokenSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserProfileSerializer,TokenObtainSerializer,DeleteUserSerializer
@@ -78,10 +78,14 @@ class DeleteUserView(generics.DestroyAPIView):
     
 class FirebaseGoogleLoginView(generics.GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = FirebaseAuthTokenSerializer
 
     def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
         try:
-            firebase_token = request.data.get('firebase_auth_token')
+            firebase_token = serializer.validated_data['firebase_auth_token']
             decoded_token = auth.verify_id_token(firebase_token)
             firebase_uid = decoded_token['uid']
 

@@ -2,15 +2,17 @@
 /backend/.env
 /backend/db.sqlite3
 /backend/journalapplication/settings/myjournalapp-d25c7-firebase-adminsdk-ggayn-cf45b4e804.json
-/frontend/node_modules
-/frontend/dist/
+/backend/firebase/keys
 
-#backend
+#frontend
 # Ignoring files and directories inside 'frontend'
 /frontend/coverage/
 /frontend/node_modules
 /frontend/*.log
 /frontend/firebaseConfig.ts
+/frontend/node_modules
+/frontend/dist/
+/frontend/firebase.ts
 
 # Expo directories
 /frontend/.expo
