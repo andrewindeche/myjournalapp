@@ -31,14 +31,22 @@ export const loginUser = createAsyncThunk(
       dispatch(setToken(token));
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue("Please enter correct credentials.");
-      } else {
-        return rejectWithValue("Login failed. Please try again.");
+      if (error.response) {
+        if (error.response.data) {
+          const errorMessages = Object.entries(error.response.data).map(
+            ([key, value]) => `${key}: ${value.join(", ")}`,
+          );
+          return rejectWithValue(errorMessages.join(", "));
+        }
+        if (error.response.status === 401) {
+          return rejectWithValue("Please enter correct credentials.");
+        }
       }
+      return rejectWithValue("Login failed. Please try again.");
     }
   },
 );
+
 
 export const googleLogin = createAsyncThunk(
   "login/googleLogin",
@@ -69,14 +77,12 @@ const loginSlice = createSlice({
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;
     },
-
     logout: (state) => {
       state.username = "";
       state.password = "";
       state.status = "idle";
       state.error = null;
     },
-
     reset: (state) => {
       state.username = "";
       state.password = "";
@@ -95,6 +101,18 @@ const loginSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });
