@@ -77,7 +77,7 @@ const LoginScreen: React.FC = () => {
     } else if (error) {
       const timer = setTimeout(() => {
         dispatch(reset());
-      }, 1000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -181,7 +181,14 @@ const LoginScreen: React.FC = () => {
       </View>
 
       <View style={styles.errorContainer}>
-        {error && <Text style={styles.errorText}>{error}</Text>}
+        {Array.isArray(error)
+          ? error.map((msg, index) => (
+              <Text key={index} style={styles.errorText}>
+                {msg}
+              </Text>
+            ))
+          : error && <Text style={styles.errorText}>{error}</Text>}
+
         {isDisabled && (
           <Text style={styles.timerText}>
             Please wait {Math.floor(timer / 60)}:
@@ -195,12 +202,16 @@ const LoginScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   errorContainer: {
-    height: 80,
+    flex: 1,
+    height: 20,
     justifyContent: "center",
+    padding: 16,
   },
   errorText: {
     color: Colors.red,
-    textAlign: "center",
+    fontSize: 18,
+    lineHeight: 20,
+    marginTop: 3,
   },
   footer: {
     alignItems: "center",

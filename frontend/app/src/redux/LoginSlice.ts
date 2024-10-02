@@ -31,14 +31,22 @@ export const loginUser = createAsyncThunk(
       dispatch(setToken(token));
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue("Please enter correct credentials.");
-      } else {
-        return rejectWithValue("Login failed. Please try again.");
+      if (error.response) {
+        if (error.response.data) {
+          const errorMessages = Object.entries(error.response.data).map(
+            ([key, value]) => `${key}: ${value.join(", ")}`,
+          );
+          return rejectWithValue(errorMessages.join(", "));
+        }
+        if (error.response.status === 401) {
+          return rejectWithValue("Please enter correct credentials.");
+        }
       }
+      return rejectWithValue("Login failed. Please try again.");
     }
   },
 );
+
 
 export const googleLogin = createAsyncThunk(
   "login/googleLogin",
