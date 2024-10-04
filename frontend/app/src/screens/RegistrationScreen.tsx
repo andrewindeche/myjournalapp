@@ -65,6 +65,12 @@ const RegistrationScreen: React.FC = () => {
     }
   }, [successMessage, dispatch]);
 
+  useEffect(() => {
+    if (attempts >= 3) {
+      setModalVisible(true);
+    }
+  }, [attempts]);
+
   const validateFields = () => {
     const errors = {};
     if (!username) {
@@ -84,7 +90,6 @@ const RegistrationScreen: React.FC = () => {
 
   const handleSignUpPress = () => {
     const validationErrors = validateFields();
-
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setTimeout(() => {
@@ -95,12 +100,10 @@ const RegistrationScreen: React.FC = () => {
     dispatch(registerUser({ username, email, password, confirm_password }))
       .unwrap()
       .catch(() => {
-        setAttempts(attempts + 1);
-        if (attempts + 1 >= 3) {
-          setModalVisible(true);
-        }
+        setAttempts((prevAttempts) => prevAttempts + 1);
       });
   };
+
   return (
     <>
       <View style={styles.outerContainer}>
