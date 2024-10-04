@@ -73,7 +73,7 @@ const LoginScreen: React.FC = () => {
           console.error("Login failed: ", error);
         });
       setAttempts(attempts + 1);
-      if (attempts + 1 >= 3) {
+      if (attempts + 1 >= 4) {
         const newTimer = timer > 0 ? timer + 120 : 120;
         setTimer(newTimer);
         setIsDisabled(true);

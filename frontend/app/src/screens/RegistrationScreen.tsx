@@ -36,7 +36,7 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [attempts, setAttempts] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // Object to store specific error messages
 
   useEffect(() => {
     dispatch(reset());
@@ -50,7 +50,7 @@ const RegistrationScreen: React.FC = () => {
     } else if (error) {
       const timer = setTimeout(() => {
         dispatch(reset());
-      }, 5000);
+      }, 5000); // Clear global error after 5 seconds
 
       return () => clearTimeout(timer);
     }
@@ -65,10 +65,16 @@ const RegistrationScreen: React.FC = () => {
     }
   }, [successMessage, dispatch]);
 
+  useEffect(() => {
+    if (attempts >= 3) {
+      setModalVisible(true);
+    }
+  }, [attempts]);
+
   const validateFields = () => {
-    const errors = {};
+    const errors: { [key: string]: string } = {};
     if (!username) {
-      errors.username = "Username may not be blank";
+      errors.username = "Full Name may not be blank";
     }
     if (!email) {
       errors.email = "Email may not be blank";
@@ -84,23 +90,20 @@ const RegistrationScreen: React.FC = () => {
 
   const handleSignUpPress = () => {
     const validationErrors = validateFields();
-
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setTimeout(() => {
-        setErrors({});
+        setErrors({}); // Clear specific error messages after 4 seconds
       }, 4000);
       return;
     }
     dispatch(registerUser({ username, email, password, confirm_password }))
       .unwrap()
       .catch(() => {
-        setAttempts(attempts + 1);
-        if (attempts + 1 >= 3) {
-          setModalVisible(true);
-        }
+        setAttempts((prevAttempts) => prevAttempts + 1);
       });
   };
+
   return (
     <>
       <View style={styles.outerContainer}>
@@ -178,12 +181,13 @@ const RegistrationScreen: React.FC = () => {
           </View>
         </View>
       </View>
+
       <View style={styles.errorContainer}>
-        {Object.keys(errors).length > 0 && (
+        {error && (
           <View>
-            {Object.keys(errors).map((key) => (
+            {Object.keys(error).map((key) => (
               <Text key={key} style={styles.errorText}>
-                {errors[key]}
+                {error[key]}
               </Text>
             ))}
           </View>
@@ -226,6 +230,8 @@ const styles = StyleSheet.create({
   errorContainer: {
     height: 80,
     justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 10,
   },
   errorText: {
     color: Colors.red,
