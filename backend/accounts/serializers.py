@@ -16,11 +16,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email',  'password', 'confirm_password')
+        fields = ('username', 'email', 'password', 'confirm_password')
 
     def validate(self, data):
         errors = {}
-        
+
         if 'username' not in data or not data['username']:
             errors['username'] = "Username may not be blank."
         
@@ -50,13 +50,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         try:
             validate_password(data['password'])
-        except Exception as e:
-            errors['password'] = str(e)
+        except DjangoValidationError as e:
+            errors['password'] = list(e.messages)
 
         if errors:
             raise serializers.ValidationError(errors)
 
         return data
+
+    def create(self, validated_data):
+        validated_data.pop('confirm_password')
+        user = User.objects.create_user(**validated_data)
+        return user
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
