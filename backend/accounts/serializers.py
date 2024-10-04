@@ -19,32 +19,44 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('username', 'email',  'password', 'confirm_password')
 
     def validate(self, data):
-        if 'password' not in data or 'confirm_password' not in data:
-            raise serializers.ValidationError("Password and Confirm Password are required")
+        errors = {}
         
+        if 'username' not in data or not data['username']:
+            errors['username'] = "Username may not be blank."
+        
+        if 'email' not in data or not data['email']:
+            errors['email'] = "Email may not be blank."
+        
+        if 'password' not in data or not data['password']:
+            errors['password'] = "Password may not be blank."
+        
+        if 'confirm_password' not in data or not data['confirm_password']:
+            errors['confirm_password'] = "Confirm Password may not be blank."
+        
+        if errors:
+            raise serializers.ValidationError(errors)
+
         if data['password'] != data['confirm_password']:
-            raise serializers.ValidationError("Passwords do not match")
-        
+            errors['confirm_password'] = "Passwords do not match."
+
         username = data.get('username')
         email = data.get('email')
 
         if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("This username is already in use.")
+            errors['username'] = "This username is already in use."
         
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("This email address is already registered.")
+            errors['email'] = "This email address is already registered."
         
         try:
             validate_password(data['password'])
         except Exception as e:
-            raise serializers.ValidationError(str(e))
+            errors['password'] = str(e)
+
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return data
-
-    def create(self, validated_data):
-        validated_data.pop('confirm_password')
-        user = User.objects.create_user(**validated_data)
-        return user
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,9 +95,9 @@ class TokenObtainSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if not username or not password:
-            raise serializers.ValidationError("Both username and password are not valid.")   
+            raise serializers.ValidationError("Both username and password are not valid.") 
         if not username:
-            raise serializers.ValidationError({"username": "Username field is required."})      
+            raise serializers.ValidationError({"username": "Username field is required."})    
         if not password:
             raise serializers.ValidationError({"password": "Password field is required."})
 

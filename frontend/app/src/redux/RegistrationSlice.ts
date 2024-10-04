@@ -41,12 +41,17 @@ export const registerUser = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
-      if (error.response.status === 400) {
-        return rejectWithValue(error.response.data);
+      if (error.response && error.response.status === 400) {
+        const formattedErrors = Object.entries(error.response.data).reduce(
+          (acc, [key, value]) => {
+            acc[key] = value.join(" ");
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
+        return rejectWithValue(formattedErrors);
       }
-      return rejectWithValue(
-        error.response.data.errors || "An unknown error occurred.",
-      );
+      return rejectWithValue("An unknown error occurred.");
     }
   },
 );
