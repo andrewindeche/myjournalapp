@@ -17,6 +17,7 @@
 # Expo directories
 /frontend/.expo
 /frontend/.expo-shared
+/frontend/app/src/firebaseConfig.ts
 
 # Yarn Integrity file
 /frontend/.yarn-integrity
