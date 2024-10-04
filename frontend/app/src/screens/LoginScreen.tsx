@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Colors } from "../colors";
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -31,9 +38,26 @@ const LoginScreen: React.FC = () => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
 
+  // Disable navigation when the timer is counting
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (timer > 0) {
+        e.preventDefault();
+        Alert.alert(
+          "Action not allowed",
+          `Please wait for ${Math.floor(timer / 60)}:${("0" + (timer % 60)).slice(-2)} before navigating.`,
+        );
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, timer]);
+
   const handleSignUpPress = () => {
-    navigation.navigate("Register");
-    dispatch(reset());
+    if (timer === 0) {
+      navigation.navigate("Register");
+      dispatch(reset());
+    }
   };
 
   const handleSignInPress = () => {
@@ -60,7 +84,7 @@ const LoginScreen: React.FC = () => {
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
-        setTimer(timer - 1);
+        setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
 
       if (timer === 1) {
@@ -210,6 +234,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: Colors.red,
     fontSize: 18,
+    justifyContent: "center",
     lineHeight: 20,
     marginTop: 3,
   },
