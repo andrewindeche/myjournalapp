@@ -430,6 +430,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+    padding: 4,
   },
   categoryInput: {
     backgroundColor: Colors.categoryInput,
@@ -456,7 +457,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 10,
-    padding: 20,
+    padding: 4,
   },
   deleteImageButton: {
     backgroundColor: Colors.red,
@@ -516,7 +517,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    padding: 10,
+    padding: 3,
   },
   titleInput: {
     backgroundColor: Colors.footer,
