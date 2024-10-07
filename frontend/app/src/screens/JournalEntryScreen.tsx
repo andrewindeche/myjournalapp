@@ -9,6 +9,7 @@ import {
   Image,
   Alert,
   ScrollView,
+  PanResponder,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -59,6 +60,11 @@ const JournalEntryScreen: React.FC = () => {
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
+  const [isColorPaletteVisible, setIsColorPaletteVisible] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState(Colors.background);
+  const handleColorSelect = (color: string) => {
+    setBackgroundColor(color);
+  };
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -131,6 +137,24 @@ const JournalEntryScreen: React.FC = () => {
       }
     });
   };
+
+  const toggleColorPalette = () => {
+    setIsColorPaletteVisible((prev) => !prev);
+  };
+
+  const panResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: (evt, gestureState) => {
+      return Math.abs(gestureState.dy) > 20;
+    },
+    onPanResponderMove: (evt, gestureState) => {},
+    onPanResponderRelease: (evt, gestureState) => {
+      if (gestureState.dy < -50) {
+        setIsColorPaletteVisible(true);
+      } else if (gestureState.dy > 50) {
+        setIsColorPaletteVisible(false);
+      }
+    },
+  });
 
   const handleTakePhoto = () => {
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
@@ -291,8 +315,22 @@ const JournalEntryScreen: React.FC = () => {
     }
   };
 
+  const ColorPalette = ({ onColorSelect }) => {
+    return (
+      <View style={styles.colorPaletteContainer}>
+        {Colors.palette.map((color) => (
+          <Pressable
+            key={color}
+            onPress={() => onColorSelect(color)}
+            style={[styles.colorOption, { backgroundColor: color }]}
+          />
+        ))}
+      </View>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.content}>
         {editMode ? (
           <>
@@ -379,6 +417,21 @@ const JournalEntryScreen: React.FC = () => {
           onCancel={cancelDeletion}
         />
       </View>
+      <View style={styles.colorPaletteHeader}>
+        <Text>Select Background Color:</Text>
+        <Pressable onPress={toggleColorPalette}>
+          <Icon
+            name={isColorPaletteVisible ? "chevron-up" : "chevron-down"}
+            size={28}
+            color="black"
+          />
+        </Pressable>
+      </View>
+      {isColorPaletteVisible && (
+        <View {...panResponder.panHandlers} style={styles.colorPaletteWrapper}>
+          <ColorPalette onColorSelect={handleColorSelect} />
+        </View>
+      )}
       <View style={styles.footer}>
         <Pressable
           onPress={() => {
@@ -430,6 +483,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+    padding: 4,
   },
   categoryInput: {
     backgroundColor: Colors.categoryInput,
@@ -440,6 +494,34 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom: 10,
     padding: 10,
+  },
+  colorOption: {
+    borderColor: Colors.black,
+    borderRadius: 20,
+    borderWidth: 1,
+    height: 40,
+    width: 40,
+  },
+  colorPaletteContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
+  },
+  colorPaletteHeader: {
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  colorPaletteWrapper: {
+    alignItems: "center",
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    bottom: 200,
+    elevation: 5,
+    left: 20,
+    padding: 10,
+    position: "absolute",
+    right: 20,
   },
   container: {
     backgroundColor: Colors.background,
@@ -456,7 +538,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 10,
-    padding: 20,
+    padding: 4,
   },
   deleteImageButton: {
     backgroundColor: Colors.red,
@@ -500,7 +582,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 60,
     justifyContent: "space-around",
-    paddingVertical: 10,
+    padding: 10,
   },
   popup: {
     backgroundColor: Colors.categoryInput,
@@ -516,7 +598,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    padding: 10,
+    padding: 3,
   },
   titleInput: {
     backgroundColor: Colors.footer,

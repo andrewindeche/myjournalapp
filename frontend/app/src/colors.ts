@@ -32,4 +32,13 @@ export const Colors = {
   charcoal: "#222",
   semiBlack: "rgba(0,0,0,0.5)",
   googleButtonBackground: "#020035",
+  palette: [
+    "#F0F8FF",
+    "#FFE4C4",
+    "#98FB98",
+    "#AFEEEE",
+    "#FFFACD",
+    "#FFB6C1",
+    "#FFFFFF",
+  ],
 } as const;
