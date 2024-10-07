@@ -36,7 +36,7 @@ const RegistrationScreen: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [attempts, setAttempts] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // Object to store specific error messages
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     dispatch(reset());
@@ -50,7 +50,7 @@ const RegistrationScreen: React.FC = () => {
     } else if (error) {
       const timer = setTimeout(() => {
         dispatch(reset());
-      }, 5000); // Clear global error after 5 seconds
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -68,6 +68,8 @@ const RegistrationScreen: React.FC = () => {
   useEffect(() => {
     if (attempts >= 3) {
       setModalVisible(true);
+    } else {
+      setModalVisible(false);
     }
   }, [attempts]);
 
@@ -90,17 +92,35 @@ const RegistrationScreen: React.FC = () => {
 
   const handleSignUpPress = () => {
     const validationErrors = validateFields();
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setTimeout(() => {
-        setErrors({}); // Clear specific error messages after 4 seconds
+        setErrors({});
       }, 4000);
       return;
     }
+
     dispatch(registerUser({ username, email, password, confirm_password }))
       .unwrap()
-      .catch(() => {
+      .catch((error) => {
+        console.error("Registration Error:", error);
+        const backendErrors: { [key: string]: string } = {};
+        if (error.username) {
+          backendErrors.username = error.username;
+        }
+        if (error.email) {
+          backendErrors.email = error.email;
+        }
+        if (error.password) {
+          backendErrors.password = error.password;
+        }
+        setErrors(backendErrors);
         setAttempts((prevAttempts) => prevAttempts + 1);
+
+        setTimeout(() => {
+          setErrors({});
+        }, 4000);
       });
   };
 
@@ -183,11 +203,11 @@ const RegistrationScreen: React.FC = () => {
       </View>
 
       <View style={styles.errorContainer}>
-        {error && (
+        {Object.keys(errors).length > 0 && (
           <View>
-            {Object.keys(error).map((key) => (
+            {Object.keys(errors).map((key) => (
               <Text key={key} style={styles.errorText}>
-                {error[key]}
+                {errors[key]}
               </Text>
             ))}
           </View>
@@ -228,9 +248,9 @@ const RegistrationScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   errorContainer: {
+    alignItems: "center",
     height: 80,
     justifyContent: "center",
-    alignItems: "center",
     marginVertical: 10,
   },
   errorText: {
