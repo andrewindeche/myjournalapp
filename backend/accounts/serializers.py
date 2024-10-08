@@ -100,9 +100,9 @@ class TokenObtainSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if not username or not password:
-            raise serializers.ValidationError("Both username and password are not valid.") 
+            raise serializers.ValidationError("Both username and password are not valid.")
         if not username:
-            raise serializers.ValidationError({"username": "Username field is required."})    
+            raise serializers.ValidationError({"username": "Username field is required."})   
         if not password:
             raise serializers.ValidationError({"password": "Password field is required."})
 
@@ -119,7 +119,21 @@ class TokenPairSerializer(serializers.Serializer):
         pass
     
 class LoginSerializer(TokenObtainPairSerializer):
-    pass
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if not username or not password:
+            raise serializers.ValidationError(_("Both username and password are required."))
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(_("User with this username does not exist."))
+
+        if not user.check_password(password):
+            raise serializers.ValidationError(_("Incorrect password for this username."))
+
+        return super().validate(attrs)
 
 class DeleteUserSerializer(serializers.Serializer):
     """
