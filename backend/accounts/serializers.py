@@ -21,33 +21,23 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         errors = {}
 
-        if 'username' not in data or not data['username']:
+        if not data.get('username', '').strip():
             errors['username'] = "Username may not be blank."
-        
-        if 'email' not in data or not data['email']:
+        if not data.get('email', '').strip():
             errors['email'] = "Email may not be blank."
-        
-        if 'password' not in data or not data['password']:
+        if not data.get('password', '').strip():
             errors['password'] = "Password may not be blank."
-        
-        if 'confirm_password' not in data or not data['confirm_password']:
+        if not data.get('confirm_password', '').strip():
             errors['confirm_password'] = "Confirm Password may not be blank."
-        
-        if errors:
-            raise serializers.ValidationError(errors)
 
-        if data['password'] != data['confirm_password']:
+        if data.get('password') != data.get('confirm_password'):
             errors['confirm_password'] = "Passwords do not match."
 
-        username = data.get('username')
-        email = data.get('email')
-
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=data.get('username')).exists():
             errors['username'] = "This username is already in use."
-        
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=data.get('email')).exists():
             errors['email'] = "This email address is already registered."
-        
+
         try:
             validate_password(data['password'])
         except DjangoValidationError as e:

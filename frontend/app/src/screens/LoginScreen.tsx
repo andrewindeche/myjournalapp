@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: Colors.red,
+    flex: 1,
     marginVertical: 10,
     textAlign: "center",
   },

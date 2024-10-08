@@ -73,50 +73,18 @@ const RegistrationScreen: React.FC = () => {
     }
   }, [attempts]);
 
-  const validateFields = () => {
-    const errors: { [key: string]: string } = {};
-    if (!username) {
-      errors.username = "Full Name may not be blank";
-    }
-    if (!email) {
-      errors.email = "Email may not be blank";
-    }
-    if (!password) {
-      errors.password = "Password may not be blank";
-    }
-    if (password !== confirm_password) {
-      errors.confirm_password = "Passwords do not match";
-    }
-    return errors;
-  };
-
   const handleSignUpPress = () => {
-    const validationErrors = validateFields();
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setTimeout(() => {
-        setErrors({});
-      }, 4000);
-      return;
-    }
-
     dispatch(registerUser({ username, email, password, confirm_password }))
       .unwrap()
+      .then(() => {
+        navigation.navigate("Login", {
+          successMessage: "Account created successfully!",
+        });
+      })
       .catch((error) => {
         console.error("Registration Error:", error);
-        const backendErrors: { [key: string]: string } = {};
-        if (error.username) {
-          backendErrors.username = error.username;
-        }
-        if (error.email) {
-          backendErrors.email = error.email;
-        }
-        if (error.password) {
-          backendErrors.password = error.password;
-        }
-        setErrors(backendErrors);
-        setAttempts((prevAttempts) => prevAttempts + 1);
+        setErrors(error);
+        setAttempts((prev) => prev + 1);
 
         setTimeout(() => {
           setErrors({});
