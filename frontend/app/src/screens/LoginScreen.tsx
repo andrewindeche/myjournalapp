@@ -233,10 +233,9 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: Colors.red,
-    fontSize: 18,
-    justifyContent: "center",
-    lineHeight: 20,
-    marginTop: 3,
+    flex: 1,
+    marginVertical: 10,
+    textAlign: "center",
   },
   footer: {
     alignItems: "center",

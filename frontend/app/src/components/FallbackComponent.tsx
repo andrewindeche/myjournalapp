@@ -1,8 +1,20 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
+import { NavigationProp } from "@react-navigation/native";
 import { Colors } from "../colors";
 
-const FallbackComponent: React.FC = ({ navigation }: any) => {
+type RootStackParamList = {
+  Home: undefined;
+  Profile: { userId: string };
+};
+
+interface FallbackComponentProps {
+  navigation: NavigationProp<RootStackParamList>;
+}
+
+const FallbackComponent: React.FC<FallbackComponentProps> = ({
+  navigation,
+}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.message}>Page not found</Text>

@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth import get_user_model
 from firebase_admin import auth
+from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -21,33 +22,23 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         errors = {}
 
-        if 'username' not in data or not data['username']:
+        if not data.get('username', '').strip():
             errors['username'] = "Username may not be blank."
-        
-        if 'email' not in data or not data['email']:
+        if not data.get('email', '').strip():
             errors['email'] = "Email may not be blank."
-        
-        if 'password' not in data or not data['password']:
+        if not data.get('password', '').strip():
             errors['password'] = "Password may not be blank."
-        
-        if 'confirm_password' not in data or not data['confirm_password']:
+        if not data.get('confirm_password', '').strip():
             errors['confirm_password'] = "Confirm Password may not be blank."
-        
-        if errors:
-            raise serializers.ValidationError(errors)
 
-        if data['password'] != data['confirm_password']:
+        if data.get('password') != data.get('confirm_password'):
             errors['confirm_password'] = "Passwords do not match."
 
-        username = data.get('username')
-        email = data.get('email')
-
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=data.get('username')).exists():
             errors['username'] = "This username is already in use."
-        
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=data.get('email')).exists():
             errors['email'] = "This email address is already registered."
-        
+
         try:
             validate_password(data['password'])
         except DjangoValidationError as e:
@@ -100,9 +91,9 @@ class TokenObtainSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if not username or not password:
-            raise serializers.ValidationError("Both username and password are not valid.") 
+            raise serializers.ValidationError("Both username and password are not valid.")
         if not username:
-            raise serializers.ValidationError({"username": "Username field is required."})    
+            raise serializers.ValidationError({"username": "Username field is required."})   
         if not password:
             raise serializers.ValidationError({"password": "Password field is required."})
 
@@ -119,7 +110,21 @@ class TokenPairSerializer(serializers.Serializer):
         pass
     
 class LoginSerializer(TokenObtainPairSerializer):
-    pass
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if not username or not password:
+            raise serializers.ValidationError(_("Both username and password are required."))
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(_("User with this username does not exist."))
+
+        if not user.check_password(password):
+            raise serializers.ValidationError(_("Incorrect password for this username."))
+
+        return super().validate(attrs)
 
 class DeleteUserSerializer(serializers.Serializer):
     """

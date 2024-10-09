@@ -2,7 +2,17 @@ import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Colors } from "../colors";
 
-const ConfirmDeleteModal = ({ isOpen, onConfirm, onCancel }) =>
+interface ConfirmDeleteModalProps {
+  isOpen: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
+  isOpen,
+  onConfirm,
+  onCancel,
+}) =>
   isOpen ? (
     <View style={styles.overlay}>
       <View style={styles.modal}>
