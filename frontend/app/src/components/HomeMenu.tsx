@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Pressable, StyleSheet, PanResponder } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -7,8 +7,13 @@ import { NavigationProp } from "@react-navigation/native";
 import { Colors } from "../colors";
 import LogoutConfirmationModal from "./LogoutConfirmationModal";
 
+type RootStackParamList = {
+  Home: undefined;
+  Profile: { userId: string };
+};
+
 interface MenuProps {
-  navigation: NavigationProp<any>;
+  navigation: NavigationProp<RootStackParamList>;
   onDeleteAccount: () => void;
 }
 
