@@ -379,7 +379,7 @@ const JournalEntryScreen: React.FC = () => {
           <ScrollView>
             {currentEntry ? (
               <Pressable
-                style={styles.entryContainer}
+                style={[styles.entryContainer, { backgroundColor }]}
                 onPress={() => handleEditEntry(currentEntry)}
               >
                 <Text style={styles.date}>
