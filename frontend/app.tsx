@@ -13,7 +13,6 @@ import SummaryScreen from "./app/src/screens/SummaryScreen";
 import LoadingScreen from "./app/src/components/LoadingScreen";
 import FallbackComponent from "./app/src/components/FallbackComponent";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +29,7 @@ const App: React.FC = () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (error) {
-        console.error(error);
+        /* empty */
       } finally {
         setLoading(false);
         SplashScreen.hideAsync();
@@ -61,7 +60,6 @@ const App: React.FC = () => {
           <Stack.Screen name="Summary" component={SummaryScreen} />
           <Stack.Screen name="JournalEntry" component={JournalEntryScreen} />
           <Stack.Screen name="Fallback" component={FallbackComponent} />
-          {/* Add a fallback route for unmatched routes */}
           <Stack.Screen
             name="NotFound"
             component={FallbackComponent}
@@ -72,20 +70,5 @@ const App: React.FC = () => {
     </Provider>
   );
 };
-
-interface CustomTextProps {
-  style?: object;
-  children: ReactNode;
-}
-
-const CustomText: React.FC<CustomTextProps> = ({ style, children }) => {
-  return <Text style={[styles.defaultFont, style]}>{children}</Text>;
-};
-
-const styles = StyleSheet.create({
-  defaultFont: {
-    fontFamily: "Mulish-Black",
-  },
-});
 
 export default App;
