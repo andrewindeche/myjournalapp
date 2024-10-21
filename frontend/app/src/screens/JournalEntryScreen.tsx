@@ -40,11 +40,12 @@ interface JournalEntry {
   created_at: string;
   content_text?: string;
   content_image?: { uri: string; name: string } | null;
+  entryId?: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
   const route = useRoute();
-  const entryId = route.params?.entryId || null;
+  const entryId = (route.params as JournalEntry)?.entryId || null;
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
