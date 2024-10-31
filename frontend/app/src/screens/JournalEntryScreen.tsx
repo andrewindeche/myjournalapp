@@ -103,6 +103,7 @@ const JournalEntryScreen: React.FC = () => {
   };
 
   const handleImageUpload = () => {
+    if (!editMode) return;
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
@@ -113,13 +114,6 @@ const JournalEntryScreen: React.FC = () => {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
-            const isBase64 = uri.startsWith("data:image");
-            if (isBase64) {
-              logger("Picked base64 image URI:", uri);
-            } else {
-              logger("Picked image URI:", uri);
-            }
-
             setImageUri(uri);
             if (currentEntry) {
               const updatedEntry = {
@@ -158,25 +152,19 @@ const JournalEntryScreen: React.FC = () => {
   });
 
   const handleTakePhoto = () => {
+    if (!editMode) return;
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
       if (response.didCancel) {
-        logger("User cancelled image picker");
+        logger("User cancelled camera");
       } else if (response.errorCode) {
-        logger("ImagePicker Error: ", response.errorMessage);
+        logger("Camera Error: ", response.errorMessage);
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
-            const isBase64 = uri.startsWith("data:image");
-            if (isBase64) {
-              logger("Picked base64 image URI:", uri);
-            } else {
-              logger("Picked image URI:", uri);
-            }
-
             setImageUri(uri);
-            if (editEntryId) {
+            if (currentEntry) {
               const updatedEntry = {
                 ...currentEntry,
                 content_image: {
@@ -185,7 +173,7 @@ const JournalEntryScreen: React.FC = () => {
                 },
               };
               dispatch(
-                updateJournalEntry({ id: editEntryId, ...updatedEntry }),
+                updateJournalEntry({ id: currentEntry.id, ...updatedEntry }),
               );
             }
           }
@@ -198,8 +186,7 @@ const JournalEntryScreen: React.FC = () => {
     if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
-        content_text: inputText || "",
-        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
+        content: [{ uri: imageUri, caption: "Sample Image" }, inputText],
         title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
@@ -365,6 +352,11 @@ const JournalEntryScreen: React.FC = () => {
               placeholder="Enter category"
               onChangeText={(text) => setSelectedCategory(text)}
             />
+            <Pressable onPress={handleImageUpload} disabled={!editMode}>
+              <View style={styles.roundIconContainer}>
+                <Icon name="image" size={28} color="black" />
+              </View>
+            </Pressable>
             <Pressable
               onPress={handleAddEntry}
               style={[
@@ -591,6 +583,15 @@ const styles = StyleSheet.create({
     marginVertical: 45,
     position: "absolute",
     right: 10,
+  },
+  roundIconContainer: {
+    alignItems: "center",
+    backgroundColor: Colors.lightGray,
+    borderRadius: 25,
+    height: 50,
+    justifyContent: "center",
+    margin: 10,
+    width: 50,
   },
   title: {
     borderColor: Colors.borderColor,
