@@ -296,10 +296,14 @@ const JournalEntryScreen: React.FC = () => {
         .then(() => {
           setCurrentEntry(updatedEntry);
           setImageUri(null);
+          Alert.alert("Image deleted successfully");
         })
         .catch((error) => {
           logger("Failed to delete image:", error);
+          Alert.alert("Failed to delete image", error.message);
         });
+    } else {
+      Alert.alert("No image to delete or entry not found");
     }
   };
 
@@ -352,11 +356,23 @@ const JournalEntryScreen: React.FC = () => {
               placeholder="Enter category"
               onChangeText={(text) => setSelectedCategory(text)}
             />
-            <Pressable onPress={handleImageUpload} disabled={!editMode}>
-              <View style={styles.roundIconContainer}>
-                <Icon name="image" size={28} color="black" />
-              </View>
-            </Pressable>
+            <View style={styles.iconRow}>
+              <Pressable onPress={handleImageUpload} disabled={!editMode}>
+                <View style={styles.roundIconContainer}>
+                  <Icon name="image" size={28} color="black" />
+                </View>
+              </Pressable>
+              <Pressable onPress={handleTakePhoto}>
+                <View style={styles.roundIconContainer}>
+                  <Icon
+                    name="camera"
+                    size={28}
+                    color="black"
+                    style={styles.iconStyle}
+                  />
+                </View>
+              </Pressable>
+            </View>
             <Pressable
               onPress={handleAddEntry}
               style={[
@@ -435,12 +451,6 @@ const JournalEntryScreen: React.FC = () => {
           }}
         >
           <Icon name="pencil" size={28} color="black" />
-        </Pressable>
-        <Pressable onPress={handleImageUpload}>
-          <Icon name="image" size={28} color="black" />
-        </Pressable>
-        <Pressable onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" />
         </Pressable>
         <Pressable
           onPress={() => handleDeleteEntry(Number(currentEntry?.id) || null)}
@@ -577,6 +587,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
   },
+  iconRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+  },
+  iconStyle: {
+    alignSelf: "center",
+    textAlign: "center",
+  },
   popup: {
     backgroundColor: Colors.categoryInput,
     marginBottom: 500,
@@ -586,12 +606,12 @@ const styles = StyleSheet.create({
   },
   roundIconContainer: {
     alignItems: "center",
-    backgroundColor: Colors.lightGray,
-    borderRadius: 25,
-    height: 50,
+    backgroundColor: Colors.white,
+    borderRadius: 50,
+    height: 60,
     justifyContent: "center",
-    margin: 10,
-    width: 50,
+    padding: 10,
+    width: 60,
   },
   title: {
     borderColor: Colors.borderColor,
