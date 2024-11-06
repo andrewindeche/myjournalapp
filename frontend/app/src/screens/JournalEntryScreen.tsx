@@ -8,6 +8,7 @@ import {
   Pressable,
   Image,
   Alert,
+  ActivityIndicator,
   ScrollView,
   PanResponder,
 } from "react-native";
@@ -63,6 +64,8 @@ const JournalEntryScreen: React.FC = () => {
   const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
   const [isColorPaletteVisible, setIsColorPaletteVisible] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(Colors.background);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [takingPhoto, setTakingPhoto] = useState(false);
   const handleColorSelect = (color: string) => {
     setBackgroundColor(color);
   };
@@ -102,8 +105,10 @@ const JournalEntryScreen: React.FC = () => {
     }
   };
 
-  const handleImageUpload = () => {
+  const handleImageUpload = async () => {
     if (!editMode) return;
+
+    setUploadingImage(true);
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
@@ -130,6 +135,7 @@ const JournalEntryScreen: React.FC = () => {
           }
         }
       }
+      setUploadingImage(false);
     });
   };
 
@@ -153,6 +159,8 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleTakePhoto = () => {
     if (!editMode) return;
+
+    setTakingPhoto(true);
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
       if (response.didCancel) {
@@ -179,6 +187,7 @@ const JournalEntryScreen: React.FC = () => {
           }
         }
       }
+      setTakingPhoto(false);
     });
   };
 
@@ -357,19 +366,25 @@ const JournalEntryScreen: React.FC = () => {
               onChangeText={(text) => setSelectedCategory(text)}
             />
             <View style={styles.iconRow}>
-              <Pressable onPress={handleImageUpload} disabled={!editMode}>
+              <Pressable
+                onPress={handleImageUpload}
+                disabled={!editMode || uploadingImage}
+              >
                 <View style={styles.roundIconContainer}>
-                  <Icon name="image" size={28} color="black" />
+                  {uploadingImage ? (
+                    <ActivityIndicator size="small" color="black" />
+                  ) : (
+                    <Icon name="image" size={28} color="black" />
+                  )}
                 </View>
               </Pressable>
-              <Pressable onPress={handleTakePhoto}>
+              <Pressable onPress={handleTakePhoto} disabled={takingPhoto}>
                 <View style={styles.roundIconContainer}>
-                  <Icon
-                    name="camera"
-                    size={28}
-                    color="black"
-                    style={styles.iconStyle}
-                  />
+                  {takingPhoto ? (
+                    <ActivityIndicator size="small" color="black" />
+                  ) : (
+                    <Icon name="camera" size={28} color="black" />
+                  )}
                 </View>
               </Pressable>
             </View>
@@ -592,10 +607,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-  },
-  iconStyle: {
-    alignSelf: "center",
-    textAlign: "center",
+    width: "100%",
   },
   popup: {
     backgroundColor: Colors.categoryInput,
