@@ -5,6 +5,7 @@ export const Colors = {
   borderColor: "#ccc",
   color: "#cb7723",
   blue: "#02003d",
+  disabledGray: "#d3d3d3",
   white: "white",
   red: "red",
   loginBackgroundColor: "#020035",
