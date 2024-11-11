@@ -3,7 +3,7 @@
 |Tool                | Description                    | Tags for tools used                                                                                               |
 | ------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | 1.GitHub| Version Control| [Version-Control]; [Repo];|
-| 2.React Native| Native FrontEnd Framework| [Typescript]; [Mobile Device];|
+| 2.React Native| Native Front End Framework| [Typescript]; [Mobile Device];|
 | 3.Django |  Python Based Backend Framework| [python]; [Django];|
 | 4.ESLint| Linting Framework| [Lint]; [syntax];|
 | 5.PostgresQl | Relational Database| [Relational Integrity]; [Database];|

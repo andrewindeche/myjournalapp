@@ -486,7 +486,8 @@ const JournalEntryScreen: React.FC = () => {
           <Icon
             name="trash-bin"
             size={28}
-            color={editMode ? Colors.gray : "black"}
+            color="black"
+            style={editMode ? styles.iconHidden : styles.icon}
           />
         </Pressable>
         <View style={styles.popup}>
@@ -619,6 +620,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
   },
+  icon: { 
+    display: "flex",
+    opacity: 1 },
+  iconHidden: { 
+    display: "none", 
+    opacity: 0 },
   iconRow: {
     alignItems: "center",
     flexDirection: "row",
