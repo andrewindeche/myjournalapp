@@ -11,7 +11,7 @@
 | 7.Metro | Native Bundler| [Bundle];|
 | 8.Pipenv | Package/Dependency manager| [Virtual Environment];[Dependency];|
 | 9.Circleci | CI/Cd Pipeline| [continuous integration];[continuous delivery];|
-| 10.Jest | Unit testing| [unit testing];[ snapshot];|
+| 10.Cypress | E2E testing| [ E2E ];[ UI Testing];|
 
 ## <h1> Description</h1>
 <p>The aim of the project is to build a journaling app using React Native for frontend and Python Django for backend </p>

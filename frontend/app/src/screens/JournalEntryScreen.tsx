@@ -8,6 +8,7 @@ import {
   Pressable,
   Image,
   Alert,
+  ActivityIndicator,
   ScrollView,
   PanResponder,
 } from "react-native";
@@ -40,11 +41,12 @@ interface JournalEntry {
   created_at: string;
   content_text?: string;
   content_image?: { uri: string; name: string } | null;
+  entryId?: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
   const route = useRoute();
-  const entryId = route.params?.entryId || null;
+  const entryId = (route.params as JournalEntry)?.entryId || null;
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
@@ -62,6 +64,8 @@ const JournalEntryScreen: React.FC = () => {
   const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
   const [isColorPaletteVisible, setIsColorPaletteVisible] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(Colors.background);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [takingPhoto, setTakingPhoto] = useState(false);
   const handleColorSelect = (color: string) => {
     setBackgroundColor(color);
   };
@@ -70,6 +74,12 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (imageUri) {
+      console.log("Image URI:", imageUri);
+    }
+  }, [imageUri]);
 
   useEffect(() => {
     const entry = journalEntries.find((e) => e.id === entryId);
@@ -101,7 +111,10 @@ const JournalEntryScreen: React.FC = () => {
     }
   };
 
-  const handleImageUpload = () => {
+  const handleImageUpload = async () => {
+    if (!editMode) return;
+
+    setUploadingImage(true);
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
@@ -111,14 +124,8 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
+          console.log("Selected image URI:", uri);
           if (uri) {
-            const isBase64 = uri.startsWith("data:image");
-            if (isBase64) {
-              logger("Picked base64 image URI:", uri);
-            } else {
-              logger("Picked image URI:", uri);
-            }
-
             setImageUri(uri);
             if (currentEntry) {
               const updatedEntry = {
@@ -135,6 +142,7 @@ const JournalEntryScreen: React.FC = () => {
           }
         }
       }
+      setUploadingImage(false);
     });
   };
 
@@ -157,25 +165,21 @@ const JournalEntryScreen: React.FC = () => {
   });
 
   const handleTakePhoto = () => {
+    if (!editMode) return;
+
+    setTakingPhoto(true);
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
       if (response.didCancel) {
-        logger("User cancelled image picker");
+        logger("User cancelled camera");
       } else if (response.errorCode) {
-        logger("ImagePicker Error: ", response.errorMessage);
+        logger("Camera Error: ", response.errorMessage);
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
           if (uri) {
-            const isBase64 = uri.startsWith("data:image");
-            if (isBase64) {
-              logger("Picked base64 image URI:", uri);
-            } else {
-              logger("Picked image URI:", uri);
-            }
-
             setImageUri(uri);
-            if (editEntryId) {
+            if (currentEntry) {
               const updatedEntry = {
                 ...currentEntry,
                 content_image: {
@@ -184,12 +188,13 @@ const JournalEntryScreen: React.FC = () => {
                 },
               };
               dispatch(
-                updateJournalEntry({ id: editEntryId, ...updatedEntry }),
+                updateJournalEntry({ id: currentEntry.id, ...updatedEntry }),
               );
             }
           }
         }
       }
+      setTakingPhoto(false);
     });
   };
 
@@ -197,8 +202,7 @@ const JournalEntryScreen: React.FC = () => {
     if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
-        content_text: inputText || "",
-        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
+        content: [{ uri: imageUri, caption: "Sample Image" }, inputText],
         title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
@@ -308,10 +312,14 @@ const JournalEntryScreen: React.FC = () => {
         .then(() => {
           setCurrentEntry(updatedEntry);
           setImageUri(null);
+          Alert.alert("Image deleted successfully");
         })
         .catch((error) => {
           logger("Failed to delete image:", error);
+          Alert.alert("Failed to delete image", error.message);
         });
+    } else {
+      Alert.alert("No image to delete or entry not found");
     }
   };
 
@@ -364,6 +372,29 @@ const JournalEntryScreen: React.FC = () => {
               placeholder="Enter category"
               onChangeText={(text) => setSelectedCategory(text)}
             />
+            <View style={styles.iconRow}>
+              <Pressable
+                onPress={handleImageUpload}
+                disabled={!editMode || uploadingImage}
+              >
+                <View style={styles.roundIconContainer}>
+                  {uploadingImage ? (
+                    <ActivityIndicator size="small" color="black" />
+                  ) : (
+                    <Icon name="image" size={28} color="black" />
+                  )}
+                </View>
+              </Pressable>
+              <Pressable onPress={handleTakePhoto} disabled={takingPhoto}>
+                <View style={styles.roundIconContainer}>
+                  {takingPhoto ? (
+                    <ActivityIndicator size="small" color="black" />
+                  ) : (
+                    <Icon name="camera" size={28} color="black" />
+                  )}
+                </View>
+              </Pressable>
+            </View>
             <Pressable
               onPress={handleAddEntry}
               style={[
@@ -443,16 +474,20 @@ const JournalEntryScreen: React.FC = () => {
         >
           <Icon name="pencil" size={28} color="black" />
         </Pressable>
-        <Pressable onPress={handleImageUpload}>
-          <Icon name="image" size={28} color="black" />
-        </Pressable>
-        <Pressable onPress={handleTakePhoto}>
-          <Icon name="camera" size={28} color="black" />
-        </Pressable>
         <Pressable
-          onPress={() => handleDeleteEntry(Number(currentEntry?.id) || null)}
+          onPress={() => {
+            if (!editMode) {
+              handleDeleteEntry(Number(currentEntry?.id) || null);
+            }
+          }}
+          disabled={editMode}
+          style={editMode && { backgroundColor: Colors.disabledGray }}
         >
-          <Icon name="trash-bin" size={28} color="black" />
+          <Icon
+            name="trash-bin"
+            size={28}
+            color={editMode ? Colors.gray : "black"}
+          />
         </Pressable>
         <View style={styles.popup}>
           {showMenu && (
@@ -584,12 +619,28 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
   },
+  iconRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    width: "100%",
+  },
   popup: {
     backgroundColor: Colors.categoryInput,
     marginBottom: 500,
     marginVertical: 45,
     position: "absolute",
     right: 10,
+  },
+  roundIconContainer: {
+    alignItems: "center",
+    backgroundColor: Colors.white,
+    borderRadius: 50,
+    height: 60,
+    justifyContent: "center",
+    padding: 10,
+    width: 60,
   },
   title: {
     borderColor: Colors.borderColor,
