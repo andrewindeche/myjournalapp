@@ -16,7 +16,7 @@ const HomeScreen: React.FC = () => {
       </View>
       <View style={styles.innerContainer}>
         <View style={styles.header}>
-          <Text style={styles.title}>Everyday has a Story!</Text>
+          <Text style={styles.title}>Every Day has a Story!</Text>
           <Text style={styles.title}>Write Yours</Text>
           <Text style={styles.subtitle}>Dive into Creativity</Text>
           <Text style={styles.subtitle}> Document Your Imagination</Text>

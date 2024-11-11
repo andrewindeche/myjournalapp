@@ -76,6 +76,12 @@ const JournalEntryScreen: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (imageUri) {
+      console.log("Image URI:", imageUri);
+    }
+  }, [imageUri]);
+
+  useEffect(() => {
     const entry = journalEntries.find((e) => e.id === entryId);
     if (entry) {
       setCurrentEntry(entry);
@@ -118,6 +124,7 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
+          console.log("Selected image URI:", uri);
           if (uri) {
             setImageUri(uri);
             if (currentEntry) {
@@ -468,9 +475,19 @@ const JournalEntryScreen: React.FC = () => {
           <Icon name="pencil" size={28} color="black" />
         </Pressable>
         <Pressable
-          onPress={() => handleDeleteEntry(Number(currentEntry?.id) || null)}
+          onPress={() => {
+            if (!editMode) {
+              handleDeleteEntry(Number(currentEntry?.id) || null);
+            }
+          }}
+          disabled={editMode}
+          style={editMode && { backgroundColor: Colors.disabledGray }}
         >
-          <Icon name="trash-bin" size={28} color="black" />
+          <Icon
+            name="trash-bin"
+            size={28}
+            color={editMode ? Colors.gray : "black"}
+          />
         </Pressable>
         <View style={styles.popup}>
           {showMenu && (
