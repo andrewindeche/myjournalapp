@@ -200,36 +200,26 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleAddEntry = async () => {
     if (inputText || imageUri) {
-      const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
+      const newEntry = {
         type: "text",
-        content: [{ uri: imageUri, caption: "Sample Image" }, inputText],
-        title: title || (currentEntry ? currentEntry.title : ""),
+        content_text: inputText,
+        content_image: imageUri ? { uri: imageUri } : null,
+        title: title || currentEntry?.title || "",
         category: selectedCategory || newCategory,
       };
-
       try {
         if (editEntryId) {
-          await dispatch(
-            updateJournalEntry({ id: editEntryId, ...newEntry }),
-          ).unwrap();
-          dispatch(fetchJournalEntries());
-          const updatedEntry = journalEntries.find((e) => e.id === editEntryId);
-          setCurrentEntry(updatedEntry || null);
+          await dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
         } else {
-          const result = await dispatch(createJournalEntry(newEntry)).unwrap();
-          dispatch(fetchJournalEntries());
-          setCurrentEntry(result);
-          setEditEntryId(result.id);
+          await dispatch(createJournalEntry(newEntry));
         }
+        dispatch(fetchJournalEntries());
         resetForm();
       } catch (error) {
-        logger("Failed to save entry:", error);
+        console.error("Failed to save entry: ", error);
       }
     } else {
-      Alert.alert(
-        "Input Text is empty",
-        "Please add some text or image before saving.",
-      );
+      Alert.alert("Please add text or an image before saving.");
     }
   };
 
