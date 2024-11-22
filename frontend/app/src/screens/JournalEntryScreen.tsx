@@ -41,12 +41,11 @@ interface JournalEntry {
   created_at: string;
   content_text?: string;
   content_image?: { uri: string; name: string } | null;
-  entryId?: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
   const route = useRoute();
-  const entryId = (route.params as JournalEntry)?.entryId || null;
+  const entryId = route.params?.entryId || null;
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
@@ -74,12 +73,6 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (imageUri) {
-      console.log("Image URI:", imageUri);
-    }
-  }, [imageUri]);
 
   useEffect(() => {
     const entry = journalEntries.find((e) => e.id === entryId);
@@ -113,7 +106,6 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleImageUpload = async () => {
     if (!editMode) return;
-
     setUploadingImage(true);
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
@@ -124,7 +116,6 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
-          console.log("Selected image URI:", uri);
           if (uri) {
             setImageUri(uri);
             if (currentEntry) {
@@ -166,7 +157,6 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleTakePhoto = () => {
     if (!editMode) return;
-
     setTakingPhoto(true);
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
@@ -200,26 +190,37 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleAddEntry = async () => {
     if (inputText || imageUri) {
-      const newEntry = {
+      const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
-        content_text: inputText,
-        content_image: imageUri ? { uri: imageUri } : null,
-        title: title || currentEntry?.title || "",
+        content_text: inputText || "",
+        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
+        title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
+
       try {
         if (editEntryId) {
-          await dispatch(updateJournalEntry({ id: editEntryId, ...newEntry }));
+          await dispatch(
+            updateJournalEntry({ id: editEntryId, ...newEntry }),
+          ).unwrap();
+          dispatch(fetchJournalEntries());
+          const updatedEntry = journalEntries.find((e) => e.id === editEntryId);
+          setCurrentEntry(updatedEntry || null);
         } else {
-          await dispatch(createJournalEntry(newEntry));
+          const result = await dispatch(createJournalEntry(newEntry)).unwrap();
+          dispatch(fetchJournalEntries());
+          setCurrentEntry(result);
+          setEditEntryId(result.id);
         }
-        dispatch(fetchJournalEntries());
         resetForm();
       } catch (error) {
-        console.error("Failed to save entry: ", error);
+        logger("Failed to save entry:", error);
       }
     } else {
-      Alert.alert("Please add text or an image before saving.");
+      Alert.alert(
+        "Input Text is empty",
+        "Please add some text or image before saving.",
+      );
     }
   };
 
@@ -610,12 +611,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
   },
-  icon: { 
+  icon: {
     display: "flex",
-    opacity: 1 },
-  iconHidden: { 
-    display: "none", 
-    opacity: 0 },
+    opacity: 1,
+  },
+  iconHidden: {
+    display: "none",
+    opacity: 0,
+  },
   iconRow: {
     alignItems: "center",
     flexDirection: "row",
