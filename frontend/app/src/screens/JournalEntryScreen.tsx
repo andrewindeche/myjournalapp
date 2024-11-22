@@ -41,12 +41,11 @@ interface JournalEntry {
   created_at: string;
   content_text?: string;
   content_image?: { uri: string; name: string } | null;
-  entryId?: string;
 }
 
 const JournalEntryScreen: React.FC = () => {
   const route = useRoute();
-  const entryId = (route.params as JournalEntry)?.entryId || null;
+  const entryId = route.params?.entryId || null;
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
@@ -74,12 +73,6 @@ const JournalEntryScreen: React.FC = () => {
     dispatch(fetchJournalEntries());
     dispatch(fetchCategories());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (imageUri) {
-      console.log("Image URI:", imageUri);
-    }
-  }, [imageUri]);
 
   useEffect(() => {
     const entry = journalEntries.find((e) => e.id === entryId);
@@ -113,7 +106,6 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleImageUpload = async () => {
     if (!editMode) return;
-
     setUploadingImage(true);
     const options: ImageLibraryOptions = { mediaType: "photo" };
     launchImageLibrary(options, (response) => {
@@ -124,7 +116,6 @@ const JournalEntryScreen: React.FC = () => {
       } else {
         if (response.assets && response.assets.length > 0) {
           const uri = response.assets[0]?.uri;
-          console.log("Selected image URI:", uri);
           if (uri) {
             setImageUri(uri);
             if (currentEntry) {
@@ -166,7 +157,6 @@ const JournalEntryScreen: React.FC = () => {
 
   const handleTakePhoto = () => {
     if (!editMode) return;
-
     setTakingPhoto(true);
     const options: CameraOptions = { mediaType: "photo", cameraType: "back" };
     launchCamera(options, (response) => {
@@ -202,7 +192,8 @@ const JournalEntryScreen: React.FC = () => {
     if (inputText || imageUri) {
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
-        content: [{ uri: imageUri, caption: "Sample Image" }, inputText],
+        content_text: inputText || "",
+        content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
         title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
       };
@@ -486,7 +477,8 @@ const JournalEntryScreen: React.FC = () => {
           <Icon
             name="trash-bin"
             size={28}
-            color={editMode ? Colors.gray : "black"}
+            color="black"
+            style={editMode ? styles.iconHidden : styles.icon}
           />
         </Pressable>
         <View style={styles.popup}>
@@ -618,6 +610,14 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: "space-around",
     padding: 10,
+  },
+  icon: {
+    display: "flex",
+    opacity: 1,
+  },
+  iconHidden: {
+    display: "none",
+    opacity: 0,
   },
   iconRow: {
     alignItems: "center",
