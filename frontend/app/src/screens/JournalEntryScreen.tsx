@@ -145,7 +145,6 @@ const JournalEntryScreen: React.FC = () => {
     onMoveShouldSetPanResponder: (evt, gestureState) => {
       return Math.abs(gestureState.dy) > 20;
     },
-    onPanResponderMove: (evt, gestureState) => {},
     onPanResponderRelease: (evt, gestureState) => {
       if (gestureState.dy < -50) {
         setIsColorPaletteVisible(true);
