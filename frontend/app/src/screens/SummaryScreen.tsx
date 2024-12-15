@@ -94,7 +94,7 @@ const SummaryScreen: React.FC = () => {
       searchType === "keywords"
         ? (entry.content_text || "")
           .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase())
         : true;
 
     return (
@@ -204,7 +204,7 @@ const SummaryScreen: React.FC = () => {
         ) : filteredEntries.length === 0 ? (
           <View style={styles.emptyContainer}>
             {selectedCategory === "date" ? (
-              <View style={styles.emptyDateFilterContainer}>
+              <View>
                 <Text style={styles.emptyText}>
                   No journals found for the selected date range.
                 </Text>

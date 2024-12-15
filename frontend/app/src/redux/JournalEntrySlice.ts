@@ -19,6 +19,10 @@ interface Category {
   entries: JournalEntry[];
 }
 
+interface ErrorWithResponse extends Error {
+  response?: { status: number };
+}
+
 interface JournalState {
   journalEntries: JournalEntry[];
   categoriesWithEntries: Category[];
@@ -46,8 +50,9 @@ export const fetchJournalEntries = createAsyncThunk(
     try {
       const response = await instance.get("entries-create/");
       return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
+    } catch (error: unknown) {
+      const err = error as ErrorWithResponse;
+      if (err.response && err.response.status === 401) {
         return rejectWithValue(
           "Unauthorized. Failed to fetch journal entries.",
         );
@@ -77,8 +82,6 @@ export const updateJournalEntry = createAsyncThunk(
 
     if (updatedEntry.content_image) {
       const { uri, name } = updatedEntry.content_image;
-      const fileType = `image/${name.split(".").pop()}`;
-
       const response = await fetch(uri);
       const blob = await response.blob();
 
@@ -96,8 +99,9 @@ export const updateJournalEntry = createAsyncThunk(
         },
       );
       return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
+    } catch (error: unknown) {
+      const err = error as ErrorWithResponse;
+      if (err.response && err.response.status === 401) {
         return rejectWithValue("Unauthorized. Error updating entry.");
       }
       return rejectWithValue("Error updating entry.");
@@ -114,8 +118,9 @@ export const fetchCategories = createAsyncThunk(
     try {
       const response = await instance.get("categories-create/");
       return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
+    } catch (error: unknown) {
+      const err = error as ErrorWithResponse;
+      if (err.response && err.response.status === 401) {
         return rejectWithValue("Unauthorized. Failed to fetch categories.");
       }
       return rejectWithValue("Failed to fetch categories.");
@@ -132,8 +137,9 @@ export const deleteJournalEntry = createAsyncThunk(
     try {
       await instance.delete(`entries-update/${entryId}/`);
       return entryId;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
+    } catch (error: unknown) {
+      const err = error as ErrorWithResponse;
+      if (err.response && err.response.status === 401) {
         return rejectWithValue("Unauthorized. Error deleting entry.");
       }
       return rejectWithValue("Error deleting entry.");
@@ -161,8 +167,6 @@ export const createJournalEntry = createAsyncThunk(
 
     if (newEntry.content_image) {
       const { uri, name } = newEntry.content_image;
-      const fileType = `image/${name.split(".").pop()}`;
-      console.log("File type:", fileType);
       const response = await fetch(uri);
       const blob = await response.blob();
       formData.append("content_image", blob, name);
@@ -175,8 +179,9 @@ export const createJournalEntry = createAsyncThunk(
         },
       });
       return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
+    } catch (error: unknown) {
+      const err = error as ErrorWithResponse;
+      if (err.response && err.response.status === 401) {
         return rejectWithValue("Unauthorized. Error Creating Entries.");
       }
       return rejectWithValue("Error creating new entry.");
@@ -286,7 +291,5 @@ const journalEntriesSlice = createSlice({
 });
 
 export const { addCategory } = journalEntriesSlice.actions;
-
 export const selectCategories = (state: RootState) => state.entries.categories;
-
 export default journalEntriesSlice.reducer;

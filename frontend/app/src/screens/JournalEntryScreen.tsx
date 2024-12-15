@@ -61,13 +61,10 @@ const JournalEntryScreen: React.FC = () => {
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
-  const [isColorPaletteVisible, setIsColorPaletteVisible] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(Colors.background);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [takingPhoto, setTakingPhoto] = useState(false);
-  const handleColorSelect = (color: string) => {
-    setBackgroundColor(color);
-  };
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -95,6 +92,14 @@ const JournalEntryScreen: React.FC = () => {
     setIsSaveDisabled(isDisabled);
   }, [title, inputText, selectedCategory, imageUri]);
 
+  useEffect(() => {
+    setBackgroundColor(isDarkMode ? Colors.darkBackground : Colors.background);
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode((prevMode) => !prevMode);
+  };
+
   const logger = (message: string, ...optionalParams: unknown[]) => {
     if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
@@ -102,6 +107,15 @@ const JournalEntryScreen: React.FC = () => {
       // eslint-disable-next-line no-console
       console.error(message, ...optionalParams);
     }
+  };
+
+  const getTheme = (isDarkMode: boolean) => {
+    return {
+      backgroundColor: isDarkMode
+        ? Colors.darkMode.background
+        : Colors.background,
+      textColor: isDarkMode ? Colors.darkMode.text : Colors.text,
+    };
   };
 
   const handleImageUpload = async () => {
@@ -136,24 +150,6 @@ const JournalEntryScreen: React.FC = () => {
       setUploadingImage(false);
     });
   };
-
-  const toggleColorPalette = () => {
-    setIsColorPaletteVisible((prev) => !prev);
-  };
-
-  const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      return Math.abs(gestureState.dy) > 20;
-    },
-    onPanResponderMove: (evt, gestureState) => {},
-    onPanResponderRelease: (evt, gestureState) => {
-      if (gestureState.dy < -50) {
-        setIsColorPaletteVisible(true);
-      } else if (gestureState.dy > 50) {
-        setIsColorPaletteVisible(false);
-      }
-    },
-  });
 
   const handleTakePhoto = () => {
     if (!editMode) return;
@@ -314,22 +310,12 @@ const JournalEntryScreen: React.FC = () => {
     }
   };
 
-  const ColorPalette = ({ onColorSelect }) => {
-    return (
-      <View style={styles.colorPaletteContainer}>
-        {Colors.palette.map((color) => (
-          <Pressable
-            key={color}
-            onPress={() => onColorSelect(color)}
-            style={[styles.colorOption, { backgroundColor: color }]}
-          />
-        ))}
-      </View>
-    );
-  };
+  const theme = getTheme(isDarkMode);
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+    >
       <View style={styles.content}>
         {editMode ? (
           <>
@@ -439,21 +425,18 @@ const JournalEntryScreen: React.FC = () => {
           onCancel={cancelDeletion}
         />
       </View>
-      <View style={styles.colorPaletteHeader}>
-        <Text>Select Background Color:</Text>
-        <Pressable onPress={toggleColorPalette}>
+      <View style={styles.darkModeToggle}>
+        <Pressable onPress={toggleDarkMode}>
           <Icon
-            name={isColorPaletteVisible ? "chevron-up" : "chevron-down"}
+            name={isDarkMode ? "moon" : "sunny"}
             size={28}
-            color="black"
+            color={isDarkMode ? "white" : "black"}
           />
         </Pressable>
+        <Text style={[styles.toggleText, { color: theme.textColor }]}>
+          {isDarkMode ? "Dark Mode" : "Light Mode"}
+        </Text>
       </View>
-      {isColorPaletteVisible && (
-        <View {...panResponder.panHandlers} style={styles.colorPaletteWrapper}>
-          <ColorPalette onColorSelect={handleColorSelect} />
-        </View>
-      )}
       <View style={styles.footer}>
         <Pressable
           onPress={() => {
@@ -522,34 +505,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
   },
-  colorOption: {
-    borderColor: Colors.black,
-    borderRadius: 20,
-    borderWidth: 1,
-    height: 40,
-    width: 40,
-  },
-  colorPaletteContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 10,
-  },
-  colorPaletteHeader: {
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  colorPaletteWrapper: {
-    alignItems: "center",
-    backgroundColor: Colors.background,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    bottom: 200,
-    elevation: 5,
-    left: 20,
-    padding: 10,
-    position: "absolute",
-    right: 20,
-  },
   container: {
     backgroundColor: Colors.background,
     flex: 1,
@@ -559,6 +514,15 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 25,
     paddingBottom: 10,
+  },
+  darkModeToggle: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: 20,
+  },
+  darkMode: {
+    background: Colors.backgroundDarkMode,
+    text: Colors.textDarkMode, 
   },
   date: {
     color: Colors.color,
@@ -642,6 +606,9 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 60,
   },
+  text: {
+    color: Colors.text,
+  },
   title: {
     borderColor: Colors.borderColor,
     borderRadius: 5,
@@ -660,6 +627,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     padding: 10,
+  },
+  toggleText: {
+    color: Colors.black,
+    fontSize: 18,
+    marginLeft: 10,
   },
 });
 

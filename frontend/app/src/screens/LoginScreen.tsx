@@ -157,7 +157,7 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.label}>Your Username</Text>
           <TextInput
             style={styles.input}
-            placeholder="Your Username"
+            placeholder="Enter Your Username"
             onChangeText={(text) => dispatch(setUsername(text))}
             value={username}
             editable={!isDisabled}
