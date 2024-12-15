@@ -1,5 +1,12 @@
 export const Colors = {
   background: "#e3e6f5",
+  backgroundDarkMode: "#1a1a1a",
+  textDarkMode: "#fff",
+  darkMode: {
+    background: "#1a1a1a",
+    text: "#ffffff",
+  },
+  text: "#000",
   categoryInput: "#fff",
   footer: "#fff",
   borderColor: "#ccc",
@@ -33,13 +40,4 @@ export const Colors = {
   charcoal: "#222",
   semiBlack: "rgba(0,0,0,0.5)",
   googleButtonBackground: "#020035",
-  palette: [
-    "#F0F8FF",
-    "#FFE4C4",
-    "#98FB98",
-    "#BB5566",
-    "#FFFACD",
-    "#FFB6C1",
-    "#FFFFFF",
-  ],
 } as const;
