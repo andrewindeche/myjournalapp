@@ -1,11 +1,13 @@
 export const Colors = {
-  background: "#e3e6f5",
+  background: "#ffffff",
   backgroundDarkMode: "#1a1a1a",
   textDarkMode: "#fff",
   darkMode: {
     background: "#1a1a1a",
     text: "#ffffff",
   },
+  whiteModeBackground: "#FFFFFF",
+  whiteModeText: "#000000",
   text: "#000",
   categoryInput: "#fff",
   footer: "#fff",
