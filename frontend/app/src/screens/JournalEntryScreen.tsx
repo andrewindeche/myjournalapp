@@ -384,19 +384,25 @@ const JournalEntryScreen: React.FC = () => {
             </Pressable>
           </>
         ) : (
-          <ScrollView>
+          <ScrollView
+            contentContainerStyle={[styles.scrollView, { backgroundColor: theme.backgroundColor }]}
+          >
             {currentEntry ? (
               <Pressable
-                style={[styles.entryContainer, { backgroundColor }]}
+                style={[styles.entryContainer, { backgroundColor: theme.backgroundColor }]}
                 onPress={() => handleEditEntry(currentEntry)}
               >
-                <Text style={styles.date}>
+                <Text style={[styles.date, { color: theme.textColor }]}>
                   {new Date(currentEntry.created_at).toDateString()}
                 </Text>
-                <Text style={styles.title}>{currentEntry.title}</Text>
-                <Text style={styles.category}>{currentEntry.category}</Text>
+                <Text style={[styles.title, { color: theme.textColor }]}>
+                  {currentEntry.title}
+                </Text>
+                <Text style={[styles.category, { color: theme.textColor }]}>
+                  {currentEntry.category}
+                </Text>
                 {currentEntry.content_text && (
-                  <Text style={styles.content}>
+                  <Text style={[styles.content, { color: theme.textColor }]}>
                     {currentEntry.content_text}
                   </Text>
                 )}
@@ -406,11 +412,11 @@ const JournalEntryScreen: React.FC = () => {
                     style={styles.entryImage}
                   />
                 ) : (
-                  <Text>No image available</Text>
+                  <Text style={{ color: theme.textColor }}>No image available</Text>
                 )}
               </Pressable>
             ) : (
-              <Text>
+              <Text style={[styles.text, { color: theme.textColor }]}>
                 <ul>
                   <li>Click on the Pencil icon to Add an Entry.</li>
                   <li>Click twice on pencil to start another entry.</li>
