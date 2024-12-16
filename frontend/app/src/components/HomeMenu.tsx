@@ -9,7 +9,7 @@ import LogoutConfirmationModal from "./LogoutConfirmationModal";
 
 type RootStackParamList = {
   Home: undefined;
-  Profile: { userId: string };
+  Profile: undefined;
   Login: undefined;
   JournalEntry: undefined;
 };

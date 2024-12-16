@@ -9,8 +9,16 @@ import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { deleteUserAccount } from "../redux/ProfileSlice";
 
+type RootStackParamList = {
+  Home: undefined;
+  Summary: undefined;
+  Profile: undefined;
+  Login: undefined;
+  JournalEntry: undefined;
+};
+
 interface MenuProps {
-  navigation: NavigationProp<any>;
+  navigation: NavigationProp<RootStackParamList>;
   onDeleteAccount: () => void;
 }
 
@@ -43,7 +51,6 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
       dispatch(logout());
       onDeleteAccount();
       navigation.navigate("Login");
-      successMessage: "Account Deleted Successfully"
     } catch (error) {
       Alert.alert("Error", "Failed to delete account.");
     } finally {
