@@ -10,7 +10,6 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
-  PanResponder,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -43,7 +42,20 @@ interface JournalEntry {
   content_image?: { uri: string; name: string } | null;
 }
 
-const JournalEntryScreen: React.FC = () => {
+type RootStackParamList = {
+  Home: undefined;
+  Register: undefined;
+  Login: undefined;
+  Profile: undefined;
+  Summary: undefined;
+  JournalEntry: undefined;
+  Fallback: undefined;
+  NotFound: undefined;
+};
+type NavigationProp = StackNavigationProp<RootStackParamList, "JournalEntry">;
+type Props = { navigation: NavigationProp };
+
+const JournalEntryScreen: React.FC<Props> = () => {
   const route = useRoute();
   const entryId = route.params?.entryId || null;
   const navigation = useNavigation();
@@ -385,11 +397,17 @@ const JournalEntryScreen: React.FC = () => {
           </>
         ) : (
           <ScrollView
-            contentContainerStyle={[styles.scrollView, { backgroundColor: theme.backgroundColor }]}
+            contentContainerStyle={[
+              styles.scrollView,
+              { backgroundColor: theme.backgroundColor },
+            ]}
           >
             {currentEntry ? (
               <Pressable
-                style={[styles.entryContainer, { backgroundColor: theme.backgroundColor }]}
+                style={[
+                  styles.entryContainer,
+                  { backgroundColor: theme.backgroundColor },
+                ]}
                 onPress={() => handleEditEntry(currentEntry)}
               >
                 <Text style={[styles.date, { color: theme.textColor }]}>
@@ -412,7 +430,9 @@ const JournalEntryScreen: React.FC = () => {
                     style={styles.entryImage}
                   />
                 ) : (
-                  <Text style={{ color: theme.textColor }}>No image available</Text>
+                  <Text style={{ color: theme.textColor }}>
+                    No image available
+                  </Text>
                 )}
               </Pressable>
             ) : (
@@ -528,7 +548,7 @@ const styles = StyleSheet.create({
   },
   darkMode: {
     background: Colors.backgroundDarkMode,
-    text: Colors.textDarkMode, 
+    text: Colors.textDarkMode,
   },
   date: {
     color: Colors.color,
