@@ -40,7 +40,8 @@
       "@typescript-eslint/explicit-module-boundary-types": "off"
     },
     "ignorePatterns": [
-      "**/node_modules/@types/react/index"
+      "**/node_modules/@types/react/index",
+      "babel.config.js"
     ],
     "settings": {
       "import/resolver": {
