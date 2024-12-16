@@ -7,9 +7,16 @@ import { Colors } from "../colors";
 import { NavigationProp } from "@react-navigation/native";
 import LogoutConfirmationModal from "./LogoutConfirmationModal";
 
+type RootStackParamList = {
+  Home: undefined;
+  Summary: undefined;
+  Profile: undefined;
+  Login: undefined;
+};
+
 interface MenuProps {
   onClose: () => void;
-  navigation: NavigationProp<any>;
+  navigation: NavigationProp<RootStackParamList>;
 }
 
 const SubMenu: React.FC<MenuProps> = ({ onClose, navigation }) => {
