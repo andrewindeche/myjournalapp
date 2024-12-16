@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";

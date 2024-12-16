@@ -10,6 +10,8 @@ import LogoutConfirmationModal from "./LogoutConfirmationModal";
 type RootStackParamList = {
   Home: undefined;
   Profile: { userId: string };
+  Login: undefined;
+  JournalEntry: undefined;
 };
 
 interface MenuProps {
