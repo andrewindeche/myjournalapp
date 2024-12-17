@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -42,6 +42,7 @@ const SummaryScreen: React.FC = () => {
   const [searchType, setSearchType] = useState<"title" | "keywords">("title");
   const [isModalVisible, setModalVisible] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState<number | null>(null);
+  const swipeableRefs = useRef<Record<number, Swipeable | null>>({});
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const handleEntryPress = (entry: JournalEntry) => {
@@ -80,6 +81,10 @@ const SummaryScreen: React.FC = () => {
   const handleCancelDelete = () => {
     setModalVisible(false);
     setEntryToDelete(null);
+
+    if (entryToDelete !== null && swipeableRefs.current[entryToDelete]) {
+      swipeableRefs.current[entryToDelete]?.close();
+    }
   };
 
   const renderEntry = ({
@@ -89,13 +94,8 @@ const SummaryScreen: React.FC = () => {
     item: JournalEntry;
     index: number;
   }) => {
-    const renderRightActions = (progress: any, dragX: any) => (
-      <Pressable
-        style={styles.deleteAction}
-        onPress={() => handleDeletePress(item.id)}
-      >
-        <MaterialCommunityIcons name="delete" size={24} color={Colors.white} />
-      </Pressable>
+    const renderRightActions = () => (
+      <View style={{ flex: 1, backgroundColor: "transparent" }} />
     );
 
     const handleSwipeableRightOpen = () => {
@@ -104,6 +104,9 @@ const SummaryScreen: React.FC = () => {
 
     return (
       <Swipeable
+        ref={(ref) => {
+          if (ref) swipeableRefs.current[item.id] = ref;
+        }}
         renderRightActions={renderRightActions}
         onSwipeableOpen={handleSwipeableRightOpen}
       >
@@ -140,8 +143,8 @@ const SummaryScreen: React.FC = () => {
     const matchesContent =
       searchType === "keywords"
         ? (entry.content_text || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
         : true;
 
     return (
