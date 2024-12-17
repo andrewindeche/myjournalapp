@@ -10,13 +10,17 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import HomeMenu from "../components/HomeMenu";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   fetchJournalEntries,
   fetchCategories,
+  deleteJournalEntry,
 } from "../redux/JournalEntrySlice";
 import { RootState } from "../redux/store";
 import { fetchProfileInfo } from "../redux/ProfileSlice";
 import { Colors } from "../colors";
+import { Swipeable } from "react-native-gesture-handler";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
 const colorPalette = [
   "#FFDEE9",
@@ -36,6 +40,8 @@ const SummaryScreen: React.FC = () => {
   const [dateFilter, setDateFilter] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchType, setSearchType] = useState<"title" | "keywords">("title");
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [entryToDelete, setEntryToDelete] = useState<number | null>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const handleEntryPress = (entry: JournalEntry) => {
@@ -58,25 +64,66 @@ const SummaryScreen: React.FC = () => {
   const getColorForIndex = (index: number) =>
     colorPalette[index % colorPalette.length];
 
+  const handleDeletePress = (entryId: number) => {
+    setEntryToDelete(entryId);
+    setModalVisible(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (entryToDelete !== null) {
+      dispatch(deleteJournalEntry(entryToDelete));
+      setModalVisible(false);
+      setEntryToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setModalVisible(false);
+    setEntryToDelete(null);
+  };
+
   const renderEntry = ({
     item,
     index,
   }: {
     item: JournalEntry;
     index: number;
-  }) => (
-    <Pressable key={item.id} onPress={() => handleEntryPress(item)}>
-      <View
-        style={[styles.noteCard, { backgroundColor: getColorForIndex(index) }]}
+  }) => {
+    const renderRightActions = (progress: any, dragX: any) => (
+      <Pressable
+        style={styles.deleteAction}
+        onPress={() => handleDeletePress(item.id)}
       >
-        <Text style={styles.noteTitle}>{item.title}</Text>
-        <Text style={styles.noteCategory}>{item.category}</Text>
-        <Text style={styles.noteDate}>
-          {new Date(item.created_at).toLocaleDateString()}
-        </Text>
-      </View>
-    </Pressable>
-  );
+        <MaterialCommunityIcons name="delete" size={24} color={Colors.white} />
+      </Pressable>
+    );
+
+    const handleSwipeableRightOpen = () => {
+      handleDeletePress(item.id);
+    };
+
+    return (
+      <Swipeable
+        renderRightActions={renderRightActions}
+        onSwipeableOpen={handleSwipeableRightOpen}
+      >
+        <Pressable key={item.id} onPress={() => handleEntryPress(item)}>
+          <View
+            style={[
+              styles.noteCard,
+              { backgroundColor: getColorForIndex(index) },
+            ]}
+          >
+            <Text style={styles.noteTitle}>{item.title}</Text>
+            <Text style={styles.noteCategory}>{item.category}</Text>
+            <Text style={styles.noteDate}>
+              {new Date(item.created_at).toLocaleDateString()}
+            </Text>
+          </View>
+        </Pressable>
+      </Swipeable>
+    );
+  };
 
   const filteredEntries = entries.filter((entry) => {
     const matchesCategory =
@@ -94,7 +141,7 @@ const SummaryScreen: React.FC = () => {
       searchType === "keywords"
         ? (entry.content_text || "")
           .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+          .includes(searchTerm.toLowerCase())
         : true;
 
     return (
@@ -234,6 +281,11 @@ const SummaryScreen: React.FC = () => {
           />
         )}
       </View>
+      <ConfirmDeleteModal
+        isOpen={isModalVisible}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
       <HomeMenu navigation={navigation} onDeleteAccount={() => {}} />
     </>
   );
@@ -273,6 +325,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginVertical: 10,
   },
+  deleteAction: {
+    alignItems: "center",
+    backgroundColor: Colors.red,
+    height: "100%",
+    justifyContent: "center",
+    padding: 20,
+  },
+
   emptyContainer: {
     alignItems: "center",
     flex: 1,
