@@ -10,7 +10,6 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import HomeMenu from "../components/HomeMenu";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   fetchJournalEntries,
   fetchCategories,
@@ -143,8 +142,8 @@ const SummaryScreen: React.FC = () => {
     const matchesContent =
       searchType === "keywords"
         ? (entry.content_text || "")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
         : true;
 
     return (
@@ -266,7 +265,7 @@ const SummaryScreen: React.FC = () => {
                 </Text>
               </View>
             ) : (
-              <View style={styles.emptyTextContainer}>
+              <View>
                 <Text style={styles.emptyText}>No journals found.</Text>
                 <Text style={styles.emptyInstruction}>
                   Click on the note icon at the bottom of the screen to add a
@@ -328,14 +327,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginVertical: 10,
   },
-  deleteAction: {
-    alignItems: "center",
-    backgroundColor: Colors.red,
-    height: "100%",
-    justifyContent: "center",
-    padding: 20,
-  },
-
   emptyContainer: {
     alignItems: "center",
     flex: 1,

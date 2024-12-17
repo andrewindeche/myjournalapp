@@ -82,7 +82,6 @@ const RegistrationScreen: React.FC = () => {
         });
       })
       .catch((error) => {
-        console.error("Registration Error:", error);
         setErrors(error);
         setAttempts((prev) => prev + 1);
 
@@ -103,9 +102,9 @@ const RegistrationScreen: React.FC = () => {
 
       <View style={styles.innerContainer}>
         <View style={styles.inputContainer}>
-          <Text style={[styles.title, styles.inputText]}>Sign Up</Text>
+          <Text style={styles.title}>Sign Up</Text>
 
-          <Text style={styles.label}>Full Name</Text>
+          <Text>Full Name</Text>
           <TextInput
             style={styles.input}
             placeholder="Full Name"
@@ -118,7 +117,7 @@ const RegistrationScreen: React.FC = () => {
             )}
           </Text>
 
-          <Text style={styles.label}>Email Address</Text>
+          <Text>Email Address</Text>
           <TextInput
             style={styles.input}
             placeholder="Email Address"
@@ -126,7 +125,7 @@ const RegistrationScreen: React.FC = () => {
             value={email}
           />
 
-          <Text style={styles.label}>Password</Text>
+          <Text>Password</Text>
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -137,7 +136,7 @@ const RegistrationScreen: React.FC = () => {
 
           {password && (
             <>
-              <Text style={styles.label}>Confirm Password</Text>
+              <Text>Confirm Password</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Confirm Password"
@@ -190,8 +189,8 @@ const RegistrationScreen: React.FC = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>User Registration Tip</Text>
-            <Text style={styles.modalText}>
+            <Text>User Registration Tip</Text>
+            <Text>
               <ul>
                 <li>Ensure password and confirmed passwords match</li>
                 <li>Enter correct details in Username and Password Fields</li>
@@ -201,11 +200,8 @@ const RegistrationScreen: React.FC = () => {
                 </li>
               </ul>
             </Text>
-            <Pressable
-              style={styles.okButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.okButtonText}>OK</Text>
+            <Pressable onPress={() => setModalVisible(false)}>
+              <Text>OK</Text>
             </Pressable>
           </View>
         </View>
