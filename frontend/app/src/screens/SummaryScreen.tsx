@@ -258,7 +258,8 @@ const SummaryScreen: React.FC = () => {
                   No journals found for the selected date range.
                 </Text>
                 <Text style={styles.emptyInstruction}>
-                  Use the "- Day" and "+ Day" buttons to adjust the date range.
+                  Use the &quot;- Day&quot; and &quot;+ Day&quot; buttons to
+                  adjust the date range.
                 </Text>
                 <Text style={styles.emptyInstruction}>
                   Click on the Date filter button again to view the entries
