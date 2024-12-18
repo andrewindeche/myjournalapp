@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import HomeMenu from "../components/HomeMenu";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   fetchJournalEntries,
   fetchCategories,
@@ -42,6 +41,7 @@ const SummaryScreen: React.FC = () => {
   const [searchType, setSearchType] = useState<"title" | "keywords">("title");
   const [isModalVisible, setModalVisible] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState<number | null>(null);
+  const swipeableRefs = useRef<Record<number, Swipeable | null>>({});
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const handleEntryPress = (entry: JournalEntry) => {
@@ -80,6 +80,10 @@ const SummaryScreen: React.FC = () => {
   const handleCancelDelete = () => {
     setModalVisible(false);
     setEntryToDelete(null);
+
+    if (entryToDelete !== null && swipeableRefs.current[entryToDelete]) {
+      swipeableRefs.current[entryToDelete]?.close();
+    }
   };
 
   const renderEntry = ({
@@ -89,14 +93,7 @@ const SummaryScreen: React.FC = () => {
     item: JournalEntry;
     index: number;
   }) => {
-    const renderRightActions = (progress: any, dragX: any) => (
-      <Pressable
-        style={styles.deleteAction}
-        onPress={() => handleDeletePress(item.id)}
-      >
-        <MaterialCommunityIcons name="delete" size={24} color={Colors.white} />
-      </Pressable>
-    );
+    const renderRightActions = () => <View style={styles.actions} />;
 
     const handleSwipeableRightOpen = () => {
       handleDeletePress(item.id);
@@ -104,6 +101,9 @@ const SummaryScreen: React.FC = () => {
 
     return (
       <Swipeable
+        ref={(ref) => {
+          if (ref) swipeableRefs.current[item.id] = ref;
+        }}
         renderRightActions={renderRightActions}
         onSwipeableOpen={handleSwipeableRightOpen}
       >
@@ -256,14 +256,15 @@ const SummaryScreen: React.FC = () => {
                   No journals found for the selected date range.
                 </Text>
                 <Text style={styles.emptyInstruction}>
-                  Use the "- Day" and "+ Day" buttons to adjust the date range.
+                  Use the &quot;- Day&quot; and &quot;+ Day&quot; buttons to
+                  adjust the date range.
                 </Text>
                 <Text style={styles.emptyInstruction}>
                   Click on the Date filter button again to view the entries
                 </Text>
               </View>
             ) : (
-              <View style={styles.emptyTextContainer}>
+              <View>
                 <Text style={styles.emptyText}>No journals found.</Text>
                 <Text style={styles.emptyInstruction}>
                   Click on the note icon at the bottom of the screen to add a
@@ -292,6 +293,10 @@ const SummaryScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  actions: {
+    backgroundColor: Colors.transparent,
+    flex: 1,
+  },
   categoryButton: {
     backgroundColor: Colors.darkCharcoal,
     borderRadius: 20,
@@ -325,14 +330,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginVertical: 10,
   },
-  deleteAction: {
-    alignItems: "center",
-    backgroundColor: Colors.red,
-    height: "100%",
-    justifyContent: "center",
-    padding: 20,
-  },
-
   emptyContainer: {
     alignItems: "center",
     flex: 1,

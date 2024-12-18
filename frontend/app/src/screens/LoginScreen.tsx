@@ -15,12 +15,26 @@ import * as Google from "expo-auth-session/providers/google";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "firebase/app";
 import "firebase/auth";
+import { StackNavigationProp } from "@react-navigation/stack";
 import {
   setUsername,
   setPassword,
   loginUser,
   reset,
 } from "../redux/LoginSlice";
+
+export type RootStackParamList = {
+  Home: undefined;
+  Register: undefined;
+  Login: undefined;
+  Profile: undefined;
+  Summary: undefined;
+  JournalEntry: undefined;
+  Fallback: undefined;
+  NotFound: undefined;
+};
+
+export type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -38,7 +52,6 @@ const LoginScreen: React.FC = () => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
 
-  // Disable navigation when the timer is counting
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       if (timer > 0) {
@@ -70,7 +83,7 @@ const LoginScreen: React.FC = () => {
           navigation.navigate("Summary");
         })
         .catch((error) => {
-          console.error("Login failed: ", error);
+          error("Login failed: ", error);
         });
       setAttempts(attempts + 1);
       if (attempts + 1 >= 4) {

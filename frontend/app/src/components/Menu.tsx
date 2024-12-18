@@ -47,12 +47,18 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 
   const confirmDeleteAccount = async () => {
     try {
-      await dispatch(deleteUserAccount()).unwrap();
+      await dispatch(
+        deleteUserAccount({ rejectValue: "Account not deleted" }),
+      ).unwrap();
       dispatch(logout());
       onDeleteAccount();
       navigation.navigate("Login");
     } catch (error) {
-      Alert.alert("Error", "Failed to delete account.");
+      if (error instanceof Error) {
+        Alert.alert("Error", error.message || "Failed to delete account.");
+      } else {
+        Alert.alert("Error", "Failed to delete account.");
+      }
     } finally {
       setDeleteModalVisible(false);
     }
