@@ -93,9 +93,7 @@ const SummaryScreen: React.FC = () => {
     item: JournalEntry;
     index: number;
   }) => {
-    const renderRightActions = () => (
-      <View style={{ flex: 1, backgroundColor: "transparent" }} />
-    );
+    const renderRightActions = () => <View style={styles.actions} />;
 
     const handleSwipeableRightOpen = () => {
       handleDeletePress(item.id);
@@ -295,6 +293,10 @@ const SummaryScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  actions: {
+    backgroundColor: Colors.transparent,
+    flex: 1,
+  },
   categoryButton: {
     backgroundColor: Colors.darkCharcoal,
     borderRadius: 20,
