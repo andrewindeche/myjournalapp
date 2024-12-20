@@ -15,7 +15,7 @@
 
 ## <h1> Description</h1>
 <p>The aim of the project is to build a journaling app using React Native for frontend and Python Django for backend </p>
-<p>The project enables Users should be able to write journal entries, categorize them, and view a summary of their entries.</p>
+<p>The project enables Users to write journal entries, categorize them, and view a summary of their entries.</p>
 
 ## <h1> Set up Instructions</h1>
 <p><b>Github</b></p>

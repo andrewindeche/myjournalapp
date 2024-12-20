@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { AppDispatch } from "../redux/store";
 import {
   View,
   Text,
@@ -43,7 +44,7 @@ const SummaryScreen: React.FC = () => {
   const [entryToDelete, setEntryToDelete] = useState<number | null>(null);
   const swipeableRefs = useRef<Record<number, Swipeable | null>>({});
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const handleEntryPress = (entry: JournalEntry) => {
     navigation.navigate("JournalEntry", { entryId: entry.id });
   };

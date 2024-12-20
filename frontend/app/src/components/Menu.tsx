@@ -47,9 +47,7 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 
   const confirmDeleteAccount = async () => {
     try {
-      await dispatch(
-        deleteUserAccount({ rejectValue: "Account not deleted" }),
-      ).unwrap();
+      await dispatch(deleteUserAccount()).unwrap();
       dispatch(logout());
       onDeleteAccount();
       navigation.navigate("Login");
