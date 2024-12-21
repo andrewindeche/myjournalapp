@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { AxiosError } from "axios";
 import { setToken } from "./authSlice";
 
 interface LoginState {
@@ -30,15 +31,17 @@ export const loginUser = createAsyncThunk(
       const token = response.data.access;
       dispatch(setToken(token));
       return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        if (error.response.data) {
-          const errorMessages = Object.entries(error.response.data).map(
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        if (error.response && error.response.data) {
+          const errorData = error.response.data as Record<string, string[]>;
+
+          const errorMessages = Object.entries(errorData).map(
             ([key, value]) => `${key}: ${value.join(", ")}`,
           );
           return rejectWithValue(errorMessages.join(", "));
         }
-        if (error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           return rejectWithValue("Please enter correct credentials.");
         }
       }
@@ -47,21 +50,23 @@ export const loginUser = createAsyncThunk(
   },
 );
 
-
 export const googleLogin = createAsyncThunk(
   "login/googleLogin",
   async (idToken: string, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/google-login/",
-        {
-          id_token: idToken,
-        },
+        { id_token: idToken },
       );
       const token = response.data.access;
       dispatch(setToken(token));
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(
+          error.response?.data || "Google login failed. Please try again.",
+        );
+      }
       return rejectWithValue("Google login failed. Please try again.");
     }
   },

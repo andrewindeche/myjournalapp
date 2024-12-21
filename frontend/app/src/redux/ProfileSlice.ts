@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import instance, { setAuthToken } from "../redux/axiosInstance";
+import { AxiosError } from "axios";
 
 interface ProfileState {
   username: string;
@@ -27,9 +28,14 @@ export const fetchProfileInfo = createAsyncThunk<
   try {
     const response = await instance.get("profile/");
     return response.data;
-  } catch (error: any) {
-    if (error.response && error.response.status === 401) {
-      return rejectWithValue("Unauthorized. Failed to fetch Profile");
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue("Unauthorized. Failed to fetch Profile");
+      }
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch Profile.",
+      );
     }
     return rejectWithValue("Failed to fetch Profile.");
   }
@@ -44,15 +50,18 @@ export const deleteUserAccount = createAsyncThunk<
   setAuthToken(token);
   try {
     await instance.delete("profile/delete/");
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+    return rejectWithValue("Failed to delete account.");
   }
 });
 
 export const updateUsername = createAsyncThunk<ProfileState, string>(
   "profile/updateUsername",
   async (newUsername: string, { rejectWithValue, getState }) => {
-    const state: RootState = getState() as RootState;
+    const state = getState() as RootState;
     const token = state.auth.token;
     setAuthToken(token);
     try {
@@ -60,9 +69,14 @@ export const updateUsername = createAsyncThunk<ProfileState, string>(
         username: newUsername,
       });
       return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue("Unauthorized. Error updating username.");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        if (error.response && error.response.status === 401) {
+          return rejectWithValue("Unauthorized. Error updating username.");
+        }
+        return rejectWithValue(
+          error.response?.data || "Error updating username.",
+        );
       }
       return rejectWithValue("Error updating username.");
     }
@@ -89,12 +103,14 @@ export const updatePassword = createAsyncThunk<
         confirm_new_password,
       });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || error.message);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(error.response?.data || error.message);
+      }
+      return rejectWithValue("Failed to update password.");
     }
   },
 );
-
 const profileSlice = createSlice({
   name: "profile",
   initialState,

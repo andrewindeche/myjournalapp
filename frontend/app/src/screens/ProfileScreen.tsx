@@ -146,7 +146,7 @@ const ProfileScreen: React.FC = () => {
     dispatch(deleteUserAccount()).then((result) => {
       if (deleteUserAccount.fulfilled.match(result)) {
         dispatch(setSuccessMessage("Account deleted successfully."));
-        dispatch(logout()); 
+        dispatch(logout());
         navigation.navigate("Login");
       } else if (deleteUserAccount.rejected.match(result)) {
         setErrorMessage(
