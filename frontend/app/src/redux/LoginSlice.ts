@@ -56,14 +56,17 @@ export const googleLogin = createAsyncThunk(
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/google-login/",
-        {
-          id_token: idToken,
-        },
+        { id_token: idToken },
       );
       const token = response.data.access;
       dispatch(setToken(token));
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue(
+          error.response?.data || "Google login failed. Please try again.",
+        );
+      }
       return rejectWithValue("Google login failed. Please try again.");
     }
   },
