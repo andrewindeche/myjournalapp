@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { AxiosError } from "axios";
 
 interface RegistrationState {
   username: string;
@@ -21,7 +22,16 @@ const initialState: RegistrationState = {
   successMessage: null,
 };
 
-export const registerUser = createAsyncThunk(
+export const registerUser = createAsyncThunk<
+  unknown,
+  {
+    username: string;
+    email: string;
+    password: string;
+    confirm_password: string;
+  },
+  { rejectValue: Record<string, string> }
+>(
   "registration/registerUser",
   async (
     userData: {
@@ -40,18 +50,22 @@ export const registerUser = createAsyncThunk(
         confirm_password: userData.confirm_password,
       });
       return response.data;
-    } catch (error: any) {
-      if (error.response && error.response.status === 400) {
-        const formattedErrors = Object.entries(error.response.data).reduce(
-          (acc, [key, value]) => {
-            acc[key] = value.join(" ");
-            return acc;
-          },
-          {} as Record<string, string>,
-        );
-        return rejectWithValue(formattedErrors);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        if (error.response && error.response.status === 400) {
+          const formattedErrors = Object.entries(error.response.data).reduce(
+            (acc, [key, value]) => {
+              if (Array.isArray(value)) {
+                acc[key] = value.join(" ");
+              }
+              return acc;
+            },
+            {} as Record<string, string>,
+          );
+          return rejectWithValue(formattedErrors);
+        }
       }
-      return rejectWithValue("An unknown error occurred.");
+      return rejectWithValue({ message: "An unknown error occurred." });
     }
   },
 );
@@ -96,7 +110,7 @@ const registrationSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload as string;
+        state.error = action.payload as unknown as string;
         state.successMessage = null;
       });
   },
