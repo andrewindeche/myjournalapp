@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { View, ActivityIndicator, Text, StyleSheet } from "react-native";
 import { Colors } from "../colors";
 
 const ProgressOverlay = () => (
@@ -11,14 +11,14 @@ const ProgressOverlay = () => (
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    alignItems: "center",
     backgroundColor: Colors.semiBlack,
-    justifyContent: 'center',
-    alignItems: 'center',
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
     zIndex: 1000,
   },
   text: {
