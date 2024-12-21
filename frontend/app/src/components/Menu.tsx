@@ -8,6 +8,7 @@ import { NavigationProp } from "@react-navigation/native";
 import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { deleteUserAccount } from "../redux/ProfileSlice";
+import { AppDispatch } from "../redux/store";
 
 type RootStackParamList = {
   Home: undefined;
@@ -23,7 +24,7 @@ interface MenuProps {
 }
 
 const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
@@ -47,7 +48,7 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 
   const confirmDeleteAccount = async () => {
     try {
-      await dispatch(deleteUserAccount()).unwrap();
+      await dispatch(deleteUserAccount({ rejectValue: "" })).unwrap();
       dispatch(logout());
       onDeleteAccount();
       navigation.navigate("Login");
