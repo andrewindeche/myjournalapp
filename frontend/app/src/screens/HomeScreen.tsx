@@ -2,8 +2,17 @@ import React from "react";
 import { Text, View, StyleSheet, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "../colors";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
+type NavigationProps = StackNavigationProp<RootStackParamList>;
+
 const HomeScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
 
   return (
     <View style={styles.container}>

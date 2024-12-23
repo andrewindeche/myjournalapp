@@ -19,6 +19,7 @@ import {
   updateJournalEntry,
   deleteJournalEntry,
 } from "../redux/JournalEntrySlice";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import SubMenu from "../components/JournalEntryMenu";
@@ -36,6 +37,7 @@ interface JournalEntry {
   type?: "text" | "image";
   content: (string | { uri: string; caption?: string })[];
   title: string;
+  entryId: number;
   category: string;
   created_at: string;
   content_text?: string;

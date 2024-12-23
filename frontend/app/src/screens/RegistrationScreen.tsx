@@ -94,7 +94,7 @@ const RegistrationScreen: React.FC = () => {
     <>
       <View style={styles.outerContainer}>
         <View style={styles.header}>
-          <Text style={styles.title}>Let's Begin</Text>
+          <Text style={styles.title}>Let&apos;s Begin</Text>
           <Text style={styles.subtitle}>Create an Account</Text>
         </View>
       </View>
