@@ -37,7 +37,7 @@ interface JournalEntry {
   type?: "text" | "image";
   content: (string | { uri: string; caption?: string })[];
   title: string;
-  entryId: number;
+  entryId: string | number | null;
   category: string;
   created_at: string;
   content_text?: string;
@@ -547,10 +547,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     marginTop: 20,
-  },
-  darkMode: {
-    background: Colors.backgroundDarkMode,
-    text: Colors.textDarkMode,
   },
   date: {
     color: Colors.color,
