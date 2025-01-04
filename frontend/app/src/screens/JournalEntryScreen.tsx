@@ -399,10 +399,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
           </>
         ) : (
           <ScrollView
-            contentContainerStyle={[
-              styles.scrollView,
-              { backgroundColor: theme.backgroundColor },
-            ]}
+            contentContainerStyle={[{ backgroundColor: theme.backgroundColor }]}
           >
             {currentEntry ? (
               <Pressable
