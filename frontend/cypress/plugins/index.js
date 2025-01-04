@@ -1,10 +1,9 @@
-const wp = require('@cypress/webpack-preprocessor');
+/// <reference types="cypress" /> 
 
-module.exports = (on) => {
-  const options = {
-    webpackOptions: require('../../webpack.config'),
-    watchOptions: {}
-  };
-
-  on('file:preprocessor', wp(options));
+/** 
+ * @type {Cypress.PluginConfig} 
+ */ 
+module.exports = (on, config) => { 
+// Add your custom plugins or configuration here 
+return config; 
 };
