@@ -41,7 +41,8 @@
     },
     "ignorePatterns": [
       "**/node_modules/@types/react/index",
-      "babel.config.js"
+      "babel.config.js",
+      "cypress/plugins/index.js"
     ],
     "settings": {
       "import/resolver": {
