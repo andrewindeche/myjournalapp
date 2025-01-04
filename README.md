@@ -201,5 +201,12 @@ npx react-native start
 
 <p><b>http://localhost:8081/api/categories-create/<int:pk>/edit/</b></p>
 
+## <h1> Screenshots</h1>
+![Langing Page](<Screenshot 2024-12-18 160929.png>)
+![Login Page](<Screenshot 2024-12-18 161042.png>)
+![Sign Up page](<Screenshot 2024-12-18 160946.png>)
+![alt text](<Screenshot 2024-12-18 161021.png>)
+![alt text](<Screenshot 2025-01-04 193947.png>)
+![alt text](<Screenshot 2025-01-04 194009.png>)
 ## <h1> Author </h1>
 Built by <b>Andrew Indeche</b>
