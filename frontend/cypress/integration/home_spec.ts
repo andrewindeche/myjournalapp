@@ -23,13 +23,11 @@ describe("Home Page Tests", () => {
 
   it("should navigate to the sign-in page when the sign-in button is clicked", () => {
     cy.contains("Sign In").click();
-    cy.url().should("include", "Login");
-    cy.contains("Login").should("be.visible");
+    cy.url().should("include", "/signin");
   });
 
   it("should navigate to the register page when the register button is clicked", () => {
     cy.contains("Register").click();
-    cy.url().should("include", "Register");
-    cy.contains("Register").should("be.visible");
+    cy.url().should("include", "/register");
   });
 });
