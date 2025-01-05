@@ -4,21 +4,22 @@ describe("Home Page Tests", () => {
   });
 
   it("should display the correct text", () => {
-    cy.contains("Every Day has a Story! Write Yours").should("be.visible");
-  });
+    cy.visit("/");
+    cy.get("Text")
+      .contains("Every Day has a Story! Write Yours")
+      .should("be.visible");
 
-  it("should display the correct text", () => {
-    cy.contains("Dive into Creativity Document Your Imagination").should(
-      "be.visible",
-    );
+    cy.get("Text")
+      .contains("Dive into Creativity Document Your Imagination")
+      .should("be.visible");
   });
 
   it("should have a sign-in button", () => {
-    cy.get("button").contains("Sign In").should("be.visible");
+    cy.contains("Sign In").click();
   });
 
   it("should have a register button", () => {
-    cy.get("button").contains("Register").should("be.visible");
+    cy.contains("Register").click();
   });
 
   it("should navigate to the sign-in page when the sign-in button is clicked", () => {

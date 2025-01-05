@@ -11,7 +11,7 @@
 | 7.Metro | Native Bundler| [Bundle];|
 | 8.Pipenv | Package/Dependency manager| [Virtual Environment];[Dependency];|
 | 9.Circleci | CI/Cd Pipeline| [continuous integration];[continuous delivery];|
-| 10.Cypress | E2E testing| [ E2E ];[ UI Testing];|
+| 10.Cypress | E2E testing| [ E2E ];[ UI ];|
 
 ## <h1> Description</h1>
 <p>The aim of the project is to build a journaling app using React Native for frontend and Python Django for backend </p>
@@ -208,5 +208,6 @@ npx react-native start
 ![alt text](<Screenshot 2024-12-18 161021.png>)
 ![alt text](<Screenshot 2025-01-04 193947.png>)
 ![alt text](<Screenshot 2025-01-04 194009.png>)
+
 ## <h1> Author </h1>
 Built by <b>Andrew Indeche</b>
