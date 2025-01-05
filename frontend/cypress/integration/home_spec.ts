@@ -1,17 +1,16 @@
 describe("Home Page Tests", () => {
   beforeEach(() => {
-    cy.visit("/");
+    cy.visit("Home");
   });
 
   it("should display the correct text", () => {
-    cy.visit("/");
-    cy.get("Text")
-      .contains("Every Day has a Story! Write Yours")
-      .should("be.visible");
+    cy.contains("Every Day has a Story!").should("be.visible");
 
-    cy.get("Text")
-      .contains("Dive into Creativity Document Your Imagination")
-      .should("be.visible");
+    cy.contains("Write Yours").should("be.visible");
+
+    cy.contains("Dive into Creativity").should("be.visible");
+
+    cy.contains("Document Your Imagination").should("be.visible");
   });
 
   it("should have a sign-in button", () => {
@@ -23,14 +22,14 @@ describe("Home Page Tests", () => {
   });
 
   it("should navigate to the sign-in page when the sign-in button is clicked", () => {
-    cy.get("button").contains("Sign In").click();
-    cy.url().should("include", "/login");
+    cy.contains("Sign In").click();
+    cy.url().should("include", "Login");
     cy.contains("Login").should("be.visible");
   });
 
   it("should navigate to the register page when the register button is clicked", () => {
-    cy.get("button").contains("Register").click();
-    cy.url().should("include", "/register");
+    cy.contains("Register").click();
+    cy.url().should("include", "Register");
     cy.contains("Register").should("be.visible");
   });
 });
