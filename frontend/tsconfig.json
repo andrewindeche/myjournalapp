@@ -2,7 +2,9 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "types": ["cypress"],
     "jsx": "react-native",
+    "baseUrl": "./",
     "paths": {
       "@/*": [
         "./*"
@@ -12,10 +14,14 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "cypress/**/*.ts",
+    "cypress/integration/**/*.ts", 
+    "cypress/plugins/index.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "@react-native-async-storage.d.ts",
-    "src/**/*", "frontend/app/src/screens/**/*"
+    "src/**/*", 
+    "frontend/app/src/screens/**/*"
   ],
   "exclude": [
     "node_modules",

@@ -19,6 +19,7 @@ import {
   updateJournalEntry,
   deleteJournalEntry,
 } from "../redux/JournalEntrySlice";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import SubMenu from "../components/JournalEntryMenu";
@@ -36,6 +37,7 @@ interface JournalEntry {
   type?: "text" | "image";
   content: (string | { uri: string; caption?: string })[];
   title: string;
+  entryId: string | number | null;
   category: string;
   created_at: string;
   content_text?: string;
@@ -397,10 +399,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
           </>
         ) : (
           <ScrollView
-            contentContainerStyle={[
-              styles.scrollView,
-              { backgroundColor: theme.backgroundColor },
-            ]}
+            contentContainerStyle={[{ backgroundColor: theme.backgroundColor }]}
           >
             {currentEntry ? (
               <Pressable
@@ -545,10 +544,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     marginTop: 20,
-  },
-  darkMode: {
-    background: Colors.backgroundDarkMode,
-    text: Colors.textDarkMode,
   },
   date: {
     color: Colors.color,
