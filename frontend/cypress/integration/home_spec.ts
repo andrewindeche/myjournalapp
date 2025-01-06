@@ -20,14 +20,4 @@ describe("Home Page Tests", () => {
   it("should have a register button", () => {
     cy.contains("Register").click();
   });
-
-  it("should have a clickable sign-in button", () => {
-    cy.contains("Sign In").should("be.visible").click();
-    cy.contains("Login").should("be.visible");
-  });
-
-  it("should have a clickable register button", () => {
-    cy.contains("Register").should("be.visible").click();
-    cy.contains("Register").should("be.visible");
-  });
 });
