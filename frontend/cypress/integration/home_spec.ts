@@ -26,7 +26,7 @@ describe("Home Page Tests", () => {
     cy.contains("Login").should("be.visible");
   });
 
-  it("should have a clickable register clicked", () => {
+  it("should have a clickable register button", () => {
     cy.contains("Register").should("be.visible").click();
     cy.contains("Register").should("be.visible");
   });
