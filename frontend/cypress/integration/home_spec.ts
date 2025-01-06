@@ -21,12 +21,12 @@ describe("Home Page Tests", () => {
     cy.contains("Register").click();
   });
 
-  it("should navigate to the sign-in page when the sign-in button is clicked", () => {
+  it("should have a clickable sign-in button", () => {
     cy.contains("Sign In").should("be.visible").click();
     cy.contains("Login").should("be.visible");
   });
 
-  it("should navigate to the register page when the register button is clicked", () => {
+  it("should have a clickable register clicked", () => {
     cy.contains("Register").should("be.visible").click();
     cy.contains("Register").should("be.visible");
   });
