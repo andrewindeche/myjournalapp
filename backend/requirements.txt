@@ -35,7 +35,7 @@ pycparser==2.22
 PyJWT==2.9.0
 pyparsing==3.1.4
 python-dotenv==1.0.1
-requests==2.32.3
+requests==2.32.4
 rsa==4.9
 sqlparse==0.5.1
 typing_extensions==4.12.2
