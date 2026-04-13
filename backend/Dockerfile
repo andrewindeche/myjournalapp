@@ -1,29 +1,18 @@
-FROM python:3.10.12
+FROM python:3.10.12-slim
 
-# Install pipenv
 RUN pip install pipenv
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Set working directory
 WORKDIR /app/backend
 
-# Copy Pipfile and Pipfile.lock first to leverage Docker cache
-COPY Pipfile Pipfile.lock /app/backend/
+COPY Pipfile Pipfile.lock ./
 
-# Install dependencies using pipenv
-RUN pipenv install
+RUN pipenv install --system
 
-# Verify that Django is installed
-RUN pipenv run pip list
+COPY . .
 
-# Copy the rest of the project files
-COPY . /app/backend/
-
-# Expose port
 EXPOSE 8000
 
-# Run the server
 CMD ["pipenv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]

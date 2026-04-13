@@ -1,12 +1,10 @@
-FROM node:21-alpine
+FROM node:20-alpine
 
 WORKDIR /app/frontend
 
 COPY package*.json ./
 
-RUN npm install --global expo-cli && npm install
-
-RUN npm install -g @expo/ngrok
+RUN npm ci --legacy-peer-deps --prefer-offline --no-audit --no-fund
 
 COPY . .
 
