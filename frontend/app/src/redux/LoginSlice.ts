@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { AxiosError } from "axios";
 import { setToken } from "./authSlice";
+import { API_URL } from "./apiConfig";
 
 interface LoginState {
   username: string;
@@ -24,7 +25,7 @@ export const loginUser = createAsyncThunk(
     { dispatch, rejectWithValue },
   ) => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login/", {
+      const response = await axios.post(`${API_URL}/api/login/`, {
         username,
         password,
       });
@@ -55,7 +56,7 @@ export const googleLogin = createAsyncThunk(
   async (idToken: string, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/google-login/",
+        `${API_URL}/api/google-login/`,
         { id_token: idToken },
       );
       const token = response.data.access;
