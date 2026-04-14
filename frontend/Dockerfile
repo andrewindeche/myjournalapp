@@ -8,8 +8,6 @@ RUN npm ci --legacy-peer-deps --prefer-offline --no-audit --no-fund
 
 COPY . .
 
-EXPOSE 19000 19001 19002
+EXPOSE 19000
 
-CMD ["npm", "start"]
-
-
+CMD ["npx", "expo", "start", "--web", "--port", "19000"]

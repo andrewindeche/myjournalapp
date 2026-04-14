@@ -1,18 +1,20 @@
-FROM python:3.10.12-slim
+FROM python:3.10-slim
 
-RUN pip install pipenv
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 WORKDIR /app/backend
 
-COPY Pipfile Pipfile.lock ./
+COPY requirements.txt .
 
-RUN pipenv install --system
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
 EXPOSE 8000
 
-CMD ["pipenv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
