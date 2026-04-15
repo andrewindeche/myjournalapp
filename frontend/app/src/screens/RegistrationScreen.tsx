@@ -108,11 +108,9 @@ const RegistrationScreen: React.FC = () => {
             onChangeText={(text) => dispatch(setFullName(text))}
             value={username}
           />
-          <Text>
-            {username.includes(" ") && (
-              <FontAwesome name="check" size={20} color="green" />
-            )}
-          </Text>
+          {username.includes(" ") && (
+            <FontAwesome name="check" size={20} color="green" />
+          )}
           <Text>Email Address</Text>
           <TextInput
             style={styles.input}
@@ -182,15 +180,11 @@ const RegistrationScreen: React.FC = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text>User Registration Tip</Text>
-            <Text>
-              <ul>
-                <li>Ensure password and confirmed passwords match</li>
-                <li>Enter correct details in Username and Password Fields</li>
-                <li>
-                  Ensure password is at least 8 characters long and contains a
-                  mix of letters, numbers, and special characters.
-                </li>
-              </ul>
+            <Text style={styles.tipText}>
+              {'\u2022'} Ensure password and confirmed passwords match{'\n'}
+              {'\u2022'} Enter correct details in Username and Password Fields{'\n'}
+              {'\u2022'} Ensure password is at least 8 characters long and contains a
+              mix of letters, numbers, and special characters.
             </Text>
             <Pressable onPress={() => setModalVisible(false)}>
               <Text>OK</Text>
@@ -288,6 +282,10 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 18,
     marginTop: 5,
+    textAlign: "center",
+  },
+  tipText: {
+    color: Colors.black,
     textAlign: "center",
   },
   title: {
