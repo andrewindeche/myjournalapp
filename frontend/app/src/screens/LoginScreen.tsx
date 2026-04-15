@@ -211,20 +211,22 @@ const LoginScreen: React.FC = () => {
 
           <Pressable style={styles.newUser} onPress={handleSignUpPress}>
             <Text>
-              I'm a new user <Text style={styles.signUpText}>Sign up</Text>
+              I&apos;m a new user <Text style={styles.signUpText}>Sign up</Text>
             </Text>
           </Pressable>
         </View>
       </View>
 
       <View style={styles.errorContainer}>
-        {Array.isArray(error)
-          ? error.map((msg, index) => (
-              <Text key={index} style={styles.errorText}>
-                {msg}
-              </Text>
-            ))
-          : error && <Text style={styles.errorText}>{error}</Text>}
+        {Array.isArray(error) &&
+          error.map((msg, index) => (
+            <Text key={index} style={styles.errorText}>
+              {msg}
+            </Text>
+          ))}
+        {!Array.isArray(error) && error && (
+          <Text style={styles.errorText}>{error}</Text>
+        )}
 
         {isDisabled && (
           <Text style={styles.timerText}>

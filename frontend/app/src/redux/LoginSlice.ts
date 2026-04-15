@@ -55,10 +55,9 @@ export const googleLogin = createAsyncThunk(
   "login/googleLogin",
   async (idToken: string, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/api/google-login/`,
-        { id_token: idToken },
-      );
+      const response = await axios.post(`${API_URL}/api/google-login/`, {
+        id_token: idToken,
+      });
       const token = response.data.access;
       dispatch(setToken(token));
       return response.data;

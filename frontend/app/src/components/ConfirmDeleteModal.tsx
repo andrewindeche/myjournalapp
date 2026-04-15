@@ -1,12 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Colors } from "../colors";
-
-interface ConfirmDeleteModalProps {
-  isOpen: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
+import { ConfirmDeleteModalProps } from "../types";
 
 const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   isOpen,

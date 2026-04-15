@@ -26,23 +26,11 @@ import SubMenu from "../components/JournalEntryMenu";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import {
-  launchCamera,
   launchImageLibrary,
   ImageLibraryOptions,
   CameraOptions,
 } from "react-native-image-picker";
-
-interface JournalEntry {
-  id: string;
-  type?: "text" | "image";
-  content: (string | { uri: string; caption?: string })[];
-  title: string;
-  entryId: string | number | null;
-  category: string;
-  created_at: string;
-  content_text?: string;
-  content_image?: { uri: string; name: string } | null;
-}
+import { JournalEntry } from "../types";
 
 type RootStackParamList = {
   Home: undefined;

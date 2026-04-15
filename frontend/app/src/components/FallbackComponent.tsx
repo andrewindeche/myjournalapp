@@ -1,12 +1,7 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
 import { Colors } from "../colors";
-
-type RootStackParamList = {
-  Home: undefined;
-  Profile: { userId: string };
-};
+import { NavigationProp, RootStackParamList } from "../types";
 
 interface FallbackComponentProps {
   navigation: NavigationProp<RootStackParamList>;
