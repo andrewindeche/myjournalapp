@@ -313,8 +313,10 @@ const JournalEntryScreen: React.FC<Props> = () => {
           logger("Failed to delete image:", error);
           Alert.alert("Failed to delete image", error.message);
         });
+    } else if (imageUri) {
+      setImageUri(null);
     } else {
-      Alert.alert("No image to delete or entry not found");
+      Alert.alert("No image to delete");
     }
   };
 
