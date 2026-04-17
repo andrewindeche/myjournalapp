@@ -32,14 +32,6 @@ import { JournalEntry } from "../redux/types";
 import { API_URL } from "../redux/apiConfig";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SubMenu from "../components/JournalEntryMenu";
-import { useRoute, useNavigation } from "@react-navigation/native";
-import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import {
-  launchImageLibrary,
-  ImageLibraryOptions,
-  CameraOptions,
-} from "react-native-image-picker";
-import { JournalEntry } from "../types";
 
 type RootStackParamList = {
   Home: undefined;
