@@ -30,7 +30,10 @@ const SubMenu: React.FC<MenuProps> = ({ onClose, navigation }) => {
   const confirmLogout = () => {
     dispatch(logout());
     onClose();
-    navigation.navigate("Login");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
     setLogoutModalVisible(false);
   };
 

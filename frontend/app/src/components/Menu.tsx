@@ -21,7 +21,10 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 
   const confirmLogout = () => {
     dispatch(logout());
-    navigation.navigate("Login");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
     setLogoutModalVisible(false);
   };
 
@@ -38,7 +41,10 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
       await dispatch(deleteUserAccount({ rejectValue: "" })).unwrap();
       dispatch(logout());
       onDeleteAccount();
-      navigation.navigate("Login");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert("Error", error.message || "Failed to delete account.");
