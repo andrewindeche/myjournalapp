@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Colors } from "../colors";
 import {
   View,
@@ -10,6 +10,7 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  Animated,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -33,6 +34,7 @@ import { API_URL } from "../redux/apiConfig";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SubMenu from "../components/JournalEntryMenu";
 import ZoomableImage from "../components/ZoomableImage";
+import DraggableImage from "../components/DraggableImage";
 
 type RootStackParamList = {
   Home: undefined;
@@ -53,6 +55,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
+  const operationLoading = useSelector((state: RootState) => state.entries.operationLoading);
   const [newCategory, setNewCategory] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -69,6 +72,11 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const [backgroundColor, setBackgroundColor] = useState(Colors.background);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [takingPhoto, setTakingPhoto] = useState(false);
+  const [imagePosition, setImagePosition] = useState<"top" | "bottom">("bottom");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveProgress, setSaveProgress] = useState(0);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -196,6 +204,43 @@ const JournalEntryScreen: React.FC<Props> = () => {
 
   const handleAddEntry = async () => {
     if (inputText || imageUri) {
+      setIsSaving(true);
+      setSaveProgress(0);
+
+      Animated.parallel([
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(pulseAnim, {
+              toValue: 1.1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+            Animated.timing(pulseAnim, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+          ])
+        ),
+        Animated.loop(
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          })
+        ),
+      ]).start();
+
+      const progressInterval = setInterval(() => {
+        setSaveProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 5;
+        });
+      }, 100);
+
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content_text: inputText || "",
@@ -217,8 +262,31 @@ const JournalEntryScreen: React.FC<Props> = () => {
           setCurrentEntry(result);
           setEditEntryId(result.id);
         }
-        resetForm();
+        clearInterval(progressInterval);
+        setSaveProgress(100);
+        setTimeout(() => {
+          Animated.parallel([
+            Animated.timing(pulseAnim, {
+              toValue: 1,
+              duration: 200,
+              useNativeDriver: true,
+            }),
+          ]).start();
+          setIsSaving(false);
+          setSaveProgress(0);
+          resetForm();
+        }, 300);
       } catch (error) {
+        clearInterval(progressInterval);
+        setIsSaving(false);
+        setSaveProgress(0);
+        Animated.parallel([
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+        ]).start();
         logger("Failed to save entry:", error);
       }
     } else {
@@ -327,9 +395,47 @@ const JournalEntryScreen: React.FC<Props> = () => {
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
+      {(operationLoading.fetchEntries || operationLoading.fetchCategories || operationLoading.deleteEntry) && (
+        <View style={styles.loadingOverlay}>
+          <View style={styles.loadingContainer}>
+            <Animated.View style={[styles.loadingSpinner, { transform: [{ scale: pulseAnim }, { rotate: rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }] }]}>
+              <Text style={styles.loadingText}>Loading...</Text>
+            </Animated.View>
+          </View>
+        </View>
+      )}
       <View style={styles.content}>
         {editMode ? (
           <>
+            {imageUri && editMode && (
+              <View style={styles.imagePositionContainer}>
+                <View style={styles.positionToggle}>
+                  <Pressable
+                    style={[styles.positionButton, imagePosition === "top" && styles.positionButtonActive]}
+                    onPress={() => setImagePosition("top")}
+                  >
+                    <Text style={[styles.positionButtonText, imagePosition === "top" && styles.positionButtonTextActive]}>Top</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.positionButton, imagePosition === "bottom" && styles.positionButtonActive]}
+                    onPress={() => setImagePosition("bottom")}
+                  >
+                    <Text style={[styles.positionButtonText, imagePosition === "bottom" && styles.positionButtonTextActive]}>Bottom</Text>
+                  </Pressable>
+                </View>
+                {imagePosition === "top" && (
+                  <>
+                    <DraggableImage uri={imageUri} />
+                    <Pressable
+                      onPress={handleDeleteImage}
+                      style={styles.deleteImageButton}
+                    >
+                      <Text style={styles.deleteImageButtonText}>Delete Image</Text>
+                    </Pressable>
+                  </>
+                )}
+              </View>
+            )}
             <TextInput
               style={styles.titleInput}
               value={title}
@@ -343,9 +449,9 @@ const JournalEntryScreen: React.FC<Props> = () => {
               value={inputText}
               onChangeText={(text) => setInputText(text)}
             />
-            {imageUri && (
-              <View style={styles.imageContainer}>
-                <Image source={{ uri: imageUri }} style={styles.previewImage} />
+            {imageUri && editMode && imagePosition === "bottom" && (
+              <View style={styles.imagePositionContainer}>
+                <DraggableImage uri={imageUri} />
                 <Pressable
                   onPress={handleDeleteImage}
                   style={styles.deleteImageButton}
@@ -354,6 +460,13 @@ const JournalEntryScreen: React.FC<Props> = () => {
                 </Pressable>
               </View>
             )}
+            <TextInput
+              style={styles.entryInput}
+              multiline
+              placeholder="Add your note here..."
+              value={inputText}
+              onChangeText={(text) => setInputText(text)}
+            />
             <TextInput
               style={styles.categoryInput}
               value={selectedCategory || newCategory}
@@ -656,6 +769,59 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontSize: 18,
     marginLeft: 10,
+  },
+  imagePositionContainer: {
+    marginVertical: 10,
+  },
+  positionToggle: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  positionButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    marginHorizontal: 5,
+    borderRadius: 20,
+    backgroundColor: Colors.categoryInput,
+    borderWidth: 1,
+    borderColor: Colors.borderColor,
+  },
+  positionButtonActive: {
+    backgroundColor: Colors.color,
+    borderColor: Colors.color,
+  },
+  positionButtonText: {
+    fontSize: 14,
+    color: Colors.text,
+  },
+  positionButtonTextActive: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  loadingContainer: {
+    padding: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.white,
+  },
+  loadingSpinner: {
+    alignItems: "center",
+  },
+  loadingText: {
+    color: Colors.color,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

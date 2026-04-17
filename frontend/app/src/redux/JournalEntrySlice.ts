@@ -30,6 +30,13 @@ interface JournalState {
   categories: Category[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  operationLoading: {
+    fetchEntries: boolean;
+    createEntry: boolean;
+    updateEntry: boolean;
+    deleteEntry: boolean;
+    fetchCategories: boolean;
+  };
 }
 
 const initialState: JournalState = {
@@ -39,6 +46,13 @@ const initialState: JournalState = {
   mostRecentEntry: null,
   status: "idle",
   error: null,
+  operationLoading: {
+    fetchEntries: false,
+    createEntry: false,
+    updateEntry: false,
+    deleteEntry: false,
+    fetchCategories: false,
+  },
 };
 
 export const fetchJournalEntries = createAsyncThunk(
@@ -201,11 +215,13 @@ const journalEntriesSlice = createSlice({
     builder
       .addCase(fetchJournalEntries.pending, (state) => {
         state.status = "loading";
+        state.operationLoading.fetchEntries = true;
       })
       .addCase(
         fetchJournalEntries.fulfilled,
         (state, action: PayloadAction<JournalEntry[]>) => {
           state.status = "succeeded";
+          state.operationLoading.fetchEntries = false;
           state.journalEntries = action.payload;
           if (action.payload.length > 0) {
             state.mostRecentEntry = action.payload[action.payload.length - 1];
@@ -214,6 +230,7 @@ const journalEntriesSlice = createSlice({
       )
       .addCase(fetchJournalEntries.rejected, (state, action) => {
         state.status = "failed";
+        state.operationLoading.fetchEntries = false;
         state.error = action.payload as string;
         if (state.error === "Unauthorized. Error fetching Journals.") {
           logout();
@@ -221,38 +238,70 @@ const journalEntriesSlice = createSlice({
       })
       .addCase(fetchCategories.pending, (state) => {
         state.status = "loading";
+        state.operationLoading.fetchCategories = true;
       })
       .addCase(
         fetchCategories.fulfilled,
         (state, action: PayloadAction<Category[]>) => {
           state.status = "succeeded";
+          state.operationLoading.fetchCategories = false;
           state.categories = action.payload;
         },
       )
       .addCase(fetchCategories.rejected, (state, action) => {
         state.status = "failed";
+        state.operationLoading.fetchCategories = false;
         state.error = action.payload as string;
         if (state.error === "Unauthorized. Error fetching categories.") {
           logout();
         }
       })
+      .addCase(createJournalEntry.pending, (state) => {
+        state.operationLoading.createEntry = true;
+      })
       .addCase(
         createJournalEntry.fulfilled,
         (state, action: PayloadAction<JournalEntry>) => {
+          state.operationLoading.createEntry = false;
           state.journalEntries.push(action.payload);
           state.mostRecentEntry = action.payload;
         },
       )
       .addCase(createJournalEntry.rejected, (state, action) => {
         state.status = "failed";
+        state.operationLoading.createEntry = false;
         state.error = action.payload as string;
         if (state.error === "Unauthorized. Error Creating Entries.") {
           logout();
         }
       })
+      .addCase(updateJournalEntry.pending, (state) => {
+        state.operationLoading.updateEntry = true;
+      })
+      .addCase(
+        updateJournalEntry.fulfilled,
+        (state, action: PayloadAction<JournalEntry>) => {
+          state.operationLoading.updateEntry = false;
+          const index = state.journalEntries.findIndex(
+            (entry) => entry.id === action.payload.id,
+          );
+          if (index !== -1) {
+            state.journalEntries[index] = action.payload;
+          }
+        },
+      )
+      .addCase(updateJournalEntry.rejected, (state, action) => {
+        state.status = "failed";
+        state.operationLoading.updateEntry = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteJournalEntry.pending, (state) => {
+        state.operationLoading.deleteEntry = true;
+      })
       .addCase(
         deleteJournalEntry.fulfilled,
         (state, action: PayloadAction<number>) => {
+          state.operationLoading.deleteEntry = false;
           state.journalEntries = state.journalEntries.filter(
             (entry) => entry.id !== action.payload,
           );
