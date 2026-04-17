@@ -13,15 +13,24 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
-  fetchJournalEntries,
-  fetchCategories,
+  launchCamera,
+  launchImageLibrary,
+  CameraOptions,
+  ImageLibraryOptions,
+} from "react-native-image-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { AppDispatch, RootState } from "../redux/store";
+import {
   createJournalEntry,
   updateJournalEntry,
   deleteJournalEntry,
+  fetchJournalEntries,
+  fetchCategories,
 } from "../redux/JournalEntrySlice";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { AppDispatch, RootState } from "../redux/store";
-import { useDispatch, useSelector } from "react-redux";
+import { JournalEntry } from "../redux/types";
+import { API_URL } from "../redux/apiConfig";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SubMenu from "../components/JournalEntryMenu";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
@@ -118,6 +127,12 @@ const JournalEntryScreen: React.FC<Props> = () => {
         : Colors.background,
       textColor: isDarkMode ? Colors.darkMode.text : Colors.text,
     };
+  };
+
+  const getFullImageUrl = (imagePath: string | undefined | null): string | null => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${API_URL}${imagePath}`;
   };
 
   const handleImageUpload = async () => {
@@ -334,8 +349,8 @@ const JournalEntryScreen: React.FC<Props> = () => {
               onChangeText={(text) => setInputText(text)}
             />
             {imageUri && (
-              <View>
-                <Image source={{ uri: imageUri }} style={styles.entryImage} />
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: imageUri }} style={styles.previewImage} />
                 <Pressable
                   onPress={handleDeleteImage}
                   style={styles.deleteImageButton}
@@ -410,16 +425,15 @@ const JournalEntryScreen: React.FC<Props> = () => {
                     {currentEntry.content_text}
                   </Text>
                 )}
-                {currentEntry.content_image?.uri ? (
-                  <Image
-                    source={{ uri: currentEntry.content_image.uri }}
-                    style={styles.entryImage}
-                  />
-                ) : (
-                  <Text style={{ color: theme.textColor }}>
-                    No image available
-                  </Text>
-                )}
+                {getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) ? (
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={{ uri: getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) }}
+                      style={styles.entryImage}
+                      resizeMode="cover"
+                    />
+                  </View>
+                ) : null}
               </Pressable>
             ) : (
               <Text style={[styles.text, { color: theme.textColor }]}>
@@ -557,11 +571,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 2,
   },
-  entryImage: {
-    height: 130,
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 10,
-    resizeMode: "contain",
-    width: 130,
+    marginTop: 5,
+  },
+  entryImage: {
+    borderRadius: 8,
+    height: 200,
+    width: "100%",
+  },
+  previewImage: {
+    borderRadius: 8,
+    height: 150,
+    width: "100%",
   },
   entryInput: {
     backgroundColor: Colors.categoryInput,

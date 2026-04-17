@@ -10,7 +10,7 @@ interface JournalEntry {
   created_at: string;
   category: string;
   content_text?: string;
-  content_image?: { uri: string; name: string } | null;
+  content_image?: { uri: string; name: string } | string | null;
 }
 
 interface Category {
