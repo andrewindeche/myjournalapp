@@ -28,7 +28,7 @@ import {
   fetchJournalEntries,
   fetchCategories,
 } from "../redux/JournalEntrySlice";
-import { JournalEntry } from "../redux/types";
+import { JournalEntry, EntryTheme, ENTRY_THEMES } from "../types";
 import { API_URL } from "../redux/apiConfig";
 import { saveTheme, loadTheme } from "../redux/authSlice";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
@@ -76,6 +76,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<EntryTheme>("default");
   const [editMode, setEditMode] = useState(false);
   const [editEntryId, setEditEntryId] = useState<number | null>(null);
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
@@ -107,6 +108,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
       setSelectedCategory(currentEntry.category || "");
       setInputText(currentEntry.content_text || "");
       setImageUri(currentEntry.content_image?.uri || null);
+      setSelectedTheme(currentEntry.theme || "default");
     }
   }, [entryId, currentEntry]);
 
@@ -260,12 +262,16 @@ const JournalEntryScreen: React.FC<Props> = () => {
         });
       }, 100);
 
+      const entryTheme = ENTRY_THEMES[selectedTheme];
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
         type: "text",
         content_text: inputText || "",
         content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
         title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
+        theme: selectedTheme,
+        backgroundColor: entryTheme.background,
+        textColor: entryTheme.text,
       };
 
       try {
@@ -533,6 +539,29 @@ const JournalEntryScreen: React.FC<Props> = () => {
               placeholder="Enter category"
               onChangeText={(text) => setSelectedCategory(text)}
             />
+            <View style={styles.themeRow}>
+              <Text style={styles.themeLabel}>Theme:</Text>
+              {(Object.keys(ENTRY_THEMES) as EntryTheme[]).map((t) => (
+                <Pressable
+                  key={t}
+                  style={[
+                    styles.themeButton,
+                    { backgroundColor: ENTRY_THEMES[t].background },
+                    selectedTheme === t && styles.themeButtonSelected,
+                  ]}
+                  onPress={() => setSelectedTheme(t)}
+                >
+                  <Text
+                    style={[
+                      styles.themeButtonText,
+                      { color: ENTRY_THEMES[t].text },
+                    ]}
+                  >
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
             <View style={styles.iconRow}>
               <Pressable
                 onPress={handleImageUpload}
@@ -879,6 +908,28 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontSize: 18,
     marginLeft: 10,
+  },
+  themeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginVertical: 10,
+  },
+  themeLabel: {
+    fontSize: 16,
+    marginRight: 10,
+  },
+  themeButton: {
+    borderRadius: 5,
+    margin: 3,
+    padding: 8,
+  },
+  themeButtonSelected: {
+    borderColor: Colors.blue,
+    borderWidth: 2,
+  },
+  themeButtonText: {
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
 

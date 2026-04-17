@@ -1,8 +1,10 @@
 import { StackNavigationProp } from "@react-navigation/native";
 
+export type EntryTheme = "default" | "ocean" | "sunset" | "forest" | "lavender" | "mint" | "rose" | "midnight";
+
 export interface JournalEntry {
   id: string;
-  type?: "text" | "image";
+  type?: "text" | "image" | "video";
   content: (string | { uri: string; caption?: string })[];
   title: string;
   entryId: string | number | null;
@@ -10,7 +12,22 @@ export interface JournalEntry {
   created_at: string;
   content_text?: string;
   content_image?: { uri: string; name: string } | null;
+  content_video?: { uri: string; name: string } | null;
+  theme?: EntryTheme;
+  backgroundColor?: string;
+  textColor?: string;
 }
+
+export const ENTRY_THEMES: Record<EntryTheme, { background: string; text: string }> = {
+  default: { background: "#ffffff", text: "#000000" },
+  ocean: { background: "#e0f7fa", text: "#006064" },
+  sunset: { background: "#fff3e0", text: "#e65100" },
+  forest: { background: "#e8f5e9", text: "#1b5e20" },
+  lavender: { background: "#f3e5f5", text: "#4a148c" },
+  mint: { background: "#e0f2f1", text: "#004d40" },
+  rose: { background: "#fce4ec", text: "#880e4f" },
+  midnight: { background: "#1a237e", text: "#ffffff" },
+};
 
 export interface MenuProps {
   navigation: StackNavigationProp<RootStackParamList>;

@@ -19,6 +19,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'email', 'password', 'confirm_password')
 
+    ALLOWED_EMAIL_DOMAINS = ['gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com', 'icloud.com', 'mail.com', 'protonmail.com', 'yandex.com']
+
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError("Email may not be blank.")
+        email_domain = value.split('@')[-1].lower() if '@' in value else ''
+        if email_domain not in self.ALLOWED_EMAIL_DOMAINS:
+            raise serializers.ValidationError(f"Please use a valid email from: {', '.join(self.ALLOWED_EMAIL_DOMAINS)}")
+        return value
+
     def validate(self, data):
         errors = {}
 
@@ -30,6 +40,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             errors['password'] = "Password may not be blank."
         if not data.get('confirm_password', '').strip():
             errors['confirm_password'] = "Confirm Password may not be blank."
+
+        email = data.get('email', '').lower()
+        if email:
+            email_domain = email.split('@')[-1] if '@' in email else ''
+            if email_domain not in self.ALLOWED_EMAIL_DOMAINS:
+                errors['email'] = f"Please use a valid email from: {', '.join(self.ALLOWED_EMAIL_DOMAINS)}"
 
         if data.get('password') != data.get('confirm_password'):
             errors['confirm_password'] = "Passwords do not match."
