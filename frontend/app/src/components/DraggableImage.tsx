@@ -64,24 +64,24 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
     marginVertical: 10,
+    width: "100%",
   },
   dragIndicator: {
     alignItems: "center",
     paddingVertical: 4,
   },
   dragText: {
-    fontSize: 12,
     color: "#888",
+    fontSize: 12,
+  },
+  image: {
+    borderRadius: 8,
+    height: 150,
+    width: "100%",
   },
   imageWrapper: {
     width: "100%",
-  },
-  image: {
-    width: "100%",
-    height: 150,
-    borderRadius: 8,
   },
 });
 

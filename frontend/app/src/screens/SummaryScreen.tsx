@@ -389,17 +389,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 20,
   },
-  themeToggleButton: {
-    backgroundColor: Colors.accent,
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-  },
-  themeToggleText: {
-    color: Colors.white,
-    fontFamily: "Mulish-Bold",
-    fontSize: 14,
-  },
   loadingText: {
     color: Colors.color,
     marginTop: 20,
@@ -469,6 +458,17 @@ const styles = StyleSheet.create({
   },
   selectedSearchType: {
     backgroundColor: Colors.darkGray,
+  },
+  themeToggleButton: {
+    backgroundColor: Colors.accent,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+  },
+  themeToggleText: {
+    color: Colors.white,
+    fontFamily: "Mulish-Bold",
+    fontSize: 14,
   },
   title: {
     color: Colors.background,

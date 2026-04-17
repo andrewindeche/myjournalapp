@@ -16,20 +16,17 @@ const initialState: AuthState = {
   isDarkMode: false,
 };
 
-export const loadTheme = createAsyncThunk(
-  "auth/loadTheme",
-  async () => {
-    const theme = await AsyncStorage.getItem("isDarkMode");
-    return theme === "true";
-  }
-);
+export const loadTheme = createAsyncThunk("auth/loadTheme", async () => {
+  const theme = await AsyncStorage.getItem("isDarkMode");
+  return theme === "true";
+});
 
 export const saveTheme = createAsyncThunk(
   "auth/saveTheme",
   async (isDarkMode: boolean) => {
     await AsyncStorage.setItem("isDarkMode", String(isDarkMode));
     return isDarkMode;
-  }
+  },
 );
 
 const authSlice = createSlice({

@@ -6,7 +6,6 @@ import {
   TextInput,
   StyleSheet,
   Pressable,
-  Image,
   Alert,
   ActivityIndicator,
   ScrollView,
@@ -56,16 +55,33 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
-  const operationLoading = useSelector((state: RootState) => state.entries.operationLoading);
-  const isDarkModeRedux = useSelector((state: RootState) => state.auth.isDarkMode);
+  const operationLoading = useSelector(
+    (state: RootState) => state.entries.operationLoading,
+  );
+  const isDarkModeRedux = useSelector(
+    (state: RootState) => state.auth.isDarkMode,
+  );
   const [isDarkMode, setIsDarkMode] = useState(isDarkModeRedux);
   const [newCategory, setNewCategory] = useState("");
   const [backgroundColor, setBackgroundColor] = useState(Colors.background);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [takingPhoto, setTakingPhoto] = useState(false);
-  const [imagePosition, setImagePosition] = useState<"top" | "bottom">("bottom");
+  const [imagePosition, setImagePosition] = useState<"top" | "bottom">(
+    "bottom",
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [saveProgress, setSaveProgress] = useState(0);
+  const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
+  const [title, setTitle] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [inputText, setInputText] = useState("");
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editEntryId, setEditEntryId] = useState<number | null>(null);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -131,7 +147,9 @@ const JournalEntryScreen: React.FC<Props> = () => {
     };
   };
 
-  const getFullImageUrl = (imagePath: string | undefined | null): string | null => {
+  const getFullImageUrl = (
+    imagePath: string | undefined | null,
+  ): string | null => {
     if (!imagePath) return null;
     if (imagePath.startsWith("http")) return imagePath;
     return `${API_URL}${imagePath}`;
@@ -221,14 +239,14 @@ const JournalEntryScreen: React.FC<Props> = () => {
               duration: 400,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ),
         Animated.loop(
           Animated.timing(rotateAnim, {
             toValue: 1,
             duration: 1500,
             useNativeDriver: true,
-          })
+          }),
         ),
       ]).start();
 
@@ -396,10 +414,27 @@ const JournalEntryScreen: React.FC<Props> = () => {
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
-      {(operationLoading.fetchEntries || operationLoading.fetchCategories || operationLoading.deleteEntry) && (
+      {(operationLoading.fetchEntries ||
+        operationLoading.fetchCategories ||
+        operationLoading.deleteEntry) && (
         <View style={styles.loadingOverlay}>
           <View style={styles.loadingContainer}>
-            <Animated.View style={[styles.loadingSpinner, { transform: [{ scale: pulseAnim }, { rotate: rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }] }]}>
+            <Animated.View
+              style={[
+                styles.loadingSpinner,
+                {
+                  transform: [
+                    { scale: pulseAnim },
+                    {
+                      rotate: rotateAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ["0deg", "360deg"],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <Text style={styles.loadingText}>Loading...</Text>
             </Animated.View>
           </View>
@@ -412,16 +447,38 @@ const JournalEntryScreen: React.FC<Props> = () => {
               <View style={styles.imagePositionContainer}>
                 <View style={styles.positionToggle}>
                   <Pressable
-                    style={[styles.positionButton, imagePosition === "top" && styles.positionButtonActive]}
+                    style={[
+                      styles.positionButton,
+                      imagePosition === "top" && styles.positionButtonActive,
+                    ]}
                     onPress={() => setImagePosition("top")}
                   >
-                    <Text style={[styles.positionButtonText, imagePosition === "top" && styles.positionButtonTextActive]}>Top</Text>
+                    <Text
+                      style={[
+                        styles.positionButtonText,
+                        imagePosition === "top" &&
+                          styles.positionButtonTextActive,
+                      ]}
+                    >
+                      Top
+                    </Text>
                   </Pressable>
                   <Pressable
-                    style={[styles.positionButton, imagePosition === "bottom" && styles.positionButtonActive]}
+                    style={[
+                      styles.positionButton,
+                      imagePosition === "bottom" && styles.positionButtonActive,
+                    ]}
                     onPress={() => setImagePosition("bottom")}
                   >
-                    <Text style={[styles.positionButtonText, imagePosition === "bottom" && styles.positionButtonTextActive]}>Bottom</Text>
+                    <Text
+                      style={[
+                        styles.positionButtonText,
+                        imagePosition === "bottom" &&
+                          styles.positionButtonTextActive,
+                      ]}
+                    >
+                      Bottom
+                    </Text>
                   </Pressable>
                 </View>
                 {imagePosition === "top" && (
@@ -431,7 +488,9 @@ const JournalEntryScreen: React.FC<Props> = () => {
                       onPress={handleDeleteImage}
                       style={styles.deleteImageButton}
                     >
-                      <Text style={styles.deleteImageButtonText}>Delete Image</Text>
+                      <Text style={styles.deleteImageButtonText}>
+                        Delete Image
+                      </Text>
                     </Pressable>
                   </>
                 )}
@@ -534,9 +593,17 @@ const JournalEntryScreen: React.FC<Props> = () => {
                     {currentEntry.content_text}
                   </Text>
                 )}
-                {getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) ? (
+                {getFullImageUrl(
+                  currentEntry.content_image?.uri ||
+                    (currentEntry.content_image as string),
+                ) ? (
                   <ZoomableImage
-                    uri={getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) as string}
+                    uri={
+                      getFullImageUrl(
+                        currentEntry.content_image?.uri ||
+                          (currentEntry.content_image as string),
+                      ) as string
+                    }
                     style={styles.entryImage}
                   />
                 ) : null}
@@ -677,20 +744,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 2,
   },
-  imageContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-    marginTop: 5,
-  },
   entryImage: {
     borderRadius: 8,
     height: 200,
-    width: "100%",
-  },
-  previewImage: {
-    borderRadius: 8,
-    height: 150,
     width: "100%",
   },
   entryInput: {
@@ -728,12 +784,65 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: "100%",
   },
+  imagePositionContainer: {
+    marginVertical: 10,
+  },
+  loadingContainer: {
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 20,
+  },
+  loadingOverlay: {
+    alignItems: "center",
+    backgroundColor: Colors.semiBlack,
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 1000,
+  },
+  loadingSpinner: {
+    alignItems: "center",
+  },
+  loadingText: {
+    color: Colors.color,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   popup: {
     backgroundColor: Colors.categoryInput,
     marginBottom: 500,
     marginVertical: 45,
     position: "absolute",
     right: 10,
+  },
+  positionButton: {
+    backgroundColor: Colors.categoryInput,
+    borderColor: Colors.borderColor,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginHorizontal: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  positionButtonActive: {
+    backgroundColor: Colors.color,
+    borderColor: Colors.color,
+  },
+  positionButtonText: {
+    color: Colors.text,
+    fontSize: 14,
+  },
+  positionButtonTextActive: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
+  positionToggle: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
   },
   roundIconContainer: {
     alignItems: "center",
@@ -770,59 +879,6 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontSize: 18,
     marginLeft: 10,
-  },
-  imagePositionContainer: {
-    marginVertical: 10,
-  },
-  positionToggle: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-  positionButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    marginHorizontal: 5,
-    borderRadius: 20,
-    backgroundColor: Colors.categoryInput,
-    borderWidth: 1,
-    borderColor: Colors.borderColor,
-  },
-  positionButtonActive: {
-    backgroundColor: Colors.color,
-    borderColor: Colors.color,
-  },
-  positionButtonText: {
-    fontSize: 14,
-    color: Colors.text,
-  },
-  positionButtonTextActive: {
-    color: Colors.white,
-    fontWeight: "bold",
-  },
-  loadingOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  loadingContainer: {
-    padding: 20,
-    borderRadius: 10,
-    backgroundColor: Colors.white,
-  },
-  loadingSpinner: {
-    alignItems: "center",
-  },
-  loadingText: {
-    color: Colors.color,
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 

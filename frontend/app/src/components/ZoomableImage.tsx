@@ -49,14 +49,14 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ uri, style }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    width: "100%",
   },
   image: {
-    width: "100%",
-    height: 200,
     borderRadius: 8,
+    height: 200,
+    width: "100%",
   },
 });
 

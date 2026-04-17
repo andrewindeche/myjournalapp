@@ -181,10 +181,11 @@ const RegistrationScreen: React.FC = () => {
           <View style={styles.modalContent}>
             <Text>User Registration Tip</Text>
             <Text style={styles.tipText}>
-              {'\u2022'} Ensure password and confirmed passwords match{'\n'}
-              {'\u2022'} Enter correct details in Username and Password Fields{'\n'}
-              {'\u2022'} Ensure password is at least 8 characters long and contains a
-              mix of letters, numbers, and special characters.
+              {"\u2022"} Ensure password and confirmed passwords match{"\n"}
+              {"\u2022"} Enter correct details in Username and Password Fields
+              {"\n"}
+              {"\u2022"} Ensure password is at least 8 characters long and
+              contains a mix of letters, numbers, and special characters.
             </Text>
             <Pressable onPress={() => setModalVisible(false)}>
               <Text>OK</Text>

@@ -84,7 +84,7 @@ const LoginScreen: React.FC = () => {
     if (!isDisabled) {
       setIsLoggingIn(true);
       setLoginProgress(0);
-      
+
       Animated.parallel([
         Animated.loop(
           Animated.sequence([
@@ -98,7 +98,7 @@ const LoginScreen: React.FC = () => {
               duration: 500,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ),
         Animated.loop(
           Animated.timing(rotateAnim, {
@@ -106,7 +106,7 @@ const LoginScreen: React.FC = () => {
             duration: 2000,
             easing: Easing.linear,
             useNativeDriver: true,
-          })
+          }),
         ),
         Animated.timing(opacityAnim, {
           toValue: 1,
@@ -229,13 +229,25 @@ const LoginScreen: React.FC = () => {
           <Animated.View
             style={[
               styles.loaderContainer,
-              { transform: [{ scale: scaleAnim }, { rotate: rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }] },
+              {
+                transform: [
+                  { scale: scaleAnim },
+                  {
+                    rotate: rotateAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", "360deg"],
+                    }),
+                  },
+                ],
+              },
             ]}
           >
             <View style={styles.loaderInner}>
               <Text style={styles.loaderText}>Journal</Text>
               <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${loginProgress}%` }]} />
+                <View
+                  style={[styles.progressFill, { width: `${loginProgress}%` }]}
+                />
               </View>
               <Text style={styles.progressText}>{loginProgress}%</Text>
             </View>
@@ -386,6 +398,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
+  loaderContainer: {
+    alignItems: "center",
+    backgroundColor: "transparent",
+    borderColor: Colors.color,
+    borderRadius: 75,
+    borderWidth: 4,
+    height: 150,
+    justifyContent: "center",
+    width: 150,
+  },
+  loaderInner: {
+    alignItems: "center",
+  },
+  loaderOverlay: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 1000,
+  },
+  loaderText: {
+    color: Colors.color,
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
   newUser: {
     marginTop: 20,
   },
@@ -396,6 +438,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
     width: "100%",
+  },
+  progressBar: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 4,
+    height: 8,
+    overflow: "hidden",
+    width: 100,
+  },
+  progressFill: {
+    backgroundColor: Colors.color,
+    height: "100%",
+  },
+  progressText: {
+    color: Colors.white,
+    fontSize: 14,
+    marginTop: 10,
   },
   signInButton: {
     backgroundColor: Colors.loginBackgroundColor,
@@ -433,52 +491,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  loaderOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  loaderContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "transparent",
-    borderWidth: 4,
-    borderColor: Colors.color,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loaderInner: {
-    alignItems: "center",
-  },
-  loaderText: {
-    color: Colors.color,
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  progressBar: {
-    width: 100,
-    height: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: Colors.color,
-  },
-  progressText: {
-    color: Colors.white,
-    marginTop: 10,
-    fontSize: 14,
   },
 });
 
