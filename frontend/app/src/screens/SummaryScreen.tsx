@@ -55,12 +55,15 @@ const SummaryScreen: React.FC = () => {
   const status = useSelector((state: RootState) => state.entries.status);
   const username = useSelector((state: RootState) => state.profile.username);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
-    dispatch(fetchJournalEntries());
-    dispatch(fetchCategories());
-    dispatch(fetchProfileInfo());
-  }, [dispatch]);
+    if (token) {
+      dispatch(fetchJournalEntries());
+      dispatch(fetchCategories());
+      dispatch(fetchProfileInfo());
+    }
+  }, [dispatch, token]);
 
   const getColorForIndex = (index: number) =>
     colorPalette[index % colorPalette.length];

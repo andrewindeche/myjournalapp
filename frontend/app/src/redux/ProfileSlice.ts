@@ -24,6 +24,11 @@ export const fetchProfileInfo = createAsyncThunk<
 >("profile/fetchProfileInfo", async (_, { rejectWithValue, getState }) => {
   const state = getState() as RootState;
   const token = state.auth.token;
+  
+  if (!token) {
+    return rejectWithValue("No token available");
+  }
+  
   setAuthToken(token);
   try {
     const response = await instance.get("profile/");

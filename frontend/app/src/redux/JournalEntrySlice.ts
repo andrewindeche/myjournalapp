@@ -60,6 +60,11 @@ export const fetchJournalEntries = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
+    
+    if (!token) {
+      return rejectWithValue("No token available");
+    }
+    
     setAuthToken(token);
     try {
       const response = await instance.get("entries-create/");
@@ -84,6 +89,11 @@ export const updateJournalEntry = createAsyncThunk(
   ) => {
     const state = getState() as RootState;
     const token = state.auth.token;
+    
+    if (!token) {
+      return rejectWithValue("No token available");
+    }
+    
     setAuthToken(token);
 
     const formData = new FormData();
@@ -128,6 +138,11 @@ export const fetchCategories = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
+    
+    if (!token) {
+      return rejectWithValue("No token available");
+    }
+    
     setAuthToken(token);
     try {
       const response = await instance.get("categories-create/");
@@ -147,6 +162,11 @@ export const deleteJournalEntry = createAsyncThunk(
   async (entryId: number, { getState, rejectWithValue }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
+    
+    if (!token) {
+      return rejectWithValue("No token available");
+    }
+    
     setAuthToken(token);
     try {
       await instance.delete(`entries-update/${entryId}/`);
@@ -169,6 +189,11 @@ export const createJournalEntry = createAsyncThunk(
   ) => {
     const state = getState() as RootState;
     const token = state.auth.token;
+    
+    if (!token) {
+      return rejectWithValue("No token available");
+    }
+    
     setAuthToken(token);
 
     const formData = new FormData();
