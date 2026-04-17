@@ -1,7 +1,7 @@
 {
   "name": "frontend",
-  "main": "app/index.tsx",
   "version": "1.0.0",
+  "main": "app/index.tsx",
   "scripts": {
     "start": "expo start --tunnel --dev-client",
     "android": "expo run:android",
@@ -24,7 +24,6 @@
     "expo-font": "~55.0.6",
     "expo-image-picker": "^55.0.18",
     "expo-linking": "~55.0.12",
-    "expo-router": "^55.0.12",
     "expo-splash-screen": "~55.0.17",
     "expo-status-bar": "~55.0.5",
     "expo-system-ui": "~55.0.15",
