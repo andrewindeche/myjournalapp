@@ -22,6 +22,8 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [fontsLoaded] = useFonts({
     "Mulish-Black": require("./assets/fonts/Mulish-Black.ttf"),
+    "Mulish-Bold": require("./assets/fonts/Mulish-Bold.ttf"),
+    "Mulish-Regular": require("./assets/fonts/Mulish-Regular.ttf"),
   });
 
   useEffect(() => {

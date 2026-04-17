@@ -31,6 +31,7 @@ import {
 } from "../redux/JournalEntrySlice";
 import { JournalEntry } from "../redux/types";
 import { API_URL } from "../redux/apiConfig";
+import { saveTheme, loadTheme } from "../redux/authSlice";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SubMenu from "../components/JournalEntryMenu";
 import ZoomableImage from "../components/ZoomableImage";
@@ -56,19 +57,9 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { journalEntries } = useSelector((state: RootState) => state.entries);
   const operationLoading = useSelector((state: RootState) => state.entries.operationLoading);
+  const isDarkModeRedux = useSelector((state: RootState) => state.auth.isDarkMode);
+  const [isDarkMode, setIsDarkMode] = useState(isDarkModeRedux);
   const [newCategory, setNewCategory] = useState("");
-  const [showMenu, setShowMenu] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [title, setTitle] = useState("");
-  const [inputText, setInputText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [editEntryId, setEditEntryId] = useState<string | null>(null);
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
-  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [entryIdToDelete, setEntryIdToDelete] = useState<number | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(Colors.background);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [takingPhoto, setTakingPhoto] = useState(false);
@@ -77,6 +68,10 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const [saveProgress, setSaveProgress] = useState(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    dispatch(loadTheme());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchJournalEntries());
@@ -91,13 +86,13 @@ const JournalEntryScreen: React.FC<Props> = () => {
   }, [entryId, journalEntries]);
 
   useEffect(() => {
-    if (editMode && currentEntry) {
+    if (entryId && currentEntry) {
       setTitle(currentEntry.title || "");
       setSelectedCategory(currentEntry.category || "");
       setInputText(currentEntry.content_text || "");
       setImageUri(currentEntry.content_image?.uri || null);
     }
-  }, [editMode, currentEntry]);
+  }, [entryId, currentEntry]);
 
   useEffect(() => {
     const isDisabled = !(title && inputText && selectedCategory);
@@ -108,8 +103,14 @@ const JournalEntryScreen: React.FC<Props> = () => {
     setBackgroundColor(isDarkMode ? Colors.darkBackground : Colors.background);
   }, [isDarkMode]);
 
+  useEffect(() => {
+    setIsDarkMode(isDarkModeRedux);
+  }, [isDarkModeRedux]);
+
   const toggleDarkMode = () => {
-    setIsDarkMode((prevMode) => !prevMode);
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    dispatch(saveTheme(newMode));
   };
 
   const logger = (message: string, ...optionalParams: unknown[]) => {

@@ -319,6 +319,9 @@ const journalEntriesSlice = createSlice({
         state.status = "failed";
         state.operationLoading.updateEntry = false;
         state.error = action.payload as string;
+        if (state.error === "Unauthorized. Error updating entry.") {
+          logout();
+        }
       })
       .addCase(deleteJournalEntry.pending, (state) => {
         state.operationLoading.deleteEntry = true;
@@ -339,25 +342,6 @@ const journalEntriesSlice = createSlice({
         state.status = "failed";
         state.error = action.payload as string;
         if (state.error === "Unauthorized. Error deleting entry.") {
-          logout();
-        }
-      })
-      .addCase(
-        updateJournalEntry.fulfilled,
-        (state, action: PayloadAction<JournalEntry>) => {
-          const index = state.journalEntries.findIndex(
-            (entry) => entry.id === action.payload.id,
-          );
-          if (index !== -1) {
-            state.journalEntries[index] = action.payload;
-            state.mostRecentEntry = action.payload;
-          }
-        },
-      )
-      .addCase(updateJournalEntry.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload as string;
-        if (state.error === "Unauthorized. Error updating entry.") {
           logout();
         }
       });
