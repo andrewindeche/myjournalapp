@@ -198,12 +198,11 @@ const JournalEntryScreen: React.FC<Props> = () => {
 
       try {
         if (editEntryId) {
-          await dispatch(
+          const result = await dispatch(
             updateJournalEntry({ id: editEntryId, ...newEntry }),
           ).unwrap();
           dispatch(fetchJournalEntries());
-          const updatedEntry = journalEntries.find((e) => e.id === editEntryId);
-          setCurrentEntry(updatedEntry || null);
+          setCurrentEntry(result);
         } else {
           const result = await dispatch(createJournalEntry(newEntry)).unwrap();
           dispatch(fetchJournalEntries());
