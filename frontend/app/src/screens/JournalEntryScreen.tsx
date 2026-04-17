@@ -32,6 +32,7 @@ import { JournalEntry } from "../redux/types";
 import { API_URL } from "../redux/apiConfig";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SubMenu from "../components/JournalEntryMenu";
+import ZoomableImage from "../components/ZoomableImage";
 
 type RootStackParamList = {
   Home: undefined;
@@ -420,13 +421,10 @@ const JournalEntryScreen: React.FC<Props> = () => {
                   </Text>
                 )}
                 {getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) ? (
-                  <View style={styles.imageContainer}>
-                    <Image
-                      source={{ uri: getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) }}
-                      style={styles.entryImage}
-                      resizeMode="cover"
-                    />
-                  </View>
+                  <ZoomableImage
+                    uri={getFullImageUrl(currentEntry.content_image?.uri || currentEntry.content_image as string) as string}
+                    style={styles.entryImage}
+                  />
                 ) : null}
               </Pressable>
             ) : (

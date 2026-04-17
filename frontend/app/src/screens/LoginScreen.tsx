@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Colors } from "../colors";
 import {
   View,
@@ -7,6 +7,8 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  Animated,
+  Easing,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,6 +53,11 @@ const LoginScreen: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginProgress, setLoginProgress] = useState(0);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
@@ -75,15 +82,80 @@ const LoginScreen: React.FC = () => {
 
   const handleSignInPress = () => {
     if (!isDisabled) {
+      setIsLoggingIn(true);
+      setLoginProgress(0);
+      
+      Animated.parallel([
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(scaleAnim, {
+              toValue: 1.2,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+              toValue: 1,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+          ])
+        ),
+        Animated.loop(
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 2000,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          })
+        ),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      const progressInterval = setInterval(() => {
+        setLoginProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(progressInterval);
+            return 100;
+          }
+          return prev + 2;
+        });
+      }, 40);
+
       dispatch(loginUser({ username, password }))
         .unwrap()
         .then(() => {
-          dispatch(setUsername(""));
-          dispatch(setPassword(""));
-          navigation.navigate("Summary");
+          clearInterval(progressInterval);
+          setTimeout(() => {
+            Animated.parallel([
+              Animated.timing(opacityAnim, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: true,
+              }),
+            ]).start(() => {
+              setIsLoggingIn(false);
+              dispatch(setUsername(""));
+              dispatch(setPassword(""));
+              navigation.navigate("Summary");
+            });
+          }, 500);
         })
         .catch((error) => {
-          error("Login failed: ", error);
+          clearInterval(progressInterval);
+          Animated.parallel([
+            Animated.timing(opacityAnim, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setIsLoggingIn(false);
+          });
+          console.error("Login failed: ", error);
         });
       setAttempts(attempts + 1);
       if (attempts + 1 >= 4) {
@@ -152,6 +224,24 @@ const LoginScreen: React.FC = () => {
 
   return (
     <>
+      {isLoggingIn && (
+        <Animated.View style={[styles.loaderOverlay, { opacity: opacityAnim }]}>
+          <Animated.View
+            style={[
+              styles.loaderContainer,
+              { transform: [{ scale: scaleAnim }, { rotate: rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }] },
+            ]}
+          >
+            <View style={styles.loaderInner}>
+              <Text style={styles.loaderText}>Journal</Text>
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${loginProgress}%` }]} />
+              </View>
+              <Text style={styles.progressText}>{loginProgress}%</Text>
+            </View>
+          </Animated.View>
+        </Animated.View>
+      )}
       <View style={styles.outerContainer}>
         <View style={styles.header}>
           <Text style={styles.title}>Welcome to your journal</Text>
@@ -343,6 +433,52 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  loaderOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  loaderContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "transparent",
+    borderWidth: 4,
+    borderColor: Colors.color,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loaderInner: {
+    alignItems: "center",
+  },
+  loaderText: {
+    color: Colors.color,
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  progressBar: {
+    width: 100,
+    height: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: Colors.color,
+  },
+  progressText: {
+    color: Colors.white,
+    marginTop: 10,
+    fontSize: 14,
   },
 });
 
