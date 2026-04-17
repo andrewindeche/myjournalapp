@@ -4,10 +4,9 @@
     "strict": true,
     "jsx": "react-native",
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -16,11 +15,8 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "@react-native-async-storage.d.ts",
-    "src/**/*", 
+    "src/**/*",
     "frontend/app/src/screens/**/*"
   ],
-  "exclude": [
-    "node_modules",
-     "babel.config.js", 
-     "metro.config.js"]
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }
