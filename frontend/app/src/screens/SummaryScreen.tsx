@@ -184,7 +184,13 @@ const SummaryScreen: React.FC = () => {
               <Text style={styles.greetingText}>Hi, {username}</Text>
             )}
           </View>
-          <Pressable onPress={toggleDarkMode} style={styles.themeToggleButton}>
+          <Pressable
+            onPress={toggleDarkMode}
+            style={[
+              styles.themeToggleButton,
+              { backgroundColor: darkMode ? Colors.lightGray : Colors.darkCharcoal },
+            ]}
+          >
             <Text style={styles.themeToggleText}>
               {darkMode ? "Light" : "Dark"}
             </Text>
