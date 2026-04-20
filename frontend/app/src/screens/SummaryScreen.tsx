@@ -21,7 +21,7 @@ import { fetchProfileInfo } from "../redux/ProfileSlice";
 import { Colors } from "../colors";
 import { Swipeable } from "react-native-gesture-handler";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import { loadTheme, saveTheme, setDarkMode } from "../redux/authSlice";
+import { loadTheme, saveTheme, setDarkMode as setDarkModeAction } from "../redux/authSlice";
 
 const colorPalette = [
   "#FFDEE9",
@@ -71,7 +71,7 @@ const SummaryScreen: React.FC = () => {
   const toggleDarkMode = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
-    dispatch(setDarkMode(newMode));
+    dispatch(setDarkModeAction(newMode));
     dispatch(saveTheme(newMode));
   };
 

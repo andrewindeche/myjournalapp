@@ -235,6 +235,18 @@ const journalEntriesSlice = createSlice({
     addCategory(state, action: PayloadAction<Category>) {
       state.categories.push(action.payload);
     },
+    reset(state) {
+      state.journalEntries = [];
+      state.categories = [];
+      state.status = "idle";
+      state.error = null;
+      state.operationLoading = {
+        fetchEntries: false,
+        updateEntry: false,
+        deleteEntry: false,
+        createEntry: false,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -348,6 +360,6 @@ const journalEntriesSlice = createSlice({
   },
 });
 
-export const { addCategory } = journalEntriesSlice.actions;
+export const { addCategory, reset } = journalEntriesSlice.actions;
 export const selectCategories = (state: RootState) => state.entries.categories;
 export default journalEntriesSlice.reducer;
