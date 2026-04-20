@@ -21,6 +21,7 @@ import { fetchProfileInfo } from "../redux/ProfileSlice";
 import { Colors } from "../colors";
 import { Swipeable } from "react-native-gesture-handler";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import { loadTheme, saveTheme, setDarkMode as setDarkModeAction } from "../redux/authSlice";
 
 const colorPalette = [
   "#FFDEE9",
@@ -55,12 +56,32 @@ const SummaryScreen: React.FC = () => {
   const status = useSelector((state: RootState) => state.entries.status);
   const username = useSelector((state: RootState) => state.profile.username);
   const profileStatus = useSelector((state: RootState) => state.profile.status);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const isDarkMode = useSelector((state: RootState) => state.auth.isDarkMode);
+  const [darkMode, setDarkMode] = useState(isDarkMode);
 
   useEffect(() => {
-    dispatch(fetchJournalEntries());
-    dispatch(fetchCategories());
-    dispatch(fetchProfileInfo());
+    dispatch(loadTheme());
   }, [dispatch]);
+
+  useEffect(() => {
+    setDarkMode(isDarkMode);
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    dispatch(setDarkModeAction(newMode));
+    dispatch(saveTheme(newMode));
+  };
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchJournalEntries());
+      dispatch(fetchCategories());
+      dispatch(fetchProfileInfo());
+    }
+  }, [dispatch, token]);
 
   const getColorForIndex = (index: number) =>
     colorPalette[index % colorPalette.length];
@@ -141,8 +162,8 @@ const SummaryScreen: React.FC = () => {
     const matchesContent =
       searchType === "keywords"
         ? (entry.content_text || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
         : true;
 
     return (
@@ -163,6 +184,11 @@ const SummaryScreen: React.FC = () => {
               <Text style={styles.greetingText}>Hi, {username}</Text>
             )}
           </View>
+          <Pressable onPress={toggleDarkMode} style={styles.themeToggleButton}>
+            <Text style={styles.themeToggleText}>
+              {darkMode ? "Light" : "Dark"}
+            </Text>
+          </Pressable>
         </View>
         <Text style={styles.title}>My Journals</Text>
         <View style={styles.filtersContainer}>
@@ -299,15 +325,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryButton: {
-    backgroundColor: Colors.darkCharcoal,
+    backgroundColor: "rgba(123, 104, 238, 0.2)",
     borderRadius: 20,
     marginRight: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
   categoryText: {
-    color: Colors.color,
-    fontSize: 16,
+    color: Colors.accent,
+    fontFamily: "Mulish-Bold",
+    fontSize: 14,
   },
   container: {
     backgroundColor: Colors.tangaroa,
@@ -354,7 +381,8 @@ const styles = StyleSheet.create({
   },
   greetingText: {
     color: Colors.background,
-    fontSize: 16,
+    fontFamily: "Mulish-Regular",
+    fontSize: 18,
   },
   header: {
     alignItems: "center",
@@ -373,16 +401,19 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   noteCategory: {
-    color: Colors.darkOrange,
-    fontSize: 16,
+    color: Colors.coral,
+    fontFamily: "Mulish-Regular",
+    fontSize: 14,
     fontStyle: "italic",
   },
   noteDate: {
-    color: Colors.LarimarBlue,
-    fontSize: 14,
+    color: Colors.teal,
+    fontFamily: "Mulish-Regular",
+    fontSize: 12,
     marginBottom: 5,
   },
   noteTitle: {
+    fontFamily: "Mulish-Bold",
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 5,
@@ -424,13 +455,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   selectedCategoryButton: {
-    color: Colors.black,
+    backgroundColor: Colors.accent,
   },
   selectedSearchType: {
     backgroundColor: Colors.darkGray,
   },
+  themeToggleButton: {
+    backgroundColor: Colors.accent,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+  },
+  themeToggleText: {
+    color: Colors.white,
+    fontFamily: "Mulish-Bold",
+    fontSize: 14,
+  },
   title: {
     color: Colors.background,
+    fontFamily: "Mulish-Bold",
     fontSize: 32,
     fontWeight: "bold",
     marginBottom: 20,

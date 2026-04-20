@@ -11,7 +11,7 @@
 | 7.Metro | Native Bundler| [Bundle];|
 | 8.Pipenv | Package/Dependency manager| [Virtual Environment];[Dependency];|
 | 9.Circleci | CI/Cd Pipeline| [continuous integration];[continuous delivery];|
-| 10.Cypress | E2E testing| [ E2E ];[ UI ];|
+| 10.Detox | E2E Testing| [Testing]; [E2E]; [Automation];|
 
 ## <h1> Description</h1>
 <p>The aim of the project is to build a journaling app using React Native for frontend and Python Django for backend </p>
@@ -172,6 +172,21 @@ npx react-native start
 
 <b>http://localhost:8081</b>
 
+## <h1> Features</h1>
+- User registration and login
+- Email verification (gmail, outlook, yahoo, hotmail, etc.)
+- JWT authentication
+- Google OAuth login
+- Create, read, update, delete journal entries
+- Image upload and viewing
+- Video upload and viewing
+- Drag and reposition images
+- Entry themes (Ocean, Sunset, Forest, Lavender, Mint, Rose, Midnight)
+- Dark/Light mode
+- Category filtering
+- Date filtering (Today, This Week, This Month, All Time)
+- Summary statistics
+
 ## <h1> Endpoints</h1>
 
 1. Logging in:
@@ -200,6 +215,57 @@ npx react-native start
 9. Retrieve, update or delete categories:
 
 <p><b>http://localhost:8081/api/categories-create/<int:pk>/edit/</b></p>
+
+## <h1> E2E Testing with Detox</h1>
+
+<p>The project uses Detox for end-to-end testing</p>
+
+1. Install dependencies:
+
+```bash
+cd frontend
+npm install detox
+```
+
+2. Build the APK:
+
+```bash
+npx expo run:android --variant=debug
+```
+
+3. Run E2E tests:
+
+```bash
+npm run test:e2e
+```
+
+4. Run specific test file:
+
+```bash
+npx detox test e2e/login.test.ts
+```
+
+5. Open Detox GUI:
+
+```bash
+npm run test:e2e:open
+```
+
+<p><b>Test files location:</b> <code>frontend/e2e/</code></p>
+
+- <code>login.test.ts</code> - Login screen tests
+- <code>registration.test.ts</code> - Registration flow tests
+- <code>home.test.ts</code> - Home screen tests
+- <code>journalentry.test.ts</code> - Journal entry tests
+- <code>summary.test.ts</code> - Summary screen tests
+- <code>profile.test.ts</code> - Profile screen tests
+
+<p><b>Prerequisites:</b></p>
+<ul>
+<li>Android Studio SDK configured</li>
+<li>Emulator running or device connected via USB</li>
+<li>Device must have USB debugging enabled</li>
+</ul>
 
 ## <h1> Screenshots</h1>
 ![Langing Page](<Screenshot 2024-12-18 160929.png>)

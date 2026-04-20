@@ -15,6 +15,7 @@ class JournalEntry(models.Model):
     title = models.CharField(max_length=255)
     content_text = models.TextField(blank=True, null=True)
     content_image = models.ImageField(upload_to='images/', blank=True, null=True)
+    content_video = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 

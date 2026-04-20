@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Colors } from "../colors";
 import {
   View,
@@ -7,6 +7,8 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  Animated,
+  Easing,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,6 +53,11 @@ const LoginScreen: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginProgress, setLoginProgress] = useState(0);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
@@ -75,15 +82,80 @@ const LoginScreen: React.FC = () => {
 
   const handleSignInPress = () => {
     if (!isDisabled) {
+      setIsLoggingIn(true);
+      setLoginProgress(0);
+
+      Animated.parallel([
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(scaleAnim, {
+              toValue: 1.2,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+              toValue: 1,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+          ]),
+        ),
+        Animated.loop(
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 2000,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }),
+        ),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      const progressInterval = setInterval(() => {
+        setLoginProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(progressInterval);
+            return 100;
+          }
+          return prev + 2;
+        });
+      }, 40);
+
       dispatch(loginUser({ username, password }))
         .unwrap()
         .then(() => {
-          dispatch(setUsername(""));
-          dispatch(setPassword(""));
-          navigation.navigate("Summary");
+          clearInterval(progressInterval);
+          setTimeout(() => {
+            Animated.parallel([
+              Animated.timing(opacityAnim, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: true,
+              }),
+            ]).start(() => {
+              setIsLoggingIn(false);
+              dispatch(setUsername(""));
+              dispatch(setPassword(""));
+              navigation.navigate("Summary");
+            });
+          }, 500);
         })
         .catch((error) => {
-          error("Login failed: ", error);
+          clearInterval(progressInterval);
+          Animated.parallel([
+            Animated.timing(opacityAnim, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setIsLoggingIn(false);
+          });
+          console.error("Login failed: ", error);
         });
       setAttempts(attempts + 1);
       if (attempts + 1 >= 4) {
@@ -152,6 +224,36 @@ const LoginScreen: React.FC = () => {
 
   return (
     <>
+      {isLoggingIn && (
+        <Animated.View style={[styles.loaderOverlay, { opacity: opacityAnim }]}>
+          <Animated.View
+            style={[
+              styles.loaderContainer,
+              {
+                transform: [
+                  { scale: scaleAnim },
+                  {
+                    rotate: rotateAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", "360deg"],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <View style={styles.loaderInner}>
+              <Text style={styles.loaderText}>Journal</Text>
+              <View style={styles.progressBar}>
+                <View
+                  style={[styles.progressFill, { width: `${loginProgress}%` }]}
+                />
+              </View>
+              <Text style={styles.progressText}>{loginProgress}%</Text>
+            </View>
+          </Animated.View>
+        </Animated.View>
+      )}
       <View style={styles.outerContainer}>
         <View style={styles.header}>
           <Text style={styles.title}>Welcome to your journal</Text>
@@ -211,20 +313,26 @@ const LoginScreen: React.FC = () => {
 
           <Pressable style={styles.newUser} onPress={handleSignUpPress}>
             <Text>
-              I'm a new user <Text style={styles.signUpText}>Sign up</Text>
+              I&apos;m a new user <Text style={styles.signUpText}>Sign up</Text>
             </Text>
+          </Pressable>
+
+          <Pressable style={styles.footer} onPress={() => navigation.navigate("ForgotPassword")}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </Pressable>
         </View>
       </View>
 
       <View style={styles.errorContainer}>
-        {Array.isArray(error)
-          ? error.map((msg, index) => (
-              <Text key={index} style={styles.errorText}>
-                {msg}
-              </Text>
-            ))
-          : error && <Text style={styles.errorText}>{error}</Text>}
+        {Array.isArray(error) &&
+          error.map((msg, index) => (
+            <Text key={index} style={styles.errorText}>
+              {msg}
+            </Text>
+          ))}
+        {!Array.isArray(error) && error && (
+          <Text style={styles.errorText}>{error}</Text>
+        )}
 
         {isDisabled && (
           <Text style={styles.timerText}>
@@ -294,8 +402,43 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
+  loaderContainer: {
+    alignItems: "center",
+    backgroundColor: "transparent",
+    borderColor: Colors.color,
+    borderRadius: 75,
+    borderWidth: 4,
+    height: 150,
+    justifyContent: "center",
+    width: 150,
+  },
+  loaderInner: {
+    alignItems: "center",
+  },
+  loaderOverlay: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 1000,
+  },
+  loaderText: {
+    color: Colors.color,
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
   newUser: {
     marginTop: 20,
+  },
+  forgotPasswordText: {
+    color: Colors.loginBackgroundColor,
+    fontSize: 16,
+    marginTop: 10,
   },
   outerContainer: {
     alignItems: "center",
@@ -304,6 +447,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
     width: "100%",
+  },
+  progressBar: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 4,
+    height: 8,
+    overflow: "hidden",
+    width: 100,
+  },
+  progressFill: {
+    backgroundColor: Colors.color,
+    height: "100%",
+  },
+  progressText: {
+    color: Colors.white,
+    fontSize: 14,
+    marginTop: 10,
   },
   signInButton: {
     backgroundColor: Colors.loginBackgroundColor,

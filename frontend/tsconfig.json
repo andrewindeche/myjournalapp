@@ -2,30 +2,21 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "types": ["cypress"],
     "jsx": "react-native",
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "cypress/**/*.ts",
-    "cypress/integration/**/*.ts", 
-    "cypress/plugins/index.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "@react-native-async-storage.d.ts",
-    "src/**/*", 
+    "src/**/*",
     "frontend/app/src/screens/**/*"
   ],
-  "exclude": [
-    "node_modules",
-     "babel.config.js", 
-     "metro.config.js", 
-     "jest.config.js"]
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }

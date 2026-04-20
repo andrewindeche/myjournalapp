@@ -1,17 +1,16 @@
-FROM node:21-alpine
+FROM node:20-alpine
 
 WORKDIR /app/frontend
 
 COPY package*.json ./
 
-RUN npm install --global expo-cli && npm install
-
-RUN npm install -g @expo/ngrok
+RUN npm ci --legacy-peer-deps --prefer-offline --no-audit --no-fund
 
 COPY . .
 
-EXPOSE 19000 19001 19002
+EXPOSE 19000
 
-CMD ["npm", "start"]
+ENV NODE_OPTIONS="--max-old-space-size=3072"
+ENV EXPO_NO_SOURCE_MAPS=1
 
-
+CMD ["npx", "expo", "start", "--web", "--port", "19000"]

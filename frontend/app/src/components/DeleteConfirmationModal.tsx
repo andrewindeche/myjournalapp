@@ -1,12 +1,7 @@
 import React from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
 import { Colors } from "../colors";
-
-interface DeleteConfirmationModalProps {
-  visible: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
+import { DeleteConfirmationModalProps } from "../types";
 
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   visible,

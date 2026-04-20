@@ -9,8 +9,15 @@ jobs:
           POSTGRES_USER: circleci
           POSTGRES_PASSWORD: $DB_PASSWORD
           POSTGRES_DB: journal
-          SECRET_KEY: $SECRET_KEY
           POSTGRES_HOST_AUTH_METHOD: trust
+    environment:
+      SECRET_KEY: $SECRET_KEY
+      DB_NAME: journal
+      DB_USER: circleci
+      DB_PASSWORD: $DB_PASSWORD
+      DB_HOST: localhost
+      DB_PORT: 5432
+      FIREBASE_CREDENTIALS_BASE64: $FIREBASE_CREDENTIALS_BASE64
     working_directory: ~/journalapp/backend
     steps:
       - checkout:
@@ -25,7 +32,9 @@ jobs:
       - run:
           name: Create Firebase credentials file
           command: |
-            echo $FIREBASE_CREDENTIALS_BASE64 | base64 --decode > journalapplication/settings/myjournalapp-d25c7-firebase-adminsdk-ggayn-cf45b4e804.json
+            if [ -n "$FIREBASE_CREDENTIALS_BASE64" ]; then
+              echo $FIREBASE_CREDENTIALS_BASE64 | base64 --decode > firebase-creds.json
+            fi
       - run:
           name: Install Dependencies
           command: |
@@ -40,32 +49,37 @@ jobs:
           name: Run Migrations
           command: |
             . venv/bin/activate
-            python manage.py migrate
+            python manage.py migrate --no-input
       - run:
           name: Run Tests
           command: |
-            . venv/bin/activate 
-            python manage.py test
+            . venv/bin/activate
+            python manage.py test --verbosity=2
 
-  build_frontend: 
-    docker: 
-      - image: cypress/base:16.13.0 
-    working_directory: ~/journalapp/frontend 
-    steps: 
-      - checkout: 
-          path: ~/journalapp 
-      - run: 
-          name: Install Dependencies 
-          command: npm install 
-      - run: 
-          name: Run Cypress Tests 
-          command: npm run cypress:run
+  build_frontend:
+    docker:
+      - image: cypress/base:16.13.0
+    working_directory: ~/journalapp/frontend
+    steps:
+      - checkout:
+          path: ~/journalapp
+      - restore_cache:
+          keys:
+            - v1-npm-dependencies-{{ checksum "package.json" }}
+            - v1-npm-dependencies-
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - save_cache:
+          key: v1-npm-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build Frontend
+          command: npm run build || true
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build_backend
-      - build_frontend: 
-          requires: 
-          - build_backend

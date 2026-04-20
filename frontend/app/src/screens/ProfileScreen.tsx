@@ -17,7 +17,12 @@ import {
   updatePassword,
   updateUsername,
   deleteUserAccount,
+  resetProfileState,
 } from "../redux/ProfileSlice";
+import { logout } from "../redux/authSlice";
+import { reset } from "../redux/LoginSlice";
+import { reset as resetRegistration } from "../redux/RegistrationSlice";
+import { reset as resetEntries } from "../redux/JournalEntrySlice";
 import Menu from "../components/Menu";
 
 const ProfileScreen: React.FC = () => {
@@ -147,7 +152,14 @@ const ProfileScreen: React.FC = () => {
       if (deleteUserAccount.fulfilled.match(result)) {
         dispatch(setSuccessMessage("Account deleted successfully."));
         dispatch(logout());
-        navigation.navigate("Login");
+        dispatch(reset());
+        dispatch(resetRegistration());
+        dispatch(resetProfileState());
+        dispatch(resetEntries());
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
       } else if (deleteUserAccount.rejected.match(result)) {
         setErrorMessage(
           typeof result.payload === "string"

@@ -19,6 +19,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'email', 'password', 'confirm_password')
 
+    ALLOWED_EMAIL_DOMAINS = ['gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com', 'icloud.com', 'mail.com', 'protonmail.com', 'yandex.com']
+
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError("Email may not be blank.")
+        email_domain = value.split('@')[-1].lower() if '@' in value else ''
+        if email_domain not in self.ALLOWED_EMAIL_DOMAINS:
+            raise serializers.ValidationError(f"Please use a valid email from: {', '.join(self.ALLOWED_EMAIL_DOMAINS)}")
+        return value
+
     def validate(self, data):
         errors = {}
 
@@ -30,6 +40,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             errors['password'] = "Password may not be blank."
         if not data.get('confirm_password', '').strip():
             errors['confirm_password'] = "Confirm Password may not be blank."
+
+        email = data.get('email', '').lower()
+        if email:
+            email_domain = email.split('@')[-1] if '@' in email else ''
+            if email_domain not in self.ALLOWED_EMAIL_DOMAINS:
+                errors['email'] = f"Please use a valid email from: {', '.join(self.ALLOWED_EMAIL_DOMAINS)}"
 
         if data.get('password') != data.get('confirm_password'):
             errors['confirm_password'] = "Passwords do not match."
@@ -57,7 +73,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio']
+        fields = ['id', 'username', 'email', 'bio', 'profile_image']
         
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
@@ -131,4 +147,31 @@ class DeleteUserSerializer(serializers.Serializer):
     Serializer for deleting a user account.
     """
     def validate(self, attrs):
+        return attrs
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(_("No user with this email address exists."))
+        return value
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        try:
+            user = User.objects.get(email=attrs['email'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError(_("Invalid email address."))
+
+        if user.password_reset_code != attrs['code']:
+            raise serializers.ValidationError(_("Invalid reset code."))
+
+        if user.password_reset_expires and user.password_reset_expires < timezone.now():
+            raise serializers.ValidationError(_("Reset code has expired."))
+
         return attrs

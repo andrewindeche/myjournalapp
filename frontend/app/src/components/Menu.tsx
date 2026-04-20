@@ -4,24 +4,11 @@ import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { Colors } from "../colors";
 import Icon from "react-native-vector-icons/Ionicons";
-import { NavigationProp } from "@react-navigation/native";
 import LogoutConfirmationModal from "../components/LogoutConfirmationModal";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import { deleteUserAccount } from "../redux/ProfileSlice";
 import { AppDispatch } from "../redux/store";
-
-type RootStackParamList = {
-  Home: undefined;
-  Summary: undefined;
-  Profile: undefined;
-  Login: undefined;
-  JournalEntry: undefined;
-};
-
-interface MenuProps {
-  navigation: NavigationProp<RootStackParamList>;
-  onDeleteAccount: () => void;
-}
+import { MenuProps } from "../types";
 
 const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,7 +21,10 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
 
   const confirmLogout = () => {
     dispatch(logout());
-    navigation.navigate("Login");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Home" }],
+    });
     setLogoutModalVisible(false);
   };
 
@@ -51,7 +41,10 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
       await dispatch(deleteUserAccount({ rejectValue: "" })).unwrap();
       dispatch(logout());
       onDeleteAccount();
-      navigation.navigate("Login");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert("Error", error.message || "Failed to delete account.");

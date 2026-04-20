@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { AxiosError } from "axios";
+import { API_URL } from "./apiConfig";
 
 interface RegistrationState {
   username: string;
@@ -43,7 +44,7 @@ export const registerUser = createAsyncThunk<
     { rejectWithValue },
   ) => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/register/", {
+      const response = await axios.post(`${API_URL}/api/register/`, {
         username: userData.username,
         email: userData.email,
         password: userData.password,

@@ -1,12 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
 import { Colors } from "../colors";
-
-interface LogoutConfirmationModalProps {
-  visible: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
+import { LogoutConfirmationModalProps } from "../types";
 
 const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
   visible,

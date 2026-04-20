@@ -1,68 +1,50 @@
 services:
   db:
-    image: postgres:latest
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: dockerjournal
       POSTGRES_USER: postgres
-      DB_HOST: db
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./dumps:/dumps
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  create_table:
+  backend:
     build: ./backend
-    command: pipenv run python manage.py createcachetable
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=dockerjournal
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=5432
     depends_on:
       db:
         condition: service_healthy
 
-  migrate:
-    build: ./backend
-    command: pipenv run python manage.py migrate
-    depends_on:
-      - create_table
-
-  django:
-    build: ./backend
-    command: pipenv run python manage.py runserver 0.0.0.0:8000
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app/backend
-    depends_on:
-      - db
-      - migrate
-
-  expo:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+  frontend:
+    build: ./frontend
     ports:
       - "19000:19000"
-      - "19001:19001"
-      - "19002:19002"
       - "8081:8081"
-    volumes:
-      - ./frontend:/app/frontend
-
-    command: >
-      sh -c "
-        npm install &&
-        npm start
-      "
-
     environment:
-      - REACT_NATIVE_PACKAGER_HOSTNAME=host.docker.internal
-    stdin_open: true
-    tty: true
+      - NODE_ENV=development
+      - EXPO_PUBLIC_API_URL=http://localhost:8000
+      - NODE_OPTIONS=--max-old-space-size=3072
+      - EXPO_NO_SOURCE_MAPS=1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backend
+    mem_limit: 4g
+    mem_reservation: 3g
 
 volumes:
   postgres_data:

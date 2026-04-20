@@ -1,4 +1,4 @@
-from .views import RegisterView,LoginView,UserProfileView,PasswordChangeAPIView,DeleteUserView,FirebaseGoogleLoginView
+from .views import RegisterView,LoginView,UserProfileView,PasswordChangeAPIView,DeleteUserView,FirebaseGoogleLoginView,PasswordResetRequestView,PasswordResetConfirmView
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path('password-change/', PasswordChangeAPIView.as_view(), name='password-change'),
     path('profile/delete/', DeleteUserView.as_view(), name='delete_user'),
     path('google-login/', FirebaseGoogleLoginView.as_view(), name='google-login'),
+    path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
+    path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 ]
