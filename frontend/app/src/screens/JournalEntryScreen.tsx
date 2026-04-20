@@ -127,10 +127,15 @@ const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   );
 };
 
+interface CategoryItem {
+  id: number;
+  name: string;
+}
+
 interface CategoryPickerProps {
   value: string;
   onChange: (text: string) => void;
-  categories: string[];
+  categories: CategoryItem[];
   isDarkMode: boolean;
 }
 
@@ -200,12 +205,12 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
             <ScrollView style={styles.pickerList}>
               {categories.map((cat) => (
                 <TouchableOpacity
-                  key={cat}
+                  key={cat.id}
                   style={[
                     styles.pickerItem,
                     {
                       backgroundColor:
-                        value === cat
+                        value === cat.name
                           ? isDarkMode
                             ? "#3A3A3C"
                             : "#E5E5EA"
@@ -213,7 +218,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
                     },
                   ]}
                   onPress={() => {
-                    onChange(cat);
+                    onChange(cat.name);
                     setShowPicker(false);
                   }}
                 >
@@ -222,7 +227,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
                       styles.pickerItemText,
                       {
                         color:
-                          value === cat
+                          value === cat.name
                             ? Colors.blue
                             : isDarkMode
                             ? "#FFF"
@@ -230,9 +235,9 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
                       },
                     ]}
                   >
-                    {cat}
+                    {cat.name}
                   </Text>
-                  {value === cat && (
+                  {value === cat.name && (
                     <Icon name="checkmark" size={20} color={Colors.blue} />
                   )}
                 </TouchableOpacity>
