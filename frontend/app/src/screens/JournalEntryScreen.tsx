@@ -12,6 +12,7 @@ import {
   Animated,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import Video from "react-native-video";
 import {
   launchCamera,
   launchImageLibrary,
@@ -76,6 +77,8 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [recordingVideo, setRecordingVideo] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState<EntryTheme>("default");
   const [editMode, setEditMode] = useState(false);
   const [editEntryId, setEditEntryId] = useState<number | null>(null);
@@ -108,6 +111,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
       setSelectedCategory(currentEntry.category || "");
       setInputText(currentEntry.content_text || "");
       setImageUri(currentEntry.content_image?.uri || null);
+      setVideoUri(currentEntry.content_video?.uri || null);
       setSelectedTheme(currentEntry.theme || "default");
     }
   }, [entryId, currentEntry]);
@@ -115,7 +119,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
   useEffect(() => {
     const isDisabled = !(title && inputText && selectedCategory);
     setIsSaveDisabled(isDisabled);
-  }, [title, inputText, selectedCategory, imageUri]);
+  }, [title, inputText, selectedCategory, imageUri, videoUri]);
 
   useEffect(() => {
     setBackgroundColor(isDarkMode ? Colors.darkBackground : Colors.background);
@@ -224,8 +228,74 @@ const JournalEntryScreen: React.FC<Props> = () => {
     });
   };
 
+  const handleRecordVideo = () => {
+    if (!editMode) return;
+    setRecordingVideo(true);
+    const options: CameraOptions = { mediaType: "video", cameraType: "back" };
+    launchCamera(options, (response) => {
+      if (response.didCancel) {
+        logger("User cancelled video recording");
+      } else if (response.errorCode) {
+        logger("Video Camera Error: ", response.errorMessage);
+      } else {
+        if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          if (asset?.uri && asset?.type?.startsWith("video")) {
+            setVideoUri(asset.uri);
+            if (currentEntry) {
+              const updatedEntry = {
+                ...currentEntry,
+                content_video: {
+                  uri: asset.uri,
+                  name: asset.fileName || "video.mp4",
+                },
+              };
+              dispatch(
+                updateJournalEntry({ id: currentEntry.id, ...updatedEntry }),
+              );
+            }
+          }
+        }
+      }
+      setRecordingVideo(false);
+    });
+  };
+
+  const handleSelectVideo = () => {
+    if (!editMode) return;
+    setRecordingVideo(true);
+    const options: ImageLibraryOptions = { mediaType: "video" };
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        logger("User cancelled video picker");
+      } else if (response.errorCode) {
+        logger("Video Picker Error: ", response.errorMessage);
+      } else {
+        if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          if (asset?.uri && asset?.type?.startsWith("video")) {
+            setVideoUri(asset.uri);
+            if (currentEntry) {
+              const updatedEntry = {
+                ...currentEntry,
+                content_video: {
+                  uri: asset.uri,
+                  name: asset.fileName || "video.mp4",
+                },
+              };
+              dispatch(
+                updateJournalEntry({ id: currentEntry.id, ...updatedEntry }),
+              );
+            }
+          }
+        }
+      }
+      setRecordingVideo(false);
+    });
+  };
+
   const handleAddEntry = async () => {
-    if (inputText || imageUri) {
+    if (inputText || imageUri || videoUri) {
       setIsSaving(true);
       setSaveProgress(0);
 
@@ -265,9 +335,10 @@ const JournalEntryScreen: React.FC<Props> = () => {
 
       const entryTheme = ENTRY_THEMES[selectedTheme];
       const newEntry: Omit<JournalEntry, "id" | "created_at"> = {
-        type: "text",
+        type: videoUri ? "video" : "text",
         content_text: inputText || "",
         content_image: imageUri ? { uri: imageUri, name: "image.png" } : null,
+        content_video: videoUri ? { uri: videoUri, name: "video.mp4" } : null,
         title: title || (currentEntry ? currentEntry.title : ""),
         category: selectedCategory || newCategory,
         theme: selectedTheme,
@@ -327,6 +398,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
     setEditEntryId(null);
     setEditMode(false);
     setImageUri(null);
+    setVideoUri(null);
     setInputText("");
     setTitle("");
     setSelectedCategory(null);
@@ -412,6 +484,30 @@ const JournalEntryScreen: React.FC<Props> = () => {
       setImageUri(null);
     } else {
       Alert.alert("No image to delete");
+    }
+  };
+
+  const handleDeleteVideo = () => {
+    if (editEntryId && currentEntry) {
+      const updatedEntry = {
+        ...currentEntry,
+        content_video: null,
+      };
+      dispatch(updateJournalEntry({ id: editEntryId, ...updatedEntry }))
+        .unwrap()
+        .then(() => {
+          setCurrentEntry(updatedEntry);
+          setVideoUri(null);
+          Alert.alert("Video deleted successfully");
+        })
+        .catch((error) => {
+          logger("Failed to delete video:", error);
+          Alert.alert("Failed to delete video", error.message);
+        });
+    } else if (videoUri) {
+      setVideoUri(null);
+    } else {
+      Alert.alert("No video to delete");
     }
   };
 
@@ -585,7 +681,44 @@ const JournalEntryScreen: React.FC<Props> = () => {
                   )}
                 </View>
               </Pressable>
+              <Pressable
+                onPress={handleSelectVideo}
+                disabled={!editMode || recordingVideo}
+              >
+                <View style={styles.roundIconContainer}>
+                  {recordingVideo ? (
+                    <ActivityIndicator size="small" color="black" />
+                  ) : (
+                    <Icon name="videocam" size={28} color="black" />
+                  )}
+                </View>
+              </Pressable>
+              <Pressable onPress={handleRecordVideo} disabled={recordingVideo}>
+                <View style={styles.roundIconContainer}>
+                  {recordingVideo ? (
+                    <ActivityIndicator size="small" color="black" />
+                  ) : (
+                    <Icon name="radio-button-on" size={28} color="black" />
+                  )}
+                </View>
+              </Pressable>
             </View>
+            {videoUri && editMode && (
+              <View style={styles.videoContainer}>
+                <Video
+                  source={{ uri: videoUri }}
+                  style={styles.videoPlayer}
+                  controls
+                  resizeMode="contain"
+                />
+                <Pressable
+                  onPress={handleDeleteVideo}
+                  style={styles.deleteVideoButton}
+                >
+                  <Text style={styles.deleteVideoButtonText}>Delete Video</Text>
+                </Pressable>
+              </View>
+            )}
             <Pressable
               onPress={handleAddEntry}
               style={[
@@ -930,6 +1063,23 @@ const styles = StyleSheet.create({
   },
   themeButtonText: {
     fontSize: 12,
+    fontWeight: "bold",
+  },
+  videoContainer: {
+    marginVertical: 10,
+  },
+  videoPlayer: {
+    height: 200,
+    width: "100%",
+  },
+  deleteVideoButton: {
+    backgroundColor: Colors.red,
+    borderRadius: 5,
+    marginTop: 10,
+    padding: 10,
+  },
+  deleteVideoButtonText: {
+    color: Colors.white,
     fontWeight: "bold",
   },
 });
