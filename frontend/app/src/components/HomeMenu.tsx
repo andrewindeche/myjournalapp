@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
+import { reset } from "../redux/LoginSlice";
+import { reset as resetRegistration } from "../redux/RegistrationSlice";
+import { resetProfileState } from "../redux/ProfileSlice";
+import { reset as resetEntries } from "../redux/JournalEntrySlice";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationProp } from "@react-navigation/native";
 import { Colors } from "../colors";
@@ -29,9 +33,13 @@ const HomeMenu: React.FC<MenuProps> = ({ navigation }) => {
 
   const confirmLogout = () => {
     dispatch(logout());
+    dispatch(reset());
+    dispatch(resetRegistration());
+    dispatch(resetProfileState());
+    dispatch(resetEntries());
     navigation.reset({
       index: 0,
-      routes: [{ name: "Login" }],
+      routes: [{ name: "Home" }],
     });
     setLogoutModalVisible(false);
   };

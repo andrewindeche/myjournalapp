@@ -30,7 +30,7 @@ import {
 } from "../redux/JournalEntrySlice";
 import { JournalEntry, EntryTheme, ENTRY_THEMES } from "../types";
 import { API_URL } from "../redux/apiConfig";
-import { saveTheme, loadTheme } from "../redux/authSlice";
+import { saveTheme, loadTheme, setDarkMode } from "../redux/authSlice";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SubMenu from "../components/JournalEntryMenu";
 import ZoomableImage from "../components/ZoomableImage";
@@ -128,6 +128,7 @@ const JournalEntryScreen: React.FC<Props> = () => {
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
+    dispatch(setDarkMode(newMode));
     dispatch(saveTheme(newMode));
   };
 
