@@ -73,7 +73,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio']
+        fields = ['id', 'username', 'email', 'bio', 'profile_image']
         
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
