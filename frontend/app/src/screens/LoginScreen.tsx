@@ -316,6 +316,10 @@ const LoginScreen: React.FC = () => {
               I&apos;m a new user <Text style={styles.signUpText}>Sign up</Text>
             </Text>
           </Pressable>
+
+          <Pressable style={styles.footer} onPress={() => navigation.navigate("ForgotPassword")}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </Pressable>
         </View>
       </View>
 
@@ -430,6 +434,11 @@ const styles = StyleSheet.create({
   },
   newUser: {
     marginTop: 20,
+  },
+  forgotPasswordText: {
+    color: Colors.loginBackgroundColor,
+    fontSize: 16,
+    marginTop: 10,
   },
   outerContainer: {
     alignItems: "center",

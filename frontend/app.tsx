@@ -7,6 +7,7 @@ import HomeScreen from "./app/src/screens/HomeScreen";
 import LoginScreen from "./app/src/screens/LoginScreen";
 import RegisterScreen from "./app/src/screens/RegistrationScreen";
 import ProfileScreen from "./app/src/screens/ProfileScreen";
+import ForgotPasswordScreen from "./app/src/screens/ForgotPasswordScreen";
 import store from "./app/src/redux/store";
 import JournalEntryScreen from "./app/src/screens/JournalEntryScreen";
 import SummaryScreen from "./app/src/screens/SummaryScreen";
@@ -58,6 +59,7 @@ const App: React.FC = () => {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Summary" component={SummaryScreen} />
           <Stack.Screen name="JournalEntry" component={JournalEntryScreen} />
