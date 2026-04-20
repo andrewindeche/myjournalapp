@@ -1170,7 +1170,12 @@ const JournalEntryScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      </View>
+      {showMenu && (
+        <View style={styles.menuOverlay}>
+          <SubMenu navigation={navigation} onClose={handleToggleMenu} />
+        </View>
+      )}
+    </View>
   );
 };
 
