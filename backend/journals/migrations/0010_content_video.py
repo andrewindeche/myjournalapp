@@ -11,6 +11,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='journalentry',
             name='content_video',
-            field=models.ImageField(blank=True, null=True, upload_to='content_videos/'),
+            field=models.CharField(max_length=100, blank=True, null=True),
         ),
     ]
