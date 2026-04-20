@@ -23,7 +23,7 @@ const Menu: React.FC<MenuProps> = ({ navigation, onDeleteAccount }) => {
     dispatch(logout());
     navigation.reset({
       index: 0,
-      routes: [{ name: "Home" }],
+      routes: [{ name: "Login" }],
     });
     setLogoutModalVisible(false);
   };

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { AxiosError } from "axios";
 import { setToken } from "./authSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "./apiConfig";
 
 interface LoginState {
@@ -31,6 +32,7 @@ export const loginUser = createAsyncThunk(
       });
       const token = response.data.access;
       dispatch(setToken(token));
+      await AsyncStorage.setItem("authToken", token);
       return response.data;
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
@@ -60,6 +62,7 @@ export const googleLogin = createAsyncThunk(
       });
       const token = response.data.access;
       dispatch(setToken(token));
+      await AsyncStorage.setItem("authToken", token);
       return response.data;
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
