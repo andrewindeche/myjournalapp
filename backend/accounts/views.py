@@ -101,3 +101,46 @@ class FirebaseGoogleLoginView(generics.GenericAPIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+import random
+from django.utils import timezone
+from datetime import timedelta
+from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+from .emails import send_password_reset_email
+
+class PasswordResetRequestView(generics.GenericAPIView):
+    serializer_class = PasswordResetRequestSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = User.objects.get(email=email)
+            code = str(random.randint(100000, 999999))
+            user.password_reset_code = code
+            user.password_reset_expires = timezone.now() + timedelta(minutes=30)
+            user.save()
+            send_password_reset_email(user, code)
+            return Response({
+                'message': 'Password reset code sent to your email.',
+                'code': code
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetConfirmView(generics.GenericAPIView):
+    serializer_class = PasswordResetConfirmSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            new_password = serializer.validated_data['new_password']
+            user = User.objects.get(email=email)
+            user.set_password(new_password)
+            user.password_reset_code = None
+            user.password_reset_expires = None
+            user.save()
+            return Response({'message': 'Password reset successful.'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -148,3 +148,30 @@ class DeleteUserSerializer(serializers.Serializer):
     """
     def validate(self, attrs):
         return attrs
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(_("No user with this email address exists."))
+        return value
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        try:
+            user = User.objects.get(email=attrs['email'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError(_("Invalid email address."))
+
+        if user.password_reset_code != attrs['code']:
+            raise serializers.ValidationError(_("Invalid reset code."))
+
+        if user.password_reset_expires and user.password_reset_expires < timezone.now():
+            raise serializers.ValidationError(_("Reset code has expired."))
+
+        return attrs
