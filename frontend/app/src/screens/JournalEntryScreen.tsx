@@ -965,25 +965,25 @@ const JournalEntryScreen: React.FC = () => {
             />
 
             <View style={styles.mediaButtonsRow}>
-              <FAB
+              <FloatingActionButton
                 icon="image"
                 onPress={handleImageUpload}
                 loading={uploadingImage}
                 color="#34C759"
               />
-              <FAB
+              <FloatingActionButton
                 icon="camera"
                 onPress={handleTakePhoto}
                 loading={takingPhoto}
                 color="#007AFF"
               />
-              <FAB
+              <FloatingActionButton
                 icon="videocam"
                 onPress={handleSelectVideo}
                 loading={recordingVideo}
                 color="#FF9500"
               />
-              <FAB
+              <FloatingActionButton
                 icon="radio-button-on"
                 onPress={handleRecordVideo}
                 loading={recordingVideo}
@@ -1165,12 +1165,7 @@ const JournalEntryScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {showMenu && (
-        <View style={styles.menuOverlay}>
-          <SubMenu navigation={navigation} onClose={handleToggleMenu} />
-        </View>
-      )}
-    </View>
+      </View>
   );
 };
 
@@ -1364,7 +1359,7 @@ const styles = StyleSheet.create({
   menuOverlay: {
     position: "absolute",
     right: 20,
-    bottom: 80,
+    bottom: 160,
   },
   modalOverlay: {
     flex: 1,
