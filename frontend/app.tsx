@@ -15,6 +15,7 @@ import SummaryScreen from "./app/src/screens/SummaryScreen";
 import LoadingScreen from "./app/src/components/LoadingScreen";
 import FallbackComponent from "./app/src/components/FallbackComponent";
 import { useFonts } from "expo-font";
+import { useIdleLogout } from "./app/src/hooks/useIdleLogout";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,8 @@ const AppNavigator = () => {
       // User logged out, stay on Login or Home
     }
   }, [status, token]);
+
+  useIdleLogout();
 
   const initialRoute = token ? "Home" : "Login";
 

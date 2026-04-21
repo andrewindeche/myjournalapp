@@ -1,6 +1,9 @@
 import axios from "axios";
-import { getToken } from "./tokenManager";
+import { getToken, setToken } from "./tokenManager";
 import { API_URL } from "./apiConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import store from "./store";
+import { logout } from "./authSlice";
 
 const instance = axios.create({
   baseURL: `${API_URL}/api/`,
@@ -8,6 +11,14 @@ const instance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+const handleUnauthorized = async () => {
+  setToken(null);
+  try {
+    await AsyncStorage.removeItem("authToken");
+  } catch {}
+  store.dispatch(logout());
+};
 
 export const setAuthToken = (token: string | null) => {
   if (token) {
@@ -39,9 +50,18 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      return instance(originalRequest);
+    if (error.response?.status === 401) {
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          const retryResponse = await instance(originalRequest);
+          return retryResponse;
+        } catch {
+          await handleUnauthorized();
+          return Promise.reject(error);
+        }
+      }
+      await handleUnauthorized();
     }
     return Promise.reject(error);
   },
