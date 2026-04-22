@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "frontend",
+    "name": "MyJournal",
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "../assets/images/icon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "../assets/images/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,10 +18,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "../assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.myjournalapp.journal"
+      "package": "com.myjournalapp.journal",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -29,7 +30,11 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-sqlite"
+    ],
+    "extra": {
+      "EXPO_PUBLIC_API_URL": "http://172.29.252.14:8000"
+    }
   }
 }

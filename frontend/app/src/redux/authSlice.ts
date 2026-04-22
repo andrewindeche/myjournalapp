@@ -21,6 +21,11 @@ export const loadTheme = createAsyncThunk("auth/loadTheme", async () => {
   return theme === "true";
 });
 
+export const loadToken = createAsyncThunk("auth/loadToken", async () => {
+  const savedToken = await AsyncStorage.getItem("authToken");
+  return savedToken;
+});
+
 export const saveTheme = createAsyncThunk(
   "auth/saveTheme",
   async (isDarkMode: boolean) => {
@@ -35,6 +40,7 @@ const authSlice = createSlice({
   reducers: {
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
+      state.status = "succeeded";
       setTokenInManager(action.payload);
     },
     logout(state) {
@@ -54,6 +60,12 @@ const authSlice = createSlice({
       })
       .addCase(saveTheme.fulfilled, (state, action) => {
         state.isDarkMode = action.payload;
+      })
+      .addCase(loadToken.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.token = action.payload;
+          state.status = "succeeded";
+        }
       });
   },
 });
