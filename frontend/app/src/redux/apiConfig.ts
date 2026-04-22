@@ -1,2 +1,2 @@
 export const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  process.env.EXPO_PUBLIC_API_URL || "http://172.29.252.14:8000";

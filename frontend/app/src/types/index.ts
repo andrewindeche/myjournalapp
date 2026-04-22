@@ -3,19 +3,25 @@ import { StackNavigationProp } from "@react-navigation/native";
 export type EntryTheme = "default" | "ocean" | "sunset" | "forest" | "lavender" | "mint" | "rose" | "midnight";
 
 export interface JournalEntry {
-  id: string;
+  id: number;
   type?: "text" | "image" | "video";
-  content: (string | { uri: string; caption?: string })[];
+  content: Array<{ type: "text" | "image"; value: string }>;
   title: string;
-  entryId: string | number | null;
+  entryId?: string | number | null;
   category: string;
   created_at: string;
   content_text?: string;
-  content_image?: { uri: string; name: string } | null;
+  content_image?: { uri: string; name: string } | string | null;
   content_video?: { uri: string; name: string } | null;
   theme?: EntryTheme;
   backgroundColor?: string;
   textColor?: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  entries?: JournalEntry[];
 }
 
 export const ENTRY_THEMES: Record<EntryTheme, { background: string; text: string }> = {
